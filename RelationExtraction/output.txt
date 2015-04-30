@@ -1,0 +1,56 @@
+Acronyms and Abbreviations:
+ None.
+Negations:
+ None.
+Utterance:
+ Id: 00000000.tx.1
+ Utterance text: coke is good.
+ Position: (0, 13)
+Phrase:
+ text: coke
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0009170
+   Concept Name: Coke
+   Preferred Name: Cocaine
+   Matched Words: [coke]
+   Semantic Types: [hops, orch]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [AOD, CHV, MEDLINEPLUS, MTH, SNOMEDCT_US]
+   Positional Info: [(0, 4)]
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0009255
+   Concept Name: Coke
+   Preferred Name: Coke (solid fuel)
+   Matched Words: [coke]
+   Semantic Types: [sbst]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MSH, MTH]
+   Positional Info: [(0, 4)]
+Phrase:
+ text: is
+Candidates:
+Mappings:
+Phrase:
+ text: good.
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0205170
+   Concept Name: Good
+   Preferred Name: Good
+   Matched Words: [good]
+   Semantic Types: [qlco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, SNOMEDCT_US]
+   Positional Info: [(8, 4)]
