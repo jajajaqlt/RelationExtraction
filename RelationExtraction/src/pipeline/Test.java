@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import pipeline.AbstractsToCandidates.Candidate;
+
 /**
  * 
  * @author lq4
@@ -48,7 +51,10 @@ public class Test {
 		// public static String semanticNetworkFile = "SRSTR";
 		// public static String semanticTypeAbbreviationFile = "SRDEF";
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-				"SRSTR", "SRDEF", "all_abstracts.txt");
-		a2c.getCandidates();
+				"SRSTR", "SRDEF", "small_abstracts.txt", "MRREL.RRF");
+		ArrayList<Candidate> candidates = a2c.getCandidates();
+		boolean flag = false;
+		flag = true;
+
 	}
 }

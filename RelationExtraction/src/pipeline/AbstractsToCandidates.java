@@ -36,6 +36,7 @@ public class AbstractsToCandidates {
 	public static String semanticNetworkFile;
 	public static String semanticTypeAbbreviationFile;
 	public static String abstractsFile;
+	public static String metaRelationsFile;
 	// in the format of <"stype1&stype2","netRel1&netRel2&...">
 	// the first type has relation to the second type
 	public static HashMap<String, String> stypePairRelationMap;
@@ -48,11 +49,12 @@ public class AbstractsToCandidates {
 
 	public AbstractsToCandidates(String relationMappingFile,
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
-			String abstractsFile) throws Exception {
+			String abstractsFile, String metaRelationsFile) throws Exception {
 		this.relationMappingFile = relationMappingFile;
 		this.semanticNetworkFile = semanticNetworkFile;
 		this.semanticTypeAbbreviationFile = semanticTypeAbbreviationFile;
 		this.abstractsFile = abstractsFile;
+		this.metaRelationsFile = metaRelationsFile;
 
 		netMetaRelMap = getNetMetaRelMap(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
@@ -65,7 +67,7 @@ public class AbstractsToCandidates {
 		for (String str : netMetaRelMap.keySet()) {
 			tmp.addAll(netMetaRelMap.get(str));
 		}
-		Metathesaurus meta = new Metathesaurus("MRREL", tmp);
+		Metathesaurus meta = new Metathesaurus(metaRelationsFile, tmp);
 		cuiPairRelationMap = meta.cuiPairRelationMap;
 	}
 
@@ -82,6 +84,7 @@ public class AbstractsToCandidates {
 		System.out.println(System.currentTimeMillis());
 		while ((line = br.readLine()) != null) {
 			System.out.println("" + i + "th abstract:");
+			System.out.println("start time: " + System.currentTimeMillis());
 			List<Result> resultList = api.processCitationsFromString(line);
 			// one 'line' has one abstract and one result
 			result = resultList.get(0);
@@ -90,6 +93,7 @@ public class AbstractsToCandidates {
 				someCandidates = processUtterance(utterance);
 				candidates.addAll(someCandidates);
 			}
+			System.out.println("end time: " + System.currentTimeMillis());
 			i++;
 		}
 		br.close();
@@ -102,18 +106,25 @@ public class AbstractsToCandidates {
 		ArrayList<Candidate> someCandidates = new ArrayList<Candidate>();
 		ArrayList<Candidate> aFewCandidates = new ArrayList<Candidate>();
 		List<PCM> pcmList = utterance.getPCMList();
+		int pcmListSize = pcmList.size();
 		PCM phrase1, phrase2;
-		for (int i = 0; i < pcmList.size(); i++) {
+		for (int i = 0; i < pcmListSize; i++) {
 			phrase1 = pcmList.get(i);
 			while (phrase1.getMappingList().size() == 0) {
 				i++;
-				phrase1 = pcmList.get(i);
+				if (i < pcmListSize - 1)
+					phrase1 = pcmList.get(i);
+				else
+					break;
 			}
-			for (int j = i + 1; j < pcmList.size(); j++) {
+			mainLoop: for (int j = i + 1; j < pcmListSize; j++) {
 				phrase2 = pcmList.get(j);
 				while (phrase2.getMappingList().size() == 0) {
 					j++;
-					phrase2 = pcmList.get(j);
+					if (j < pcmListSize)
+						phrase2 = pcmList.get(j);
+					else
+						break mainLoop;
 				}
 				aFewCandidates = processTwoPhrases(phrase1, phrase2, utterance,
 						i, j);
@@ -188,6 +199,7 @@ public class AbstractsToCandidates {
 			mappingIndex++;
 		}
 
+		ArrayList<String> metaRelations;
 		for (PreCandidate preCandid1 : list1) {
 			for (PreCandidate preCandid2 : list2) {
 				sTypePair = preCandid1.sType + "&" + preCandid2.sType;
@@ -205,13 +217,17 @@ public class AbstractsToCandidates {
 						candidate = deepCopyCandidate(template);
 						candidate.netRelation = netRelation;
 						for (String metaRel : netMetaRelMap.get(netRelation)) {
+							metaRelations = cuiPairRelationMap.get(cuiPair);
 							// ???
-							if (cuiPairRelationMap.get(cuiPair).contains(
-									metaRel)) {
-								candidate.isPositive = true;
-								candidate.metaRelation = metaRel;
-								break;
+							if (metaRelations != null) {
+								if (cuiPairRelationMap.get(cuiPair).contains(
+										metaRel)) {
+									candidate.isPositive = true;
+									candidate.metaRelation = metaRel;
+									break;
+								}
 							}
+
 						}
 						aFewCandidates.add(candidate);
 					}
@@ -228,12 +244,17 @@ public class AbstractsToCandidates {
 						candidate.netRelation = netRelation;
 						for (String metaRel : netMetaRelMap.get(netRelation)) {
 							// ???
-							if (cuiPairRelationMap.get(invCUIPair).contains(
-									metaRel)) {
-								candidate.isPositive = true;
-								candidate.metaRelation = metaRel;
-								break;
+							metaRelations = cuiPairRelationMap.get(invCUIPair);
+							// ???
+							if (metaRelations != null) {
+								if (cuiPairRelationMap.get(invCUIPair)
+										.contains(metaRel)) {
+									candidate.isPositive = true;
+									candidate.metaRelation = metaRel;
+									break;
+								}
 							}
+
 						}
 						aFewCandidates.add(candidate);
 					}

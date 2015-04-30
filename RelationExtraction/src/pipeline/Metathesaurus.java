@@ -26,7 +26,7 @@ public class Metathesaurus {
 		String cui1, rela, cui2, cuiPair;
 		HashSet<String> set;
 		String sCurrentLine;
-		br = new BufferedReader(new FileReader("MRREL.RRF"));
+		br = new BufferedReader(new FileReader(MRRELFile));
 		while ((sCurrentLine = br.readLine()) != null) {
 			rec = new MRRELRecord();
 			rec.items = sCurrentLine.split("\\|", 17);
