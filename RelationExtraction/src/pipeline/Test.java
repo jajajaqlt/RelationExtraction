@@ -50,6 +50,11 @@ public class Test {
 		// public static String relationMappingFile = "NETMETA";
 		// public static String semanticNetworkFile = "SRSTR";
 		// public static String semanticTypeAbbreviationFile = "SRDEF";
+		
+//		public AbstractsToCandidates(String relationMappingFile,
+//				String semanticNetworkFile, String semanticTypeAbbreviationFile,
+//				String abstractsFile, String metaRelationsFile) throws Exception {
+		
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
 				"SRSTR", "SRDEF", "small_abstracts.txt", "MRREL.RRF");
 		ArrayList<Candidate> candidates = a2c.getCandidates();
