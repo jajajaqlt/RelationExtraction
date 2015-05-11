@@ -187,11 +187,18 @@ public class CandidatesToFeatures {
 
 	// Sentence level methods
 	private ArrayList<String> getPOSFeatures(Candidate cand) throws Exception {
+		// if utt = "Quinapril hydrochloride may treat heart failure.";
 		String utt = cand.utterance.getString();
 		Tokenizer<CoreLabel> tok = tokenizerFactory
 				.getTokenizer(new StringReader(utt));
+		// [Quinapril, hydrochloride, may, treat, heart, failure, .]
 		List<CoreLabel> rawWords2 = tok.tokenize();
+		// (ROOT (S (NP (JJ Quinapril) (NN hydrochloride)) (VP (MD may) (VP (VB
+		// treat) (NP (NN heart) (NN failure)))) (. .)))
 		Tree parse = lp.apply(rawWords2);
+		// [Quinapril/JJ, hydrochloride/NN, may/MD, treat/VB, heart/NN,
+		// failure/NN, ./.]
+		// http://en.wikipedia.org/wiki/Parse_tree
 		ArrayList<TaggedWord> parsedSent = parse.taggedYield();
 		ArrayList<String> tags = new ArrayList<String>();
 		// All words tagged
