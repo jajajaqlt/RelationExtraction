@@ -6,5 +6,9 @@
 	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/MetaMapApi.jar"/>
 	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/metamap-api-2.0.jar"/>
 	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/prologbeans.jar"/>
+	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/stanford-parser.jar"/>
+	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/stanford-parser-3.4.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/stanford-parser-3.4.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Research/workspace/Git_repositories/RelationExtraction/RelationExtraction/archives/stanford-parser-3.4.1-models.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

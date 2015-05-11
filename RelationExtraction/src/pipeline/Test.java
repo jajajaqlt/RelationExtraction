@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import edu.stanford.nlp.parser.lexparser.CNFTransformers;
 import pipeline.AbstractsToCandidates.Candidate;
 
 /**
@@ -50,14 +51,16 @@ public class Test {
 		// public static String relationMappingFile = "NETMETA";
 		// public static String semanticNetworkFile = "SRSTR";
 		// public static String semanticTypeAbbreviationFile = "SRDEF";
-		
-//		public AbstractsToCandidates(String relationMappingFile,
-//				String semanticNetworkFile, String semanticTypeAbbreviationFile,
-//				String abstractsFile, String metaRelationsFile) throws Exception {
-		
+
+		// public AbstractsToCandidates(String relationMappingFile,
+		// String semanticNetworkFile, String semanticTypeAbbreviationFile,
+		// String abstractsFile, String metaRelationsFile) throws Exception {
+
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
 				"SRSTR", "SRDEF", "small_abstracts.txt", "MRREL.RRF");
 		ArrayList<Candidate> candidates = a2c.getCandidates();
+		CandidatesToFeatures c2f = new CandidatesToFeatures(candidates);
+		c2f.c2f();
 		boolean flag = false;
 		flag = true;
 
