@@ -14,6 +14,7 @@ public class SemanticNetwork {
 	// name is defined as the string of a semantic type
 	String[] rootNodeNames = { "Physical Object", "Conceptual Entity",
 			"Activity", "Phenomenon or Process" };
+	// abbr of root semantic types {"phob","cnce","acty","phpr"};
 	HashMap<String, SemanticNetworkNode> nameNodeMap = new HashMap<String, SemanticNetworkNode>();
 	String[] relations;
 	// = { "treats", "prevents" };

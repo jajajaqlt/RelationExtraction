@@ -1,6 +1,6 @@
 package pipeline;
 
-import gov.nih.nlm.nls.metamap.Ev;
+import gov.nih.nlm.nls.metamap.Ev; 
 import gov.nih.nlm.nls.metamap.Mapping;
 import gov.nih.nlm.nls.metamap.MetaMapApi;
 import gov.nih.nlm.nls.metamap.MetaMapApiImpl;

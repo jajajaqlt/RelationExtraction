@@ -4,53 +4,81 @@ Negations:
  None.
 Utterance:
  Id: 00000000.tx.1
- Utterance text: coke is good.
- Position: (0, 13)
+ Utterance text: Quinapril hydrochloride may treat heart failure.
+ Position: (0, 48)
 Phrase:
- text: coke
+ text: Quinapril hydrochloride
 Candidates:
 Mappings:
  Mapping:
   Map Score: -1000
    Score: -1000
-   Concept Id: C0009170
-   Concept Name: Coke
-   Preferred Name: Cocaine
-   Matched Words: [coke]
-   Semantic Types: [hops, orch]
+   Concept Id: C0770920
+   Concept Name: Quinapril hydrochloride
+   Preferred Name: Quinapril hydrochloride
+   Matched Words: [quinapril, hydrochloride]
+   Semantic Types: [orch, phsu]
    is Head?: true
    is Overmatch?: false
-   Sources: [AOD, CHV, MEDLINEPLUS, MTH, SNOMEDCT_US]
-   Positional Info: [(0, 4)]
- Mapping:
-  Map Score: -1000
-   Score: -1000
-   Concept Id: C0009255
-   Concept Name: Coke
-   Preferred Name: Coke (solid fuel)
-   Matched Words: [coke]
-   Semantic Types: [sbst]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [MSH, MTH]
-   Positional Info: [(0, 4)]
+   Sources: [CHV, MTH]
+   Positional Info: [(0, 23)]
 Phrase:
- text: is
+ text: may
 Candidates:
 Mappings:
 Phrase:
- text: good.
+ text: treat
 Candidates:
 Mappings:
  Mapping:
   Map Score: -1000
    Score: -1000
-   Concept Id: C0205170
-   Concept Name: Good
-   Preferred Name: Good
-   Matched Words: [good]
-   Semantic Types: [qlco]
+   Concept Id: C1292734
+   Concept Name: TREAT
+   Preferred Name: Treatment intent
+   Matched Words: [treat]
+   Semantic Types: [ftcn]
    is Head?: true
    is Overmatch?: false
-   Sources: [MTH, SNOMEDCT_US]
-   Positional Info: [(8, 4)]
+   Sources: [NCI, NLMSubSyn, SNOMEDCT_US]
+   Positional Info: [(28, 5)]
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C1522326
+   Concept Name: Treat
+   Preferred Name: Treating
+   Matched Words: [treat]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI]
+   Positional Info: [(28, 5)]
+Phrase:
+ text: heart failure.
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0018801
+   Concept Name: Heart failure
+   Preferred Name: Heart failure
+   Matched Words: [heart, failure]
+   Semantic Types: [dsyn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, CST, ICD10CM, MSH, MTH, NLMSubSyn, SNMI, SNOMEDCT_US]
+   Positional Info: [(34, 13)]
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0018802
+   Concept Name: Heart Failure
+   Preferred Name: Congestive heart failure
+   Matched Words: [heart, failure]
+   Semantic Types: [dsyn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, ICD9CM, MTH, NCI, NDFRT, NLMSubSyn, SNOMEDCT_US]
+   Positional Info: [(34, 13)]
