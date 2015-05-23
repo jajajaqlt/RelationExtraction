@@ -50,7 +50,10 @@ public class TestFE2 {
 			System.out.println("input: " + input);
 
 			MetaMapApi api = new MetaMapApiImpl(0);
-			List<Result> resultList = api.processCitationsFromString("-z",
+			api.setOptions("-y");
+			// List<Result> resultList = api.processCitationsFromString("-y",
+			// input);
+			List<Result> resultList = api.processCitationsFromString("-y",
 					input);
 			for (Result result : resultList) {
 				if (result != null) {
@@ -103,7 +106,8 @@ public class TestFE2 {
 							pw.println("Phrase:");
 							pw.println(" text: "
 									+ pcm.getPhrase().getPhraseText());
-
+							// pw.println("syntactic analysis: " +
+							// pcm.getPhrase().getMincoManAsString());
 							pw.println("Candidates:");
 							for (Ev ev : pcm.getCandidateList()) {
 								pw.println(" Candidate:");

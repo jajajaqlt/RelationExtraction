@@ -37,6 +37,8 @@ public class SemanticNetwork {
 
 	boolean hasMultiRelations = false;
 
+	HashMap<String, String> abbrRootAbbrMap = new HashMap<String, String>();
+
 	/**
 	 * 
 	 * @param networkFile
@@ -123,6 +125,28 @@ public class SemanticNetwork {
 		// fillStypePairRelationMap();
 		substituteIntoAbbrs();
 
+		// by using parentChildrenStringMap
+		// {Medical Device=[Drug Delivery Device], Group=[Age Group, Family
+		// Group, Patient or Disabled Group, Population Group, Professional or
+		// Occupational Group]
+		String rootNodeName;
+		for (int i = 0; i < rootNodeNames.length; i++) {
+			rootNodeName = rootNodeNames[i];
+			getAbbrRootAbbrMap(nameAbbreviationMap.get(rootNodeName),
+					rootNodeName, parentChildrenStringMap.get(rootNodeName));
+		}
+		// String name, abbr;
+		// for (Map.Entry<String, String> entry :
+		// nameAbbreviationMap.entrySet()) {
+		// name = entry.getKey();
+		// abbr = entry.getValue();
+		// if (abbrRootAbbrMap.get(abbr) == null)
+		// System.out.println(name);
+		// }
+		
+		// entity and event are actually highest level semantic types
+		abbrRootAbbrMap.put("enty", "phob");
+		abbrRootAbbrMap.put("evnt", "acty");
 		boolean flag = true;
 		flag = false;
 	}
@@ -138,6 +162,24 @@ public class SemanticNetwork {
 	//
 	// }
 	// }
+
+	// by using parentChildrenStringMap
+	// {Medical Device=[Drug Delivery Device], Group=[Age Group, Family
+	// Group, Patient or Disabled Group, Population Group, Professional or
+	// Occupational Group]
+	private void getAbbrRootAbbrMap(String rootAbbr, String parentName,
+			ArrayList<String> childrenNames) {
+		String childName;
+		abbrRootAbbrMap.put(nameAbbreviationMap.get(parentName), rootAbbr);
+		if (childrenNames != null) {
+			for (int i = 0; i < childrenNames.size(); i++) {
+				childName = childrenNames.get(i);
+				getAbbrRootAbbrMap(rootAbbr, childName,
+						parentChildrenStringMap.get(childName));
+			}
+		}
+
+	}
 
 	private void substituteIntoAbbrs() {
 		// HashMap<String, HashSet<String>> relationInstatiationMap = new

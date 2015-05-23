@@ -1,6 +1,6 @@
 package pipeline;
 
-import gov.nih.nlm.nls.metamap.Ev; 
+import gov.nih.nlm.nls.metamap.Ev;
 import gov.nih.nlm.nls.metamap.Mapping;
 import gov.nih.nlm.nls.metamap.MetaMapApi;
 import gov.nih.nlm.nls.metamap.MetaMapApiImpl;
@@ -59,18 +59,43 @@ public class AbstractsToCandidates {
 		netMetaRelMap = getNetMetaRelMap(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
 				netMetaRelMap.keySet().size(), String[].class);
+//		System.out.println(System.currentTimeMillis());
 		SemanticNetwork semanticNet = new SemanticNetwork(semanticNetworkFile,
 				semanticTypeAbbreviationFile, netRelations);
+//		System.out.println(System.currentTimeMillis());
 		stypePairRelationMap = semanticNet.stypePairRelationMap;
 
 		ArrayList<String> tmp = new ArrayList<String>();
 		for (String str : netMetaRelMap.keySet()) {
 			tmp.addAll(netMetaRelMap.get(str));
 		}
+//		System.out.println(System.currentTimeMillis());
 		Metathesaurus meta = new Metathesaurus(metaRelationsFile, tmp);
+//		System.out.println(System.currentTimeMillis());
 		cuiPairRelationMap = meta.cuiPairRelationMap;
 	}
 
+	/**
+	 * Set MetaMap server options using a string of form:
+	 *
+	 * <pre>
+	 * &quot;-option1 optional-argument1 -option2 optional-argument2&quot;
+	 * </pre>
+	 * 
+	 * examples:
+	 * 
+	 * <pre>
+	 *    "-yD" or "-y -D" or "-J SNOMEDCT" or "--restrict_to_sources SNOMEDCT"
+	 * </pre>
+	 * <p>
+	 * Set MetaMap server options. State of options are preserved in subsequent
+	 * invocations of processCitationsFromString(String),
+	 * processCitationsFromReader(Reader), and processCitationsFromFile(String).
+	 * <p>
+	 * 
+	 * @param optionString
+	 *            a string of MetaMap options
+	 */
 	public ArrayList<Candidate> getCandidates() throws Exception {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
 		BufferedReader br = new BufferedReader(new FileReader(new File(
@@ -78,6 +103,7 @@ public class AbstractsToCandidates {
 		// each line is an abstract
 		String line;
 		MetaMapApi api = new MetaMapApiImpl(0);
+		api.setOptions("-y");
 		int i = 0;
 		Result result;
 		ArrayList<Candidate> someCandidates;

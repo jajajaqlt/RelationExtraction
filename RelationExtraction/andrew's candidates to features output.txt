@@ -1,0 +1,258 @@
+1431292498460
+0th abstract:
+start time: 1431292498461
+end time: 1431292498659
+1th abstract:
+start time: 1431292498660
+end time: 1431292498707
+2th abstract:
+start time: 1431292498707
+end time: 1431292498737
+1431292498737
+Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... done [0.8 sec].
+Candidate features: 
+Entities: Quinapril hydrochloride, heart failure
+CUIs: C0770920 C0018801
+Inverse_flag: false
+Utterance: Quinapril hydrochloride may treat heart failure.
+SemNet relation: treats
+Positive instance: false
+Meta relation: null
+() (Quinapril hydrochloride) ( may treat ) (heart failure) (.) (Quinapril hydrochloride) (may) (treat) (heart failure.) 
+Sentence level features: 
+POS tags: JJ NN MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+
+amod(hydrochloride-2, Quinapril-1)
+nsubj(treat-4, hydrochloride-2)
+aux(treat-4, may-3)
+root(ROOT-0, treat-4)
+nn(failure-6, heart-5)
+dobj(treat-4, failure-6)
+
+Dep tags: amod->nsubj->aux->root<-nn<-dobj
+Dep tags: ->->->root<-<-
+Dep tags w/semtypes: amod|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(JJ,NN),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD ) (VB ) (|dsyn| ) 
+Dep Parse Split tags: () (amod->nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->) ('root') (|dsyn|) 
+
+Phrase Level Features:
+Phrase level POS tags: (JJ NN ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (amod-> nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> -> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------
+Candidate features: 
+Entities: Quinapril hydrochloride, heart failure
+CUIs: C0770920 C0018801
+Inverse_flag: false
+Utterance: Quinapril hydrochloride may treat heart failure.
+SemNet relation: prevents
+Positive instance: false
+Meta relation: null
+() (Quinapril hydrochloride) ( may treat ) (heart failure) (.) (Quinapril hydrochloride) (may) (treat) (heart failure.) 
+Sentence level features: 
+POS tags: JJ NN MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+Dep tags: amod->nsubj->aux->root<-nn<-dobj
+Dep tags: ->->->root<-<-
+Dep tags w/semtypes: amod|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(JJ,NN),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD ) (VB ) (|dsyn| ) 
+Dep Parse Split tags: () (amod->nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->) ('root') (|dsyn|) 
+
+Phrase Level Features:
+Phrase level POS tags: (JJ NN ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (amod-> nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> -> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------
+Candidate features: 
+Entities: Quinapril hydrochloride, heart failure
+CUIs: C0770920 C0018802
+Inverse_flag: false
+Utterance: Quinapril hydrochloride may treat heart failure.
+SemNet relation: treats
+Positive instance: true
+Meta relation: may_treat
+() (Quinapril hydrochloride) ( may treat ) (heart failure) (.) (Quinapril hydrochloride) (may) (treat) (heart failure.) 
+Sentence level features: 
+POS tags: JJ NN MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+Dep tags: amod->nsubj->aux->root<-nn<-dobj
+Dep tags: ->->->root<-<-
+Dep tags w/semtypes: amod|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(JJ,NN),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD ) (VB ) (|dsyn| ) 
+Dep Parse Split tags: () (amod->nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->) ('root') (|dsyn|) 
+
+Phrase Level Features:
+Phrase level POS tags: (JJ NN ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (amod-> nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> -> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------
+Candidate features: 
+Entities: Quinapril hydrochloride, heart failure
+CUIs: C0770920 C0018802
+Inverse_flag: false
+Utterance: Quinapril hydrochloride may treat heart failure.
+SemNet relation: prevents
+Positive instance: false
+Meta relation: null
+() (Quinapril hydrochloride) ( may treat ) (heart failure) (.) (Quinapril hydrochloride) (may) (treat) (heart failure.) 
+Sentence level features: 
+POS tags: JJ NN MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+Dep tags: amod->nsubj->aux->root<-nn<-dobj
+Dep tags: ->->->root<-<-
+Dep tags w/semtypes: amod|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(JJ,NN),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD ) (VB ) (|dsyn| ) 
+Dep Parse Split tags: () (amod->nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->) ('root') (|dsyn|) 
+
+Phrase Level Features:
+Phrase level POS tags: (JJ NN ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (amod-> nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> -> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (amod|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------
+Candidate features: 
+Entities: prevent, Pain
+CUIs: C0309872 C0030193
+Inverse_flag: false
+Utterance: Procaine 100 MG/ML Injectable Solution may prevent Pain.
+SemNet relation: treats
+Positive instance: false
+Meta relation: null
+(Procaine 100 MG/ML Injectable Solution may ) (prevent) ( ) (Pain) (.) (Procaine 100 MG/ML Injectable Solution) (may) (prevent) (Pain.) 
+Sentence level features: 
+POS tags: RB CD NNP NNP NN MD VB NNP . 
+POS tags w/semtypes: RB CD NNP NNP NN MD |phsu| |sosy| . 
+Dep tags: advmod->num->nn->nn->nsubj->aux->root<-dobj
+Dep tags: ->->->->->->root<-
+Dep tags w/semtypes: advmod->num->nn->nn->nsubj->aux->root|phsu|<-dobj|sosy|
+Dep arrows w/semtypes: ->->->->->->|phsu||phsu|
+
+Split Level Features:
+POS Split Tags: (VB,CD NNP NNP NN MD),(VB),(),(NNP),(UH),
+POS Split Tags with SemTypes: (RB CD NNP NNP NN MD ) (|phsu| ) () (|sosy| ) (. ) 
+Dep Parse Split tags: (advmod->num->nn->nn->nsubj->aux->) (root) () (<-dobj) () 
+Dep Parse Split Arrows: (->->->->->->) (root) () (<-) () 
+Dep Parse Split tags w/SemTypes: (advmod->num->nn->nn->nsubj->aux->) (root|phsu|) () (<-dobj|sosy|) () 
+Dep Parse Split Arrows w/SemTypes: (->->->->->->) (|phsu|) () (|sosy|) () 
+
+Phrase Level Features:
+Phrase level POS tags: (RB CD NNP NNP NN ) (MD ) (VB ) (NNP . ) 
+Phrase level POS tags w/SemTypes: (RB CD NNP NNP NN ) (MD ) (|phsu| ) (|sosy| . ) 
+Phrase level dependency tags: (advmod-> num-> nn-> nn-> nsubj-> ) (aux-> ) (root ) (<-dobj ) 
+Phrase level dependency arrows: (-> -> -> -> -> ) (-> ) (root ) (<- ) 
+Phrase level dependency tags w/SemTypes: (advmod->num->nn->nn->nsubj->) (aux->) (root|phsu|) (<-dobj|sosy|) 
+Phrase level dependency tags w/SemTypes: (->->->->->) (->) (|phsu|) (|sosy|) 
+
+------------
+Candidate features: 
+Entities: Aspirin, heart disease
+CUIs: C0004057 C0018799
+Inverse_flag: false
+Utterance: Aspirin may treat heart disease.
+SemNet relation: treats
+Positive instance: false
+Meta relation: null
+() (Aspirin) ( may treat ) (heart disease) (.) (Aspirin) (may) (treat) (heart disease.) 
+Sentence level features: 
+POS tags: NNP MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+Dep tags: nsubj->aux->root<-nn<-dobj
+Dep tags: ->->root<-<-
+Dep tags w/semtypes: nsubj|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(NNP),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD VB ) (|dsyn| . ) () 
+Dep Parse Split tags: () (nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (nsubj|phsu|->) (aux->root) (<-nn|dsyn|) () 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->'root') (|dsyn|) () 
+
+Phrase Level Features:
+Phrase level POS tags: (NNP ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (nsubj|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------
+Candidate features: 
+Entities: Aspirin, heart disease
+CUIs: C0004057 C0018799
+Inverse_flag: false
+Utterance: Aspirin may treat heart disease.
+SemNet relation: prevents
+Positive instance: false
+Meta relation: null
+() (Aspirin) ( may treat ) (heart disease) (.) (Aspirin) (may) (treat) (heart disease.) 
+Sentence level features: 
+POS tags: NNP MD VB NN NN . 
+POS tags w/semtypes: |phsu| MD VB |dsyn| . 
+Dep tags: nsubj->aux->root<-nn<-dobj
+Dep tags: ->->root<-<-
+Dep tags w/semtypes: nsubj|phsu|->aux->root<-nn|dsyn|
+Dep arrows w/semtypes: |phsu|->'root'|phsu|
+
+Split Level Features:
+POS Split Tags: (),(NNP),(MD,VB),(NN,NN),(UH),
+POS Split Tags with SemTypes: () (|phsu| ) (MD VB ) (|dsyn| . ) () 
+Dep Parse Split tags: () (nsubj->) (aux->root) (<-nn<-dobj) () 
+Dep Parse Split Arrows: () (->) (->root) (<-<-) () 
+Dep Parse Split tags w/SemTypes: () (nsubj|phsu|->) (aux->root) (<-nn|dsyn|) () 
+Dep Parse Split Arrows w/SemTypes: () (|phsu|) (->'root') (|dsyn|) () 
+
+Phrase Level Features:
+Phrase level POS tags: (NNP ) (MD ) (VB ) (NN NN . ) 
+Phrase level POS tags w/SemTypes: (|phsu| ) (MD ) (VB ) (|dsyn| . ) 
+Phrase level dependency tags: (nsubj-> ) (aux-> ) (root ) (<-nn <-dobj ) 
+Phrase level dependency arrows: (-> ) (-> ) (root ) (<- <- ) 
+Phrase level dependency tags w/SemTypes: (nsubj|phsu|->) (aux->) (root) (<-nn|dsyn|) 
+Phrase level dependency tags w/SemTypes: (|phsu|) (->) ('root') (|dsyn|) 
+
+------------

@@ -52,13 +52,16 @@ public class Test {
 		// public static String semanticNetworkFile = "SRSTR";
 		// public static String semanticTypeAbbreviationFile = "SRDEF";
 
-		// public AbstractsToCandidates(String relationMappingFile,
+		// public AbstractsToCandidates(. relationMappingFile,
 		// String semanticNetworkFile, String semanticTypeAbbreviationFile,
 		// String abstractsFile, String metaRelationsFile) throws Exception {
 
+//		System.out.println(System.currentTimeMillis());
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-				"SRSTR", "SRDEF", "small_abstracts.txt", "MRREL.RRF");
+				"SRSTR", "SRDEF", "small_abstracts.txt", "COMPACT_MRREL.RRF");
+//		System.out.println(System.currentTimeMillis());
 		ArrayList<Candidate> candidates = a2c.getCandidates();
+		
 		CandidatesToFeatures c2f = new CandidatesToFeatures(candidates);
 		c2f.c2f();
 		boolean flag = false;
