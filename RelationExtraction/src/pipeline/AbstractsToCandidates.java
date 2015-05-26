@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.base.CharMatcher;
+
 //import java.util.Map;
 /**
  * 
@@ -46,6 +48,7 @@ public class AbstractsToCandidates {
 	// connects net relation to meta relations, in the format of
 	// <"netRel1",["metaRel1","metaRel2",..]>
 	public static HashMap<String, ArrayList<String>> netMetaRelMap;
+	SemanticNetwork semanticNet;
 
 	public AbstractsToCandidates(String relationMappingFile,
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
@@ -59,19 +62,19 @@ public class AbstractsToCandidates {
 		netMetaRelMap = getNetMetaRelMap(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
 				netMetaRelMap.keySet().size(), String[].class);
-//		System.out.println(System.currentTimeMillis());
-		SemanticNetwork semanticNet = new SemanticNetwork(semanticNetworkFile,
+		// System.out.println(System.currentTimeMillis());
+		semanticNet = new SemanticNetwork(semanticNetworkFile,
 				semanticTypeAbbreviationFile, netRelations);
-//		System.out.println(System.currentTimeMillis());
+		// System.out.println(System.currentTimeMillis());
 		stypePairRelationMap = semanticNet.stypePairRelationMap;
 
 		ArrayList<String> tmp = new ArrayList<String>();
 		for (String str : netMetaRelMap.keySet()) {
 			tmp.addAll(netMetaRelMap.get(str));
 		}
-//		System.out.println(System.currentTimeMillis());
+		// System.out.println(System.currentTimeMillis());
 		Metathesaurus meta = new Metathesaurus(metaRelationsFile, tmp);
-//		System.out.println(System.currentTimeMillis());
+		// System.out.println(System.currentTimeMillis());
 		cuiPairRelationMap = meta.cuiPairRelationMap;
 	}
 
@@ -109,18 +112,21 @@ public class AbstractsToCandidates {
 		ArrayList<Candidate> someCandidates;
 		System.out.println(System.currentTimeMillis());
 		while ((line = br.readLine()) != null) {
-			System.out.println("" + i + "th abstract:");
-			System.out.println("start time: " + System.currentTimeMillis());
-			List<Result> resultList = api.processCitationsFromString(line);
-			// one 'line' has one abstract and one result
-			result = resultList.get(0);
-			// splits into utterances
-			for (Utterance utterance : result.getUtteranceList()) {
-				someCandidates = processUtterance(utterance);
-				candidates.addAll(someCandidates);
+			boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
+			if (isAscii) {
+				System.out.println("" + i + "th abstract:");
+				System.out.println("start time: " + System.currentTimeMillis());
+				List<Result> resultList = api.processCitationsFromString(line);
+				// one 'line' has one abstract and one result
+				result = resultList.get(0);
+				// splits into utterances
+				for (Utterance utterance : result.getUtteranceList()) {
+					someCandidates = processUtterance(utterance);
+					candidates.addAll(someCandidates);
+				}
+				System.out.println("end time: " + System.currentTimeMillis());
+				i++;
 			}
-			System.out.println("end time: " + System.currentTimeMillis());
-			i++;
 		}
 		br.close();
 		System.out.println(System.currentTimeMillis());
@@ -255,6 +261,9 @@ public class AbstractsToCandidates {
 							}
 
 						}
+						// add root abbr semantic type
+						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap.get(candidate.prev.sType);
+						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap.get(candidate.succ.sType);
 						aFewCandidates.add(candidate);
 					}
 				}
@@ -282,6 +291,7 @@ public class AbstractsToCandidates {
 							}
 
 						}
+						
 						aFewCandidates.add(candidate);
 					}
 
@@ -293,31 +303,33 @@ public class AbstractsToCandidates {
 	}
 
 	public class PreCandidate {
-		String cui;
-		String sType;
-		List<Position> pos;
-		int phraseIndex;
-		int mappingIndex;
-		int evIndex;
-		int sTypeIndex;
+		public String cui;
+		// rootAbbr
+		public String rootSType;
+		public String sType;
+		public List<Position> pos;
+		public int phraseIndex;
+		public int mappingIndex;
+		public int evIndex;
+		public int sTypeIndex;
 	}
 
 	public class Candidate {
 		// String utteranceText;
-		Utterance utterance;
-		String netRelation;
-		boolean isInverse;
-		PreCandidate prev;
-		PreCandidate succ;
+		public Utterance utterance;
+		public String netRelation;
+		public boolean isInverse;
+		public PreCandidate prev;
+		public PreCandidate succ;
 		// String prevCUI, succCUI;
 		// used in the future
 		// int prevPhraseIndex, prevMappingIndex, prevEvIndex, prevSTypeIndex;
 		// int succPhraseIndex, succMappingIndex, succEvIndex, succSTypeIndex;
 		// List<Position> prevConceptPosition, succConceptPosition;
-		boolean isPositive;
+		public boolean isPositive;
 		// assumption: cuisOrder is always same as isInverse
 		// boolean cuisOrder
-		String metaRelation;
+		public String metaRelation;
 
 		// public Candidate(String text, String netRel, boolean isInv,
 		// String prevCUI, String succCUI,

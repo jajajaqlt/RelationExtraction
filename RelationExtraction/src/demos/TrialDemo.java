@@ -18,7 +18,7 @@ import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 
-class TrialDemo {
+public class TrialDemo {
 
 	/**
 	 * The main method demonstrates the easiest way to load a parser. Simply
@@ -131,7 +131,7 @@ class TrialDemo {
 		// dependencies
 		// TreePrint tp = new TreePrint("penn,typedDependenciesCollapsed");
 		// tp.printTree(parse);
-		String sent2 = "In the classical theory of gravity, which is based on real space-time, the universe can either have existed for an infinite time or else it had a beginning at a singularity at some finite time in the past, the latter possibility of which, in fact, the singularity theorems indicate, although the quantum theory of gravity, on the other hand, suggests a third possibility in which it is possible for space-time to be finite in extent and yet to have no singularities that formed a boundary or edge because one is using Euclidean space-times, in which the time direction is on the same footing as directions in space.";
+		String sent2 = "We find B (B0-->K(*0)gamma) = [4.23+/-0.40(stat)+/-0.22(syst)]x10(-5), B(B+-->K(*+)gamma) = [3.83+/-0.62(stat)+/-0.22(syst)]x10(-5) and constrain the CP-violating charge asymmetry to be -0.170<A(CP)(B-->K(*)gamma)<0.082 at 90% C.L.";
 		TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(
 				new CoreLabelTokenFactory(), "");
 		Tokenizer<CoreLabel> tok = tokenizerFactory
@@ -143,8 +143,8 @@ class TrialDemo {
 			// System.out.println(label.word());
 			// System.out.println(label.lemma());
 			// System.out.println(label.tag());
-			// System.out.println(label.beginPosition());
-			// System.out.println(label.endPosition());
+//			System.out.println(label.beginPosition());
+//			System.out.println(label.endPosition());
 			// System.out.println(label.ner());
 			// System.out.println();
 			sentenceTokenized += label.word() + "/";

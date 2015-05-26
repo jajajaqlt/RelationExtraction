@@ -106,6 +106,8 @@ public class TestFE2 {
 							pw.println("Phrase:");
 							pw.println(" text: "
 									+ pcm.getPhrase().getPhraseText());
+							pw.println(" phrase_positional_info: "
+									+ pcm.getPhrase().getPosition());
 							// pw.println("syntactic analysis: " +
 							// pcm.getPhrase().getMincoManAsString());
 							pw.println("Candidates:");
