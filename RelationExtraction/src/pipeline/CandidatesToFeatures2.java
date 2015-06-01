@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import pipeline.AbstractsToCandidates.Candidate;
 import pipeline.ClassUtilities.Phrase;
@@ -24,7 +25,10 @@ import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
+import gov.nih.nlm.nls.metamap.MetaMapApi;
+import gov.nih.nlm.nls.metamap.MetaMapApiImpl;
 import gov.nih.nlm.nls.metamap.PCM;
+import gov.nih.nlm.nls.metamap.Result;
 import gov.nih.nlm.nls.metamap.Utterance;
 
 public class CandidatesToFeatures2 {
@@ -85,6 +89,7 @@ public class CandidatesToFeatures2 {
 
 			// initialize sentences
 			sentence = new Sentence();
+			sentence.sentenceText = candidate.utterance.getString();
 			sentence.netRelation = candidate.netRelation;
 			sentence.isInverse = candidate.isInverse;
 			sentence.isPositive = candidate.isPositive;
@@ -108,6 +113,8 @@ public class CandidatesToFeatures2 {
 					syntacticAnalysis = false;
 				}
 			}
+
+			// deals with discrepancy
 
 			// for if-clause
 			sentence.phrases = phrases;
@@ -183,18 +190,20 @@ public class CandidatesToFeatures2 {
 					fromVertexIndex = Integer.parseInt(path.get(i - 1).name);
 					toVertexIndex = Integer.parseInt(path.get(i).name);
 					tdp = dependencies.get(fromVertexIndex).get(toVertexIndex);
-					// true case
+					// right
 					if (tdp.direction) {
 						tmp = fatPath.get(fromVertexIndex);
 						if (tmp == null)
 							tmp = new ArrayList<TypedDependencyProperty>();
+						tdp.position = false;
 						tmp.add(tdp);
 						fatPath.put(fromVertexIndex, tmp);
 					} else {
-						// false case
+						// left
 						tmp = fatPath.get(toVertexIndex);
 						if (tmp == null)
 							tmp = new ArrayList<TypedDependencyProperty>();
+						tdp.position = true;
 						tmp.add(tdp);
 						fatPath.put(toVertexIndex, tmp);
 					}
@@ -207,35 +216,96 @@ public class CandidatesToFeatures2 {
 
 			sentences.add(sentence);
 		}
+
+		printSentencesFeatures(sentences);
+
+	}
+
+	private void printSentencesFeatures(ArrayList<Sentence> sentences2) {
+		String lf1;
+		String sf1;
+		int index;
+		String word;
+		ArrayList<TypedDependencyProperty> tdpArr;
+		// TypedDependencyProperty tdp;
+
 		for (Sentence s : sentences) {
-			System.out.print(s.entity1NE + "[");
+			System.out.println(s.sentenceText);
+			// lexical feature #1, nothing is on left and right windows
+			lf1 = "";
+			lf1 += s.entity1NE + "[";
 			for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
 				for (Word w : s.phrases.get(i).words) {
-					System.out.print(w.wText + "/" + w.tag + " ");
+					lf1 += w.wText + "/" + w.tag + " ";
 				}
 			}
-			System.out.println("]" + s.entity2NE);
+			lf1 = lf1.substring(0, lf1.length() - 1) + "]" + s.entity2NE;
+			System.out.println(lf1);
+
+			// syntactic feature #1, nothing is on left and right windows
+			sf1 = "";
+			sf1 += s.entity1NE + "[";
+			for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
+					.entrySet()) {
+				index = m.getKey();
+				tdpArr = m.getValue();
+				// ←↑→↓↖↙↗↘↕
+				if (index == -1)
+					sf1 += "→" + tdpArr.get(0).relation + " ";
+				else if (index == -2)
+					sf1 += "←" + tdpArr.get(0).relation + " ";
+				else {
+					word = s.words.get(index - 1).word();
+					for (TypedDependencyProperty tdp : tdpArr) {
+						if (tdp.position) {
+							// left case
+							word = "<--" + tdp.relation + "-" + word;
+						} else {
+							// right case
+							word = word + "-" + tdp.relation + "-->";
+						}
+					}
+					sf1 += word + " ";
+				}
+			}
+			sf1 = sf1.substring(0, sf1.length() - 1) + "]" + s.entity2NE;
+			System.out.println(sf1);
 		}
+
 	}
 
 	public static void main(String[] args) throws Exception {
-		// String input = "Quinapril hydrochloride may treat heart failure.";
-		//
-		// MetaMapApi api = new MetaMapApiImpl(0);
-		// api.setOptions("-y");
-		// List<Result> resultList = api.processCitationsFromString("-y",
-		// input);
-		//
-		// lp = LexicalizedParser
-		// .loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-		// tokenizerFactory = PTBTokenizer
-		// .factory(new CoreLabelTokenFactory(), "");
-		// Tokenizer<CoreLabel> tok = tokenizerFactory
-		// .getTokenizer(new StringReader(input));
-		// List<CoreLabel> rawWords = tok.tokenize();
-		//
-		// checkTokenizationDiscrepancy(resultList.get(0).getUtteranceList()
-		// .get(0), rawWords);
+		String input = "This photochemical property was utilized in the development of hydrazones as photo-induced DNA-cleaving agents. ";
+
+		MetaMapApi api = new MetaMapApiImpl(0);
+		api.setOptions("-y");
+		List<Result> resultList = api.processCitationsFromString("-y", input);
+
+		lp = LexicalizedParser
+				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
+		tokenizerFactory = PTBTokenizer
+				.factory(new CoreLabelTokenFactory(), "");
+
+		Tokenizer<CoreLabel> tok = tokenizerFactory
+				.getTokenizer(new StringReader(input));
+		List<CoreLabel> rawWords = tok.tokenize();
+
+		checkTokenizationDiscrepancy(resultList.get(0).getUtteranceList()
+				.get(0), rawWords);
+		printPhrases();
+	}
+
+	private static void printPhrases() {
+		String str = "";
+		for (Phrase p : phrases) {
+			str += "/";
+			for (Word w : p.words) {
+				str += w.wText + " ";
+			}
+			str = str.substring(0, str.length() - 1);
+		}
+		System.out.println(str);
 	}
 
 	/**
@@ -263,6 +333,9 @@ public class CandidatesToFeatures2 {
 		int wordEndIndex;
 		CoreLabel label;
 
+		/**
+		 * Revision: extend phrases to deal with tokenization discrepancy.
+		 */
 		// making ending indices array
 		uttStartIndex = utt.getPosition().getX();
 		PCMList = utt.getPCMList();
@@ -271,9 +344,11 @@ public class CandidatesToFeatures2 {
 			pcm = PCMList.get(i);
 			phraseStartIndex = pcm.getPhrase().getPosition().getX();
 			phraseLength = pcm.getPhrase().getPosition().getY();
+			// should be exclusive
 			phraseEndingIndices[i] = phraseStartIndex - uttStartIndex
 					+ phraseLength;
-			phrases.add(new Phrase(pcm.getPhrase().getPhraseText()));
+			// move this to the iteration of going through words
+			// phrases.add(new Phrase(pcm.getPhrase().getPhraseText()));
 		}
 
 		parse = lp.apply(rawWords);
@@ -282,23 +357,38 @@ public class CandidatesToFeatures2 {
 		// TypedDependency: gov() dep() reln()
 		tdl = gs.typedDependenciesCCprocessed();
 		// for (CoreLabel cl : parse.taggedLabeledYield())
+
 		phraseEndingIndicesCursor = 0;
-		phrase = phrases.get(phraseEndingIndicesCursor);
+		phrase = new Phrase();
+		phrases.add(phrase);
+		// phrase = phrases.get(phraseEndingIndicesCursor);
+
+		boolean increaseCursorFlag = false;
 		for (int i = 0; i < rawWords.size(); i++) {
 			label = rawWords.get(i);
 			wordStartIndex = label.beginPosition();
 			wordEndIndex = label.endPosition();
+
 			while (wordStartIndex >= phraseEndingIndices[phraseEndingIndicesCursor]) {
 				phraseEndingIndicesCursor++;
-				phrase = phrases.get(phraseEndingIndicesCursor);
+				// phrase = phrases.get(phraseEndingIndicesCursor);
+				increaseCursorFlag = true;
 			}
+			if (increaseCursorFlag) {
+				phrase = new Phrase();
+				phrases.add(phrase);
+				increaseCursorFlag = false;
+			}
+
 			taggedLabel = taggedLabels.get(i);
 			phrase.words.add(new Word(taggedLabel.tag(), taggedLabel.index(),
 					taggedLabel.word()));
-			if (wordEndIndex > phraseEndingIndices[phraseEndingIndicesCursor]) {
-				return true;
-			}
+			// if (wordEndIndex >
+			// phraseEndingIndices[phraseEndingIndicesCursor]) {
+			// return true;
+			// }
 		}
+
 		return false;
 	}
 
