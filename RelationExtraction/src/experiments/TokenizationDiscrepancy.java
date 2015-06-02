@@ -36,7 +36,7 @@ import demos.TrialDemo;
  *
  */
 public class TokenizationDiscrepancy {
-	public static String inputFileName = "sample_abstracts.txt";
+	public static String inputFileName = "input.txt";
 
 	/**
 	 *

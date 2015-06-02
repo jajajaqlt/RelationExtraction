@@ -262,8 +262,10 @@ public class AbstractsToCandidates {
 
 						}
 						// add root abbr semantic type
-						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap.get(candidate.prev.sType);
-						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap.get(candidate.succ.sType);
+						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap
+								.get(candidate.prev.sType);
+						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap
+								.get(candidate.succ.sType);
 						aFewCandidates.add(candidate);
 					}
 				}
@@ -291,7 +293,11 @@ public class AbstractsToCandidates {
 							}
 
 						}
-						
+						// add root abbr semantic type
+						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap
+								.get(candidate.prev.sType);
+						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap
+								.get(candidate.succ.sType);
 						aFewCandidates.add(candidate);
 					}
 

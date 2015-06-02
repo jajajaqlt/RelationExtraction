@@ -1,10 +1,9 @@
 package tests;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 
 import pipeline.AbstractsToCandidates;
 import pipeline.AbstractsToCandidates.Candidate;
-import pipeline.CandidatesToFeatures;
 import pipeline.CandidatesToFeatures2;
 
 /**

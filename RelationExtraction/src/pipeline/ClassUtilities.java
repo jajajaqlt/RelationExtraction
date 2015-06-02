@@ -13,6 +13,7 @@ public class ClassUtilities {
 	public static class Sentence {
 		public ArrayList<Phrase> phrases;
 		public List<CoreLabel> words;
+		public String sentenceText;
 
 		// fields inherited from Candidate class
 		public String netRelation;
@@ -40,10 +41,17 @@ public class ClassUtilities {
 	// only saves lexical information
 	public static class Phrase {
 		public ArrayList<Word> words;
-		public String pText;
 
-		public Phrase(String t) {
-			pText = t;
+		/**
+		 * Probably no pText, same information is stored in words.
+		 */
+		// public String pText;
+		// public Phrase(String t) {
+		// pText = t;
+		// words = new ArrayList<ClassUtilities.Word>();
+		// }
+		
+		public Phrase() {
 			words = new ArrayList<ClassUtilities.Word>();
 		}
 	}
@@ -68,6 +76,8 @@ public class ClassUtilities {
 		// true for to direction, false otherwise
 		public boolean direction;
 		public String relation;
+		// true for left, false for right
+		public boolean position;
 
 		public TypedDependencyProperty(boolean d, String r) {
 			direction = d;

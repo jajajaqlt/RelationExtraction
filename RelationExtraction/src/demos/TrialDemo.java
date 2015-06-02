@@ -131,7 +131,7 @@ public class TrialDemo {
 		// dependencies
 		// TreePrint tp = new TreePrint("penn,typedDependenciesCollapsed");
 		// tp.printTree(parse);
-		String sent2 = "We find B (B0-->K(*0)gamma) = [4.23+/-0.40(stat)+/-0.22(syst)]x10(-5), B(B+-->K(*+)gamma) = [3.83+/-0.62(stat)+/-0.22(syst)]x10(-5) and constrain the CP-violating charge asymmetry to be -0.170<A(CP)(B-->K(*)gamma)<0.082 at 90% C.L.";
+		String sent2 = "I love you. You love me.";
 		TokenizerFactory<CoreLabel> tokenizerFactory = PTBTokenizer.factory(
 				new CoreLabelTokenFactory(), "");
 		Tokenizer<CoreLabel> tok = tokenizerFactory
@@ -140,11 +140,11 @@ public class TrialDemo {
 		Tree parse = lp.apply(rawWords2);
 		String sentenceTokenized = "";
 		for (CoreLabel label : rawWords2) {
-			// System.out.println(label.word());
+			 System.out.println(label.word());
 			// System.out.println(label.lemma());
 			// System.out.println(label.tag());
-//			System.out.println(label.beginPosition());
-//			System.out.println(label.endPosition());
+			System.out.println(label.beginPosition());
+			System.out.println(label.endPosition());
 			// System.out.println(label.ner());
 			// System.out.println();
 			sentenceTokenized += label.word() + "/";

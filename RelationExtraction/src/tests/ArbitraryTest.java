@@ -2,7 +2,7 @@ package tests;
 
 import java.util.ArrayList;
 
-public class RandomTest {
+public class ArbitraryTest {
 	public static void main(String[] args) {
 		ArrayList<Integer> ints = new ArrayList<Integer>();
 		ints.add(1);
