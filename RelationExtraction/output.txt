@@ -1,0 +1,196 @@
+Acronyms and Abbreviations:
+Acronym: FLT3-LM
+Expansion: FLT3-length mutations
+Count list: [3, 7, 5, 21]
+CUI list: []
+Negations:
+ None.
+Utterance:
+ Id: 00000000.tx.1
+ Utterance text: Cases with monosomy 7 or the presence of FLT3-length mutations (FLT3-LM)--detected in 13% of cases--were not associated with an even more inferior outcome.
+ Position: (0, 155)
+Phrase:
+ text: Cases with monosomy 7
+ phrase_positional_info: (0, 21)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -783
+   Score: -770
+   Concept Id: C1533148
+   Concept Name: Cases
+   Preferred Name: Case unit dose
+   Matched Words: [cases]
+   Semantic Types: [qnco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI, SNOMEDCT_US]
+   Positional Info: [(0, 5)]
+   Score: -666
+   Concept Id: C1513483
+   Concept Name: Monosomy 7
+   Preferred Name: Chromosome 7, monosomy
+   Matched Words: [monosomy, 7]
+   Semantic Types: [comd]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [MSH]
+   Positional Info: [(11, 10)]
+Phrase:
+ text: or
+ phrase_positional_info: (22, 2)
+Candidates:
+Mappings:
+Phrase:
+ text: the presence of FLT3-length mutations (FLT3-LM)
+ phrase_positional_info: (25, 47)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -704
+   Score: -753
+   Concept Id: C0392148
+   Concept Name: Presence
+   Preferred Name: Presence
+   Matched Words: [presence]
+   Semantic Types: [topp]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, SNOMEDCT_US]
+   Positional Info: [(29, 8)]
+   Score: -586
+   Concept Id: C0251006
+   Concept Name: FLT-3
+   Preferred Name: FLT3 protein, human
+   Matched Words: [flt, 3]
+   Semantic Types: [aapp, rcpt]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [MSH, MTH, NCI]
+   Positional Info: [(41, 4)]
+   Score: -586
+   Concept Id: C1706316
+   Concept Name: LENGTH
+   Preferred Name: Length of Trial
+   Matched Words: [length]
+   Semantic Types: [resa]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [MTH, NCI]
+   Positional Info: [(46, 6)]
+   Score: -586
+   Concept Id: C0026882
+   Concept Name: Mutations
+   Preferred Name: Mutation
+   Matched Words: [mutations]
+   Semantic Types: [genf]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [AOD, CHV, CSP, LNC, MTH, SNM, SNOMEDCT_US]
+   Positional Info: [(53, 9)]
+Phrase:
+ text: -
+ phrase_positional_info: (72, 1)
+Candidates:
+Mappings:
+Phrase:
+ text: -
+ phrase_positional_info: (73, 1)
+Candidates:
+Mappings:
+Phrase:
+ text: detected in 13% of cases
+ phrase_positional_info: (74, 24)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -686
+   Score: -760
+   Concept Id: C0442726
+   Concept Name: Detected
+   Preferred Name: Detected (finding)
+   Matched Words: [detected]
+   Semantic Types: [fndg]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MTH, SNOMEDCT_US]
+   Positional Info: [(74, 8)]
+   Score: -760
+   Concept Id: C1533148
+   Concept Name: Cases
+   Preferred Name: Case unit dose
+   Matched Words: [cases]
+   Semantic Types: [qnco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI, SNOMEDCT_US]
+   Positional Info: [(93, 5)]
+Phrase:
+ text: -
+ phrase_positional_info: (98, 1)
+Candidates:
+Mappings:
+Phrase:
+ text: -
+ phrase_positional_info: (99, 1)
+Candidates:
+Mappings:
+Phrase:
+ text: were
+ phrase_positional_info: (100, 4)
+Candidates:
+Mappings:
+Phrase:
+ text: not
+ phrase_positional_info: (105, 3)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C1518422
+   Concept Name: Not
+   Preferred Name: Negation
+   Matched Words: [not]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI]
+   Positional Info: [(105, 3)]
+Phrase:
+ text: associated with an even more inferior outcome.
+ phrase_positional_info: (109, 46)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -696
+   Score: -778
+   Concept Id: C0332281
+   Concept Name: Associated with
+   Preferred Name: Associated with
+   Matched Words: [associated, with]
+   Semantic Types: [qlco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, NCI, SNMI, SNOMEDCT_US]
+   Positional Info: [(109, 15)]
+   Score: -748
+   Concept Id: C0678975
+   Concept Name: inferior
+   Preferred Name: inferiority
+   Matched Words: [inferior]
+   Semantic Types: [socb]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [AOD, CHV, MTH]
+   Positional Info: [(138, 8)]
+   Score: -748
+   Concept Id: C1274040
+   Concept Name: Outcome
+   Preferred Name: Result
+   Matched Words: [outcome]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI]
+   Positional Info: [(147, 7)]

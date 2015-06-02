@@ -8,6 +8,8 @@ import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Result;
 import gov.nih.nlm.nls.metamap.Utterance;
+import info.olteanu.interfaces.StringFilter;
+import info.olteanu.utils.TextNormalizer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 //import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.google.common.base.CharMatcher;
 
@@ -112,21 +115,24 @@ public class AbstractsToCandidates {
 		ArrayList<Candidate> someCandidates;
 		System.out.println(System.currentTimeMillis());
 		while ((line = br.readLine()) != null) {
+			// deals with non-ascii characters here
 			boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
-			if (isAscii) {
-				System.out.println("" + i + "th abstract:");
-				System.out.println("start time: " + System.currentTimeMillis());
-				List<Result> resultList = api.processCitationsFromString(line);
-				// one 'line' has one abstract and one result
-				result = resultList.get(0);
-				// splits into utterances
-				for (Utterance utterance : result.getUtteranceList()) {
-					someCandidates = processUtterance(utterance);
-					candidates.addAll(someCandidates);
-				}
-				System.out.println("end time: " + System.currentTimeMillis());
-				i++;
+			if (!isAscii)
+				line = normalizeString(line);
+
+			System.out.println("" + i + "th abstract:");
+			System.out.println("start time: " + System.currentTimeMillis());
+			List<Result> resultList = api.processCitationsFromString(line);
+			// one 'line' has one abstract and one result
+			result = resultList.get(0);
+			// splits into utterances
+			for (Utterance utterance : result.getUtteranceList()) {
+				someCandidates = processUtterance(utterance);
+				candidates.addAll(someCandidates);
 			}
+			System.out.println("end time: " + System.currentTimeMillis());
+			i++;
+
 		}
 		br.close();
 		System.out.println(System.currentTimeMillis());
@@ -141,6 +147,7 @@ public class AbstractsToCandidates {
 		int pcmListSize = pcmList.size();
 		PCM phrase1, phrase2;
 		for (int i = 0; i < pcmListSize; i++) {
+			// gets first phrase since i that has a mapping
 			phrase1 = pcmList.get(i);
 			while (phrase1.getMappingList().size() == 0) {
 				i++;
@@ -149,6 +156,7 @@ public class AbstractsToCandidates {
 				else
 					break;
 			}
+			
 			mainLoop: for (int j = i + 1; j < pcmListSize; j++) {
 				phrase2 = pcmList.get(j);
 				while (phrase2.getMappingList().size() == 0) {
@@ -186,10 +194,10 @@ public class AbstractsToCandidates {
 		PreCandidate preCandidate1;
 		ArrayList<PreCandidate> list1 = new ArrayList<PreCandidate>();
 		mappingIndex = 0;
-		evIndex = 0;
-		sTypeIndex = 0;
 		for (Mapping map1 : mappingList1) {
+			evIndex = 0;
 			for (Ev ev1 : map1.getEvList()) {
+				sTypeIndex = 0;
 				for (String type1 : ev1.getSemanticTypes()) {
 					preCandidate1 = new PreCandidate();
 					preCandidate1.sType = type1;
@@ -210,10 +218,10 @@ public class AbstractsToCandidates {
 		PreCandidate preCandidate2;
 		ArrayList<PreCandidate> list2 = new ArrayList<PreCandidate>();
 		mappingIndex = 0;
-		evIndex = 0;
-		sTypeIndex = 0;
 		for (Mapping map2 : mappingList2) {
+			evIndex = 0;
 			for (Ev ev2 : map2.getEvList()) {
+				sTypeIndex = 0;
 				for (String type2 : ev2.getSemanticTypes()) {
 					preCandidate2 = new PreCandidate();
 					preCandidate2.sType = type2;
@@ -396,4 +404,24 @@ public class AbstractsToCandidates {
 		return ret;
 	}
 
+	/**
+	 *
+	 * @param str
+	 * @return Normalized version of str with accented characters replaced by
+	 *         unaccented version and with diacritics removed. E.g. Ö -> O
+	 */
+	public static String normalizeString(String str)
+			throws ClassNotFoundException {
+		// TextNormalizer code from phramer.org
+		// Allows compilation under both Java 5 and Java 6
+		StringFilter stringFilter = TextNormalizer
+				.getNormalizationStringFilter();
+		String nfdNormalizedString = stringFilter.filter(str);
+
+		// Normalizer is Java 6 only
+		// String nfdNormalizedString = java.text.Normalizer.normalize(str,
+		// Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		return pattern.matcher(nfdNormalizedString).replaceAll("");
+	}
 }
