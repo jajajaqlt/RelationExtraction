@@ -37,12 +37,18 @@ public class CandidatesToFeatures2 {
 	public static TokenizerFactory<CoreLabel> tokenizerFactory;
 	public static GrammaticalStructureFactory gsf;
 	public static BufferedWriter bw;
+
+	// those fields are updated only in checkTokenizationDiscrepancy() and
+	// assigned to each sentence in getSentences()
 	public static ArrayList<Phrase> phrases;
+	public static int revisedEntity1Index;
+	public static int revisedEntity2Index;
+	public static List<TypedDependency> tdl;
+
 	public static ArrayList<Sentence> sentences;
 	public static List<CoreLabel> taggedLabels;
 	public static Tree parse;
 	public static GrammaticalStructure gs;
-	public static List<TypedDependency> tdl;
 
 	public CandidatesToFeatures2(String outputFileName) throws Exception {
 		lp = LexicalizedParser
@@ -94,8 +100,6 @@ public class CandidatesToFeatures2 {
 			sentence.isInverse = candidate.isInverse;
 			sentence.isPositive = candidate.isPositive;
 			sentence.metaRelation = candidate.metaRelation;
-			sentence.entity1Index = newEntity1Index;
-			sentence.entity2Index = newEntity2Index;
 			sentence.entity1NE = candidate.prev.rootSType;
 			sentence.entity2NE = candidate.succ.rootSType;
 
@@ -105,8 +109,10 @@ public class CandidatesToFeatures2 {
 				rawWords = tok.tokenize();
 				// ***check whether discrepancy exists between tokenizations
 				// generated from metamap and stanford parser***//
-				discrepancyExists = checkTokenizationDiscrepancy(newUtt,
-						rawWords);
+				// discrepancyExists = checkTokenizationDiscrepancy(newUtt,
+				// rawWords);
+				checkTokenizationDiscrepancy(newUtt, rawWords, newEntity1Index,
+						newEntity2Index);
 			} else {
 				if (oldEntity1Index == newEntity1Index
 						&& oldEntity2Index == newEntity2Index) {
@@ -119,6 +125,8 @@ public class CandidatesToFeatures2 {
 			// for if-clause
 			sentence.phrases = phrases;
 			sentence.words = taggedLabels;
+			sentence.entity1Index = revisedEntity1Index;
+			sentence.entity2Index = revisedEntity2Index;
 
 			// for else-clause
 			if (syntacticAnalysis) {
@@ -292,7 +300,7 @@ public class CandidatesToFeatures2 {
 		List<CoreLabel> rawWords = tok.tokenize();
 
 		checkTokenizationDiscrepancy(resultList.get(0).getUtteranceList()
-				.get(0), rawWords);
+				.get(0), rawWords, 0, 1);
 		printPhrases();
 	}
 
@@ -309,15 +317,19 @@ public class CandidatesToFeatures2 {
 	}
 
 	/**
-	 * Checks discrepancy. Fills in ArrayList<Phrase> phrases;
+	 * Checks and resolves discrepancy. Assigns phrases, tdl,
+	 * revisedEntity1Index, revisedEntity2Index;
 	 * 
 	 * @param utt
 	 * @param rawWords
+	 * @param newEntity2Index
+	 * @param newEntity1Index
 	 * @return true if discrepancy exists, false otherwise
 	 * @throws Exception
 	 */
-	public static boolean checkTokenizationDiscrepancy(Utterance utt,
-			List<CoreLabel> rawWords) throws Exception {
+	public static void checkTokenizationDiscrepancy(Utterance utt,
+			List<CoreLabel> rawWords, int entity1Index, int entity2Index)
+			throws Exception {
 		phrases = new ArrayList<ClassUtilities.Phrase>();
 		Phrase phrase;
 		CoreLabel taggedLabel;
@@ -362,7 +374,7 @@ public class CandidatesToFeatures2 {
 		phrase = new Phrase();
 		phrases.add(phrase);
 		// phrase = phrases.get(phraseEndingIndicesCursor);
-
+		ArrayList<Integer> gulpedPhraseIndices = new ArrayList<Integer>();
 		boolean increaseCursorFlag = false;
 		for (int i = 0; i < rawWords.size(); i++) {
 			label = rawWords.get(i);
@@ -370,6 +382,8 @@ public class CandidatesToFeatures2 {
 			wordEndIndex = label.endPosition();
 
 			while (wordStartIndex >= phraseEndingIndices[phraseEndingIndicesCursor]) {
+				if (increaseCursorFlag)
+					gulpedPhraseIndices.add(wordStartIndex);
 				phraseEndingIndicesCursor++;
 				// phrase = phrases.get(phraseEndingIndicesCursor);
 				increaseCursorFlag = true;
@@ -389,7 +403,25 @@ public class CandidatesToFeatures2 {
 			// }
 		}
 
-		return false;
-	}
+		// updates revisedEntity1Index, revisedEntity2Index
+		if (gulpedPhraseIndices.size() == 0) {
+			revisedEntity1Index = entity1Index;
+			revisedEntity2Index = entity2Index;
+		} else {
+			int beforeFirstCount = 0, middleSecondCount = 0;
+			for (int num : gulpedPhraseIndices) {
+				if (num <= entity1Index)
+					beforeFirstCount++;
+				else if (num <= entity2Index)
+					middleSecondCount++;
+				else {
 
+				}
+			}
+			revisedEntity1Index = entity1Index - beforeFirstCount;
+			revisedEntity2Index = entity2Index - beforeFirstCount
+					- middleSecondCount;
+		}
+
+	}
 }
