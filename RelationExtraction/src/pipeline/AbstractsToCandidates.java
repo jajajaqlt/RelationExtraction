@@ -156,7 +156,7 @@ public class AbstractsToCandidates {
 				else
 					break;
 			}
-			
+
 			mainLoop: for (int j = i + 1; j < pcmListSize; j++) {
 				phrase2 = pcmList.get(j);
 				while (phrase2.getMappingList().size() == 0) {
@@ -191,6 +191,8 @@ public class AbstractsToCandidates {
 		mappingList2 = phrase2.getMappingList();
 
 		int mappingIndex, evIndex, sTypeIndex;
+
+		// Generates all pre-candidates for phrase1
 		PreCandidate preCandidate1;
 		ArrayList<PreCandidate> list1 = new ArrayList<PreCandidate>();
 		mappingIndex = 0;
@@ -215,6 +217,7 @@ public class AbstractsToCandidates {
 			mappingIndex++;
 		}
 
+		// Generates all pre-candidates for phrase2
 		PreCandidate preCandidate2;
 		ArrayList<PreCandidate> list2 = new ArrayList<PreCandidate>();
 		mappingIndex = 0;
@@ -239,6 +242,9 @@ public class AbstractsToCandidates {
 			mappingIndex++;
 		}
 
+		// Checks all pairs of pre-candidates to determine candidates
+		// candidate is positive only when orders of semantic type pair and cui
+		// pair are consistent (both forward or both backward)
 		ArrayList<String> metaRelations;
 		for (PreCandidate preCandid1 : list1) {
 			for (PreCandidate preCandid2 : list2) {
