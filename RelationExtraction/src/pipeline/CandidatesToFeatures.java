@@ -334,11 +334,14 @@ public class CandidatesToFeatures {
 		CoreLabel rawWord;
 
 		/**
-		 * Revision: extend phrases to deal with tokenization discrepancy.
+		 * Splits entities (of interest) into multiple phrases and updates both
+		 * entity (of interest) indices
 		 */
-		// making ending indices array
+
 		uttStartIndex = utt.getPosition().getX();
 		PCMList = utt.getPCMList();
+
+		// making ending indices array
 		phraseEndingIndices = new int[PCMList.size()];
 		for (int i = 0; i < PCMList.size(); i++) {
 			pcm = PCMList.get(i);
@@ -348,6 +351,10 @@ public class CandidatesToFeatures {
 			phraseEndingIndices[i] = phraseStartIndex - uttStartIndex
 					+ phraseLength;
 		}
+
+		/**
+		 * Revision: extend phrases to deal with tokenization discrepancy.
+		 */
 
 		ArrayList<Integer> gulpedPhraseIndices = new ArrayList<Integer>();
 		boolean increaseCursorFlag = false;

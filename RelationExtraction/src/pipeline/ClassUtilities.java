@@ -9,6 +9,11 @@ import java.util.PriorityQueue;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.TypedDependency;
+import gov.nih.nlm.nls.metamap.Candidates;
+import gov.nih.nlm.nls.metamap.Ev;
+import gov.nih.nlm.nls.metamap.Map;
+import gov.nih.nlm.nls.metamap.Mapping;
+import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Utterance;
 
@@ -227,41 +232,133 @@ public class ClassUtilities {
 		}
 	}
 
-	// public static class DependencyCollection {
-	// public String mainIndex;
-	// ArrayList<Destination> destinations;
-	//
-	// public DependencyCollection() {
-	// destinations = new ArrayList<Destination>();
-	// }
-	// }
-	//
-	// public static class Destination {
-	// public int subIndex;
-	// // true for to direction, false otherwise
-	// public boolean direction;
-	// public String relation;
-	//
-	// public Destination(int s, boolean d, String r) {
-	// subIndex = s;
-	// direction = d;
-	// relation = r;
-	// }
-	// }
+	public static class PCMImpl2 implements PCM {
+		PhraseImpl2 phrase;
 
-	// public static class leftRightTDP {
-	// public int index;
-	// TypedDependencyProperty left;
-	// TypedDependencyProperty right;
-	//
-	// public leftRightTDP(){
-	//
-	// }
-	//
-	// public leftRightTDP(TypedDependencyProperty l, TypedDependencyProperty
-	// r){
-	// left = l;
-	// right = r;
-	// }
-	// }
+		public PCMImpl2(PhraseImpl2 phrase) {
+			this.phrase = phrase;
+		}
+
+		@Override
+		public gov.nih.nlm.nls.metamap.Phrase getPhrase() throws Exception {
+			return phrase;
+		}
+
+		@Override
+		public Candidates getCandidatesInstance() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Ev> getCandidates() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Ev> getCandidateList() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Map> getMappings() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<Mapping> getMappingList() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
+	public static class PhraseImpl2 implements gov.nih.nlm.nls.metamap.Phrase {
+		PositionImpl2 pos;
+
+		public PhraseImpl2(PositionImpl2 pos) {
+			this.pos = pos;
+		}
+
+		@Override
+		public String getPhraseText() throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getMincoManAsString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Position getPosition() throws Exception {
+			return pos;
+		}
+
+	}
+
+	public static class PositionImpl2 implements Position {
+		public int x;
+		public int y;
+
+		public PositionImpl2(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public int getX() {
+			return x;
+		}
+
+		@Override
+		public int getY() {
+			return y;
+		}
+
+	}
+
 }
+
+// public static class DependencyCollection {
+// public String mainIndex;
+// ArrayList<Destination> destinations;
+//
+// public DependencyCollection() {
+// destinations = new ArrayList<Destination>();
+// }
+// }
+//
+// public static class Destination {
+// public int subIndex;
+// // true for to direction, false otherwise
+// public boolean direction;
+// public String relation;
+//
+// public Destination(int s, boolean d, String r) {
+// subIndex = s;
+// direction = d;
+// relation = r;
+// }
+// }
+
+// public static class leftRightTDP {
+// public int index;
+// TypedDependencyProperty left;
+// TypedDependencyProperty right;
+//
+// public leftRightTDP(){
+//
+// }
+//
+// public leftRightTDP(TypedDependencyProperty l, TypedDependencyProperty
+// r){
+// left = l;
+// right = r;
+// }
+// }
