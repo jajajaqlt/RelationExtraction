@@ -1,14 +1,14 @@
 package experiments;
 
-import gov.nih.nlm.nls.metamap.PCM;
+import gov.nih.nlm.nls.metamap.PCM; 
 import gov.nih.nlm.nls.metamap.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import pipeline.AbstractsToCandidates;
-import pipeline.AbstractsToCandidates.Candidate;
-import pipeline.AbstractsToCandidates.PreCandidate;
+import pipeline.ClassUtilities.Candidate;
+import pipeline.ClassUtilities.PreCandidate;
 
 public class OneEvInOnePhraseDetailed {
 

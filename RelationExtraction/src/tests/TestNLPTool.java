@@ -1,11 +1,10 @@
 package tests;
 
-import java.io.StringReader;
+import java.io.StringReader; 
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.List;
 
-import pipeline.AbstractsToCandidates.Candidate;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;

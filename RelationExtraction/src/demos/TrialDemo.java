@@ -1,11 +1,11 @@
 package demos;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Collection;
 import java.util.List;
 import java.io.StringReader;
 
-import pipeline.AbstractsToCandidates.Candidate;
+import pipeline.ClassUtilities.Candidate;
 import edu.stanford.nlp.process.Tokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;

@@ -1,12 +1,12 @@
 package experiments;
 
-import gov.nih.nlm.nls.metamap.PCM;
+import gov.nih.nlm.nls.metamap.PCM; 
 
 import java.util.ArrayList;
 
 import pipeline.AbstractsToCandidates;
-import pipeline.AbstractsToCandidates.Candidate;
-import pipeline.AbstractsToCandidates.PreCandidate;
+import pipeline.ClassUtilities.Candidate;
+import pipeline.ClassUtilities.PreCandidate;
 
 public class OneEvInOnePhrase {
 

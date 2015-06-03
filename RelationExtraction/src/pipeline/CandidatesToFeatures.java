@@ -9,10 +9,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import pipeline.AbstractsToCandidates.Candidate;
+import pipeline.ClassUtilities.Candidate;
+import pipeline.ClassUtilities.Edge;
 import pipeline.ClassUtilities.Phrase;
 import pipeline.ClassUtilities.Sentence;
 import pipeline.ClassUtilities.TypedDependencyProperty;
+import pipeline.ClassUtilities.Vertex;
 import pipeline.ClassUtilities.Word;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
@@ -41,9 +43,9 @@ public class CandidatesToFeatures {
 	// those fields are updated only in checkTokenizationDiscrepancy() and
 	// assigned to each sentence in getSentences()
 	public static ArrayList<Phrase> phrases;
+	public static List<TypedDependency> tdl;
 	public static int revisedEntity1Index;
 	public static int revisedEntity2Index;
-	public static List<TypedDependency> tdl;
 
 	public static ArrayList<Sentence> sentences;
 	public static List<CoreLabel> taggedLabels;
@@ -103,7 +105,8 @@ public class CandidatesToFeatures {
 			sentence.entity1NE = candidate.prev.rootSType;
 			sentence.entity2NE = candidate.succ.rootSType;
 
-			// having a function to tell whether to apply checkTokenizationDiscrepancy again
+			// having a function to tell whether to apply
+			// checkTokenizationDiscrepancy again
 			if (oldUtt != newUtt) {
 				uttText = newUtt.getString();
 				tok = tokenizerFactory.getTokenizer(new StringReader(uttText));
@@ -115,7 +118,8 @@ public class CandidatesToFeatures {
 				checkTokenizationDiscrepancy(newUtt, rawWords, newEntity1Index,
 						newEntity2Index);
 			} else {
-				// having a function to tell whether to apply syntactic analysis again
+				// having a function to tell whether to apply syntactic analysis
+				// again
 				if (oldEntity1Index == newEntity1Index
 						&& oldEntity2Index == newEntity2Index) {
 					syntacticAnalysis = false;
@@ -192,8 +196,8 @@ public class CandidatesToFeatures {
 					}
 					v.adjacencies = adjacencies;
 				}
-				Dijkstra.computePaths(vertices.get(-1));
-				path = Dijkstra.getShortestPathTo(vertices.get(-2));
+				ClassUtilities.computePaths(vertices.get(-1));
+				path = ClassUtilities.getShortestPathTo(vertices.get(-2));
 				fatPath = new LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>>();
 				// processes path into fatPath
 				for (int i = 1; i < path.size(); i++) {
