@@ -1,5 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/experiments/TokenizationDiscrepancy.java=UTF-8
 encoding//src/pipeline/AbstractsToCandidates.java=UTF-8
-encoding//src/pipeline/CandidatesToFeatures2.java=UTF-8
+encoding//src/pipeline/CandidatesToFeatures.java=UTF-8
 encoding//src/tests/ArbitraryTest.java=UTF-8

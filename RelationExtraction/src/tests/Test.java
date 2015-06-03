@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import pipeline.AbstractsToCandidates;
 import pipeline.AbstractsToCandidates.Candidate;
-import pipeline.CandidatesToFeatures2;
+import pipeline.CandidatesToFeatures;
 
 /**
  * 
@@ -59,7 +59,7 @@ public class Test {
 		// System.out.println(System.currentTimeMillis());
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 
-		CandidatesToFeatures2 c2f = new CandidatesToFeatures2("output.txt");
+		CandidatesToFeatures c2f = new CandidatesToFeatures("output.txt");
 		c2f.getSentences(candidates);
 		boolean flag = false;
 		flag = true;

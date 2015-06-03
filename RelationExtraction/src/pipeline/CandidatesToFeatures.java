@@ -31,7 +31,7 @@ import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Result;
 import gov.nih.nlm.nls.metamap.Utterance;
 
-public class CandidatesToFeatures2 {
+public class CandidatesToFeatures {
 	// stanford parser tools
 	public static LexicalizedParser lp;
 	public static TokenizerFactory<CoreLabel> tokenizerFactory;
@@ -50,7 +50,7 @@ public class CandidatesToFeatures2 {
 	public static Tree parse;
 	public static GrammaticalStructure gs;
 
-	public CandidatesToFeatures2(String outputFileName) throws Exception {
+	public CandidatesToFeatures(String outputFileName) throws Exception {
 		lp = LexicalizedParser
 				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 		tokenizerFactory = PTBTokenizer
