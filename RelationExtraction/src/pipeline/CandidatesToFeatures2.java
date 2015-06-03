@@ -103,6 +103,7 @@ public class CandidatesToFeatures2 {
 			sentence.entity1NE = candidate.prev.rootSType;
 			sentence.entity2NE = candidate.succ.rootSType;
 
+			// having a function to tell whether to apply checkTokenizationDiscrepancy again
 			if (oldUtt != newUtt) {
 				uttText = newUtt.getString();
 				tok = tokenizerFactory.getTokenizer(new StringReader(uttText));
@@ -114,6 +115,7 @@ public class CandidatesToFeatures2 {
 				checkTokenizationDiscrepancy(newUtt, rawWords, newEntity1Index,
 						newEntity2Index);
 			} else {
+				// having a function to tell whether to apply syntactic analysis again
 				if (oldEntity1Index == newEntity1Index
 						&& oldEntity2Index == newEntity2Index) {
 					syntacticAnalysis = false;
