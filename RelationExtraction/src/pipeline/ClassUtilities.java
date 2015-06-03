@@ -1,6 +1,6 @@
 package pipeline;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.trees.TypedDependency;
 import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Utterance;
 
@@ -62,8 +63,11 @@ public class ClassUtilities {
 			metaRelation = metaRel;
 		}
 
+		public Candidate() {
+
+		}
 	}
-	
+
 	public static class Sentence {
 		public ArrayList<Phrase> phrases;
 		public List<CoreLabel> words;
@@ -90,6 +94,7 @@ public class ClassUtilities {
 
 		// map data structure keeps insertion order
 		LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> path;
+
 	}
 
 	// only saves lexical information
@@ -104,7 +109,7 @@ public class ClassUtilities {
 		// pText = t;
 		// words = new ArrayList<ClassUtilities.Word>();
 		// }
-		
+
 		public Phrase() {
 			words = new ArrayList<ClassUtilities.Word>();
 		}
