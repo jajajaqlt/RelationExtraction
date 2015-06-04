@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class CandidatesToFeatures {
 		Tree parse;
 		List<CoreLabel> taggedLabels = null;
 		GrammaticalStructure gs;
-		List<TypedDependency> tdl = null;
+		Collection<TypedDependency> tdl = null;
 
 		Candidate oldCandid = null;
 		Candidate newCandid = new Candidate();
@@ -98,7 +99,8 @@ public class CandidatesToFeatures {
 				taggedLabels = parse.taggedLabeledYield();
 				gs = gsf.newGrammaticalStructure(parse);
 				// TypedDependency: gov() dep() reln()
-				tdl = gs.typedDependenciesCCprocessed();
+				// tdl = gs.typedDependenciesCCprocessed();
+				tdl = gs.typedDependencies();
 				// no index information inside taggedLabels
 				constructPhrases(newCandid, rawWords, taggedLabels);
 			} else {
@@ -130,7 +132,7 @@ public class CandidatesToFeatures {
 	}
 
 	private void constructDependencyPath(Sentence sentence,
-			List<TypedDependency> tdl) {
+			Collection<TypedDependency> tdl) {
 
 		ArrayList<Integer> entity1WordIndices, entity2WordIndices;
 		HashMap<Integer, Vertex> vertices;
@@ -319,24 +321,22 @@ public class CandidatesToFeatures {
 		Phrase phrase;
 
 		Utterance utt = candid.utterance;
-		int entity1Index = candid.prev.phraseIndex;
-		int entity2Index = candid.succ.phraseIndex;
+		int entity1Index;
+		int entity2Index;
 
 		int[] phraseEndingIndices;
 		int phraseEndingIndicesCursor;
-		int phraseStartIndex, phraseLength;
 		// inclusive
 		int wordStartIndex;
 		// exclusive
 		int wordEndIndex;
 
-		List<PCM> PCMList;
-		PCM pcm;
-
 		CoreLabel taggedLabel;
 		CoreLabel rawWord;
 
 		phraseEndingIndices = getRevisedPhraseEndingIndices(candid);
+		entity1Index = candid.prev.revisedPhraseIndex;
+		entity2Index = candid.succ.revisedPhraseIndex;
 
 		/**
 		 * Revision: extend phrases to deal with tokenization discrepancy.
@@ -394,7 +394,8 @@ public class CandidatesToFeatures {
 	}
 
 	/**
-	 * Not the fastest solution. Good for debugging. Might be subject to optimization.
+	 * Not the fastest solution. Good for debugging. Might be subject to
+	 * optimization.
 	 */
 	private static int[] getRevisedPhraseEndingIndices(Candidate candid)
 			throws Exception {
@@ -404,7 +405,6 @@ public class CandidatesToFeatures {
 		 */
 
 		int[] phraseEndingIndices;
-		int phraseEndingIndicesCursor;
 		int phraseStartIndex, phraseLength;
 
 		Utterance utt = candid.utterance;
@@ -413,12 +413,13 @@ public class CandidatesToFeatures {
 		PreCandidate prev = candid.prev, succ = candid.succ;
 		int prevPhraseIndex = prev.phraseIndex, prevMapIndex = prev.mappingIndex, prevEvIndex = prev.evIndex;
 		int succPhraseIndex = succ.phraseIndex, succMapIndex = succ.mappingIndex, succEvIndex = succ.evIndex;
+		int revisedEntity1Index, revisedEntity2Index;
 
 		List<PCM> PCMList = utt.getPCMList();
 		PCM pcm;
 
-		 System.out.println("initial:");
-		 printPCMList(utt.getString(), uttStartIndex, PCMList);
+		System.out.println("initial:");
+		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		int prevPhraseStartIndex, prevEvStartIndex, prevEvEndIndex, prevPhraseEndIndex;
 		int succPhraseStartIndex, succEvStartIndex, succEvEndIndex, succPhraseEndIndex;
@@ -458,10 +459,13 @@ public class CandidatesToFeatures {
 		List<PCM> entity1PCMCollection = new ArrayList<PCM>();
 		List<PCM> entity2PCMCollection = new ArrayList<PCM>();
 
-		if (prevPhraseStartIndex != prevEvStartIndex)
+		revisedEntity1Index = prevPhraseIndex;
+		if (prevPhraseStartIndex != prevEvStartIndex) {
 			entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 					new PositionImpl2(prevPhraseStartIndex, prevEvStartIndex
 							- prevPhraseStartIndex))));
+			revisedEntity1Index++;
+		}
 		entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 				new PositionImpl2(prevEvStartIndex, prevEvEndIndex
 						- prevEvStartIndex))));
@@ -471,12 +475,15 @@ public class CandidatesToFeatures {
 							- prevEvEndIndex))));
 		PCMList.addAll(prevPhraseIndex + 1, entity1PCMCollection);
 		originalEntity1Phrase = PCMList.remove(prevPhraseIndex);
-
 		succPhraseIndex += entity1PCMCollection.size() - 1;
-		if (succPhraseStartIndex != succEvStartIndex)
+		revisedEntity2Index = succPhraseIndex;
+
+		if (succPhraseStartIndex != succEvStartIndex) {
 			entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 					new PositionImpl2(succPhraseStartIndex, succEvStartIndex
 							- succPhraseStartIndex))));
+			revisedEntity2Index++;
+		}
 		entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 				new PositionImpl2(succEvStartIndex, succEvEndIndex
 						- succEvStartIndex))));
@@ -487,8 +494,11 @@ public class CandidatesToFeatures {
 		PCMList.addAll(succPhraseIndex + 1, entity2PCMCollection);
 		originalEntity2Phrase = PCMList.remove(succPhraseIndex);
 
-		 System.out.println("after splitting:");
-		 printPCMList(utt.getString(), uttStartIndex, PCMList);
+		candid.prev.revisedPhraseIndex = revisedEntity1Index;
+		candid.succ.revisedPhraseIndex = revisedEntity2Index;
+
+		System.out.println("after splitting:");
+		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		// making ending indices array
 		phraseEndingIndices = new int[PCMList.size()];
