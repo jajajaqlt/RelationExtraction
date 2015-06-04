@@ -393,6 +393,9 @@ public class CandidatesToFeatures {
 
 	}
 
+	/**
+	 * Not the fastest solution. Good for debugging. Might be subject to optimization.
+	 */
 	private static int[] getRevisedPhraseEndingIndices(Candidate candid)
 			throws Exception {
 		/**
@@ -414,8 +417,8 @@ public class CandidatesToFeatures {
 		List<PCM> PCMList = utt.getPCMList();
 		PCM pcm;
 
-		// System.out.println("initial:");
-		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+		 System.out.println("initial:");
+		 printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		int prevPhraseStartIndex, prevEvStartIndex, prevEvEndIndex, prevPhraseEndIndex;
 		int succPhraseStartIndex, succEvStartIndex, succEvEndIndex, succPhraseEndIndex;
@@ -455,7 +458,7 @@ public class CandidatesToFeatures {
 		List<PCM> entity1PCMCollection = new ArrayList<PCM>();
 		List<PCM> entity2PCMCollection = new ArrayList<PCM>();
 
-		if (prevPhraseStartIndex != prevEvEndIndex)
+		if (prevPhraseStartIndex != prevEvStartIndex)
 			entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 					new PositionImpl2(prevPhraseStartIndex, prevEvStartIndex
 							- prevPhraseStartIndex))));
@@ -470,7 +473,7 @@ public class CandidatesToFeatures {
 		originalEntity1Phrase = PCMList.remove(prevPhraseIndex);
 
 		succPhraseIndex += entity1PCMCollection.size() - 1;
-		if (succPhraseStartIndex != succEvEndIndex)
+		if (succPhraseStartIndex != succEvStartIndex)
 			entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
 					new PositionImpl2(succPhraseStartIndex, succEvStartIndex
 							- succPhraseStartIndex))));
@@ -484,8 +487,8 @@ public class CandidatesToFeatures {
 		PCMList.addAll(succPhraseIndex + 1, entity2PCMCollection);
 		originalEntity2Phrase = PCMList.remove(succPhraseIndex);
 
-		// System.out.println("after splitting:");
-		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+		 System.out.println("after splitting:");
+		 printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		// making ending indices array
 		phraseEndingIndices = new int[PCMList.size()];
@@ -510,8 +513,8 @@ public class CandidatesToFeatures {
 		PCMList.removeAll(entity1PCMCollection);
 		PCMList.removeAll(entity2PCMCollection);
 
-		// System.out.println("after restoration:");
-		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+		System.out.println("after restoration:");
+		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		return phraseEndingIndices;
 	}
