@@ -28,6 +28,8 @@ public class ClassUtilities {
 		public int mappingIndex;
 		public int evIndex;
 		public int sTypeIndex;
+		// for new phrase index after splitting the phrase of interest
+		public int revisedPhraseIndex;
 	}
 
 	public static class Candidate {
