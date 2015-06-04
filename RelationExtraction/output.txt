@@ -1,0 +1,4 @@
+Utterance:
+ Utterance text: We find B (B0-->K(*0)gamma) = [4.23+/-0.40(stat)+/-0.22(syst)]x10(-5), B(B+-->K(*+)gamma) = [3.83+/-0.62(stat)+/-0.22(syst)]x10(-5) and constrain the CP-violating charge asymmetry to be -0.170<A(CP)(B-->K(*)gamma)<0.082 at 90% C.L.
+ Position: (0, 231)
+We/find/B (B0/-/-/>K(*0/)/gamma/)/=/[4.23+/-0.40/(stat)+/-0.22/(syst)/]x10/(-5/)/,/B(B+-->K(*+)gamma/)/=/[3.83+/-0.62/(stat)+/-0.22/(syst)/]x10/(-5/)/and/constrain/the CP-violating charge asymmetry to/be -/0.170/<A/(CP)/(B-->K(*)gamma/)/<0.082 at 90% C.L.
