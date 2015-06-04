@@ -11,7 +11,10 @@ import java.util.Map;
 
 import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.Edge;
+import pipeline.ClassUtilities.PCMImpl2;
 import pipeline.ClassUtilities.Phrase;
+import pipeline.ClassUtilities.PhraseImpl2;
+import pipeline.ClassUtilities.PositionImpl2;
 import pipeline.ClassUtilities.PreCandidate;
 import pipeline.ClassUtilities.Sentence;
 import pipeline.ClassUtilities.TypedDependencyProperty;
@@ -29,6 +32,7 @@ import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 import gov.nih.nlm.nls.metamap.PCM;
+import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Utterance;
 
 public class CandidatesToFeatures {
@@ -318,7 +322,6 @@ public class CandidatesToFeatures {
 		int entity1Index = candid.prev.phraseIndex;
 		int entity2Index = candid.succ.phraseIndex;
 
-		int uttStartIndex;
 		int[] phraseEndingIndices;
 		int phraseEndingIndicesCursor;
 		int phraseStartIndex, phraseLength;
@@ -333,24 +336,7 @@ public class CandidatesToFeatures {
 		CoreLabel taggedLabel;
 		CoreLabel rawWord;
 
-		/**
-		 * Splits entities (of interest) into multiple phrases and updates both
-		 * entity (of interest) indices
-		 */
-
-		uttStartIndex = utt.getPosition().getX();
-		PCMList = utt.getPCMList();
-
-		// making ending indices array
-		phraseEndingIndices = new int[PCMList.size()];
-		for (int i = 0; i < PCMList.size(); i++) {
-			pcm = PCMList.get(i);
-			phraseStartIndex = pcm.getPhrase().getPosition().getX();
-			phraseLength = pcm.getPhrase().getPosition().getY();
-			// should be exclusive
-			phraseEndingIndices[i] = phraseStartIndex - uttStartIndex
-					+ phraseLength;
-		}
+		phraseEndingIndices = getRevisedPhraseEndingIndices(candid);
 
 		/**
 		 * Revision: extend phrases to deal with tokenization discrepancy.
@@ -405,6 +391,141 @@ public class CandidatesToFeatures {
 					- middleSecondCount;
 		}
 
+	}
+
+	private static int[] getRevisedPhraseEndingIndices(Candidate candid)
+			throws Exception {
+		/**
+		 * Splits entities (of interest) into multiple phrases and updates
+		 * PCMList.
+		 */
+
+		int[] phraseEndingIndices;
+		int phraseEndingIndicesCursor;
+		int phraseStartIndex, phraseLength;
+
+		Utterance utt = candid.utterance;
+		int uttStartIndex = utt.getPosition().getX();
+
+		PreCandidate prev = candid.prev, succ = candid.succ;
+		int prevPhraseIndex = prev.phraseIndex, prevMapIndex = prev.mappingIndex, prevEvIndex = prev.evIndex;
+		int succPhraseIndex = succ.phraseIndex, succMapIndex = succ.mappingIndex, succEvIndex = succ.evIndex;
+
+		List<PCM> PCMList = utt.getPCMList();
+		PCM pcm;
+
+		// System.out.println("initial:");
+		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+
+		int prevPhraseStartIndex, prevEvStartIndex, prevEvEndIndex, prevPhraseEndIndex;
+		int succPhraseStartIndex, succEvStartIndex, succEvEndIndex, succPhraseEndIndex;
+
+		Position prevPhrasePos = PCMList.get(prevPhraseIndex).getPhrase()
+				.getPosition();
+		// inclusive
+		prevPhraseStartIndex = prevPhrasePos.getX();
+		// exclusive
+		prevPhraseEndIndex = prevPhraseStartIndex + prevPhrasePos.getY();
+
+		Position succPhrasePos = PCMList.get(succPhraseIndex).getPhrase()
+				.getPosition();
+		// inclusive
+		succPhraseStartIndex = succPhrasePos.getX();
+		// exclusive
+		succPhraseEndIndex = succPhraseStartIndex + succPhrasePos.getY();
+
+		List<Position> prevPosList = PCMList.get(prevPhraseIndex)
+				.getMappingList().get(prevMapIndex).getEvList()
+				.get(prevEvIndex).getPositionalInfo();
+		// inclusive
+		prevEvStartIndex = prevPosList.get(0).getX();
+		// exclusive
+		prevEvEndIndex = prevPosList.get(prevPosList.size() - 1).getX()
+				+ prevPosList.get(prevPosList.size() - 1).getY();
+
+		List<Position> succPosList = PCMList.get(succPhraseIndex)
+				.getMappingList().get(succMapIndex).getEvList()
+				.get(succEvIndex).getPositionalInfo();
+		// inclusive
+		succEvStartIndex = succPosList.get(0).getX();
+		succEvEndIndex = succPosList.get(succPosList.size() - 1).getX()
+				+ succPosList.get(succPosList.size() - 1).getY();
+
+		PCM originalEntity1Phrase, originalEntity2Phrase;
+		List<PCM> entity1PCMCollection = new ArrayList<PCM>();
+		List<PCM> entity2PCMCollection = new ArrayList<PCM>();
+
+		if (prevPhraseStartIndex != prevEvEndIndex)
+			entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+					new PositionImpl2(prevPhraseStartIndex, prevEvStartIndex
+							- prevPhraseStartIndex))));
+		entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+				new PositionImpl2(prevEvStartIndex, prevEvEndIndex
+						- prevEvStartIndex))));
+		if (prevEvEndIndex != prevPhraseEndIndex)
+			entity1PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+					new PositionImpl2(prevEvEndIndex, prevPhraseEndIndex
+							- prevEvEndIndex))));
+		PCMList.addAll(prevPhraseIndex + 1, entity1PCMCollection);
+		originalEntity1Phrase = PCMList.remove(prevPhraseIndex);
+
+		succPhraseIndex += entity1PCMCollection.size() - 1;
+		if (succPhraseStartIndex != succEvEndIndex)
+			entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+					new PositionImpl2(succPhraseStartIndex, succEvStartIndex
+							- succPhraseStartIndex))));
+		entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+				new PositionImpl2(succEvStartIndex, succEvEndIndex
+						- succEvStartIndex))));
+		if (succEvEndIndex != succPhraseEndIndex)
+			entity2PCMCollection.add(new PCMImpl2(new PhraseImpl2(
+					new PositionImpl2(succEvEndIndex, succPhraseEndIndex
+							- succEvEndIndex))));
+		PCMList.addAll(succPhraseIndex + 1, entity2PCMCollection);
+		originalEntity2Phrase = PCMList.remove(succPhraseIndex);
+
+		// System.out.println("after splitting:");
+		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+
+		// making ending indices array
+		phraseEndingIndices = new int[PCMList.size()];
+		for (int i = 0; i < PCMList.size(); i++) {
+			pcm = PCMList.get(i);
+			phraseStartIndex = pcm.getPhrase().getPosition().getX();
+			phraseLength = pcm.getPhrase().getPosition().getY();
+			// should be exclusive
+			phraseEndingIndices[i] = phraseStartIndex - uttStartIndex
+					+ phraseLength;
+		}
+
+		/**
+		 * Restores PCMList in case next candidate uses the same candidate and
+		 * PCMList.
+		 */
+
+		// order is very important, do not change
+		PCMList.add(succPhraseIndex, originalEntity2Phrase);
+		PCMList.add(prevPhraseIndex, originalEntity1Phrase);
+
+		PCMList.removeAll(entity1PCMCollection);
+		PCMList.removeAll(entity2PCMCollection);
+
+		// System.out.println("after restoration:");
+		// printPCMList(utt.getString(), uttStartIndex, PCMList);
+
+		return phraseEndingIndices;
+	}
+
+	private static void printPCMList(String uttText, int uttStartIndex,
+			List<PCM> PCMList) throws Exception {
+		String str = "";
+		int s, l;
+		for (PCM pcm : PCMList) {
+			s = pcm.getPhrase().getPosition().getX() - uttStartIndex;
+			l = pcm.getPhrase().getPosition().getY();
+			str += uttText.substring(s, s + l) + "/";
+		}
+		System.out.println(str.substring(0, str.length() - 1));
 	}
 
 	// public static void main(String[] args) throws Exception {
