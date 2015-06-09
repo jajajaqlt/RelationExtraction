@@ -193,12 +193,15 @@ public class AbstractsToCandidates {
 
 		// Generates all pre-candidates for phrase1
 		PreCandidate preCandidate1;
-		ArrayList<PreCandidate> list1 = new ArrayList<PreCandidate>();
+		ArrayList<PreCandidate> tempList;
+		// ArrayList<PreCandidate> list1 = new ArrayList<PreCandidate>();
+		ArrayList<ArrayList<PreCandidate>> EvList1 = new ArrayList<ArrayList<PreCandidate>>();
 		mappingIndex = 0;
 		for (Mapping map1 : mappingList1) {
 			evIndex = 0;
 			for (Ev ev1 : map1.getEvList()) {
 				sTypeIndex = 0;
+				tempList = new ArrayList<PreCandidate>();
 				for (String type1 : ev1.getSemanticTypes()) {
 					preCandidate1 = new PreCandidate();
 					preCandidate1.sType = type1;
@@ -208,9 +211,10 @@ public class AbstractsToCandidates {
 					preCandidate1.mappingIndex = mappingIndex;
 					preCandidate1.evIndex = evIndex;
 					preCandidate1.sTypeIndex = sTypeIndex;
-					list1.add(preCandidate1);
+					tempList.add(preCandidate1);
 					sTypeIndex++;
 				}
+				EvList1.add(tempList);
 				evIndex++;
 			}
 			mappingIndex++;
@@ -218,12 +222,14 @@ public class AbstractsToCandidates {
 
 		// Generates all pre-candidates for phrase2
 		PreCandidate preCandidate2;
-		ArrayList<PreCandidate> list2 = new ArrayList<PreCandidate>();
+		// ArrayList<PreCandidate> list2 = new ArrayList<PreCandidate>();
+		ArrayList<ArrayList<PreCandidate>> EvList2 = new ArrayList<ArrayList<PreCandidate>>();
 		mappingIndex = 0;
 		for (Mapping map2 : mappingList2) {
 			evIndex = 0;
 			for (Ev ev2 : map2.getEvList()) {
 				sTypeIndex = 0;
+				tempList = new ArrayList<PreCandidate>();
 				for (String type2 : ev2.getSemanticTypes()) {
 					preCandidate2 = new PreCandidate();
 					preCandidate2.sType = type2;
@@ -233,9 +239,10 @@ public class AbstractsToCandidates {
 					preCandidate2.mappingIndex = mappingIndex;
 					preCandidate2.evIndex = evIndex;
 					preCandidate2.sTypeIndex = sTypeIndex;
-					list2.add(preCandidate2);
+					tempList.add(preCandidate2);
 					sTypeIndex++;
 				}
+				EvList2.add(tempList);
 				evIndex++;
 			}
 			mappingIndex++;
