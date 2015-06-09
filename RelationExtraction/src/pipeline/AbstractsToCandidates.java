@@ -1,11 +1,10 @@
 package pipeline;
 
-import gov.nih.nlm.nls.metamap.Ev; 
+import gov.nih.nlm.nls.metamap.Ev;
 import gov.nih.nlm.nls.metamap.Mapping;
 import gov.nih.nlm.nls.metamap.MetaMapApi;
 import gov.nih.nlm.nls.metamap.MetaMapApiImpl;
 import gov.nih.nlm.nls.metamap.PCM;
-import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Result;
 import gov.nih.nlm.nls.metamap.Utterance;
 import info.olteanu.interfaces.StringFilter;
@@ -21,7 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 //import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import pipeline.ClassUtilities.Candidate;
@@ -54,6 +56,7 @@ public class AbstractsToCandidates {
 	// connects net relation to meta relations, in the format of
 	// <"netRel1",["metaRel1","metaRel2",..]>
 	public static HashMap<String, ArrayList<String>> netMetaRelMap;
+	public static HashMap<String, String> metaNetRelMap;
 	SemanticNetwork semanticNet;
 
 	public AbstractsToCandidates(String relationMappingFile,
@@ -65,7 +68,7 @@ public class AbstractsToCandidates {
 		this.abstractsFile = abstractsFile;
 		this.metaRelationsFile = metaRelationsFile;
 
-		netMetaRelMap = getNetMetaRelMap(relationMappingFile);
+		processRelationMappingFile(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
 				netMetaRelMap.keySet().size(), String[].class);
 		// System.out.println(System.currentTimeMillis());
@@ -181,14 +184,7 @@ public class AbstractsToCandidates {
 			Utterance utterance, int phrase1Index, int phrase2Index)
 			throws Exception {
 		ArrayList<Candidate> aFewCandidates = new ArrayList<Candidate>();
-		Candidate template, candidate;
 		List<Mapping> mappingList1, mappingList2;
-		// Mapping mapping1, mapping2;
-		// Ev ev1, ev2;
-		// String semanticType1, semanticType2;
-		String sTypePair, invSTypePair, cuiPair, invCUIPair;
-		String[] netRelationSplits;
-		String netRelation;
 
 		mappingList1 = phrase1.getMappingList();
 		mappingList2 = phrase2.getMappingList();
@@ -245,80 +241,85 @@ public class AbstractsToCandidates {
 			mappingIndex++;
 		}
 
-		// Checks all pairs of pre-candidates to determine candidates
-		// candidate is positive only when orders of semantic type pair and cui
-		// pair are consistent (both forward or both backward)
+		String sTypePair, invSTypePair, cuiPair, invCUIPair;
 		ArrayList<String> metaRelations;
+		String netRelations;
+		String[] netRelationSplits;
+		String netRelation;
+		Set<String> heldNetRelationsSet, potentialNetRelationSet;
+
 		for (PreCandidate preCandid1 : list1) {
 			for (PreCandidate preCandid2 : list2) {
+				Candidate candidate;
+
+				preCandid1.rootSType = semanticNet.abbrRootAbbrMap
+						.get(preCandid1.sType);
+				preCandid2.rootSType = semanticNet.abbrRootAbbrMap
+						.get(preCandid2.sType);
+
 				sTypePair = preCandid1.sType + "&" + preCandid2.sType;
 				invSTypePair = preCandid2.sType + "&" + preCandid1.sType;
 				cuiPair = preCandid1.cui + "&" + preCandid2.cui;
 				invCUIPair = preCandid2.cui + "&" + preCandid1.cui;
-				if (stypePairRelationMap.get(sTypePair) != null) {
-					// forward
-					template = new Candidate(utterance, null, false,
-							preCandid1, preCandid2, false, null);
-					netRelationSplits = stypePairRelationMap.get(sTypePair)
-							.split("&");
-					for (int i = 0; i < netRelationSplits.length; i++) {
-						netRelation = netRelationSplits[i];
-						candidate = deepCopyCandidate(template);
-						candidate.netRelation = netRelation;
-						for (String metaRel : netMetaRelMap.get(netRelation)) {
-							metaRelations = cuiPairRelationMap.get(cuiPair);
-							// ???
-							if (metaRelations != null) {
-								if (cuiPairRelationMap.get(cuiPair).contains(
-										metaRel)) {
-									candidate.isPositive = true;
-									candidate.metaRelation = metaRel;
-									break;
-								}
-							}
 
-						}
-						// add root abbr semantic type
-						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap
-								.get(candidate.prev.sType);
-						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap
-								.get(candidate.succ.sType);
+				// positive examples - forward direction
+				metaRelations = cuiPairRelationMap.get(cuiPair);
+				heldNetRelationsSet = new HashSet<String>();
+				if (metaRelations != null) {
+					for (String metaRel : metaRelations) {
+						netRelation = metaNetRelMap.get(metaRel);
+						heldNetRelationsSet.add(netRelation);
+						candidate = new Candidate(utterance, preCandid1,
+								preCandid2, true, false, netRelation, metaRel);
 						aFewCandidates.add(candidate);
 					}
 				}
-				if (stypePairRelationMap.get(invSTypePair) != null) {
-					// inverse
-					template = new Candidate(utterance, null, true, preCandid1,
-							preCandid2, false, null);
-					netRelationSplits = stypePairRelationMap.get(invSTypePair)
-							.split("&");
-					for (int i = 0; i < netRelationSplits.length; i++) {
-						netRelation = netRelationSplits[i];
-						candidate = deepCopyCandidate(template);
-						candidate.netRelation = netRelation;
-						for (String metaRel : netMetaRelMap.get(netRelation)) {
-							// ???
-							metaRelations = cuiPairRelationMap.get(invCUIPair);
-							// ???
-							if (metaRelations != null) {
-								if (cuiPairRelationMap.get(invCUIPair)
-										.contains(metaRel)) {
-									candidate.isPositive = true;
-									candidate.metaRelation = metaRel;
-									break;
-								}
-							}
 
-						}
-						// add root abbr semantic type
-						candidate.prev.rootSType = semanticNet.abbrRootAbbrMap
-								.get(candidate.prev.sType);
-						candidate.succ.rootSType = semanticNet.abbrRootAbbrMap
-								.get(candidate.succ.sType);
+				// checks negative examples of other relations - forward
+				// direction
+				netRelations = stypePairRelationMap.get(sTypePair);
+				if (netRelations != null) {
+					netRelationSplits = netRelations.split("&");
+					potentialNetRelationSet = new HashSet<String>(
+							Arrays.asList(netRelationSplits));
+					potentialNetRelationSet.removeAll(heldNetRelationsSet);
+					for (String rel : potentialNetRelationSet) {
+						netRelation = rel;
+						candidate = new Candidate(utterance, preCandid1,
+								preCandid2, false, false, netRelation, null);
 						aFewCandidates.add(candidate);
 					}
-
 				}
+
+				// positive examples - inverse direction
+				metaRelations = cuiPairRelationMap.get(invCUIPair);
+				heldNetRelationsSet = new HashSet<String>();
+				if (metaRelations != null) {
+					for (String metaRel : metaRelations) {
+						netRelation = metaNetRelMap.get(metaRel);
+						heldNetRelationsSet.add(netRelation);
+						candidate = new Candidate(utterance, preCandid1,
+								preCandid2, true, true, netRelation, metaRel);
+						aFewCandidates.add(candidate);
+					}
+				}
+
+				// checks negative examples of other relations - inverse
+				// direction
+				netRelations = stypePairRelationMap.get(invSTypePair);
+				if (netRelations != null) {
+					netRelationSplits = netRelations.split("&");
+					potentialNetRelationSet = new HashSet<String>(
+							Arrays.asList(netRelationSplits));
+					potentialNetRelationSet.removeAll(heldNetRelationsSet);
+					for (String rel : potentialNetRelationSet) {
+						netRelation = rel;
+						candidate = new Candidate(utterance, preCandid1,
+								preCandid2, false, true, netRelation, null);
+						aFewCandidates.add(candidate);
+					}
+				}
+
 			}
 		}
 
@@ -331,15 +332,16 @@ public class AbstractsToCandidates {
 		// candid.succCUI, candid.prevConceptPosition,
 		// candid.succConceptPosition, candid.isPositive,
 		// candid.metaRelation);
-		Candidate candidate = new Candidate(candid.utterance,
-				candid.netRelation, candid.isInverse, candid.prev, candid.succ,
-				candid.isPositive, candid.metaRelation);
+		Candidate candidate = new Candidate(candid.utterance, candid.prev,
+				candid.succ, candid.isPositive, candid.isInverse,
+				candid.netRelation, candid.metaRelation);
 		return candidate;
 	}
 
-	public HashMap<String, ArrayList<String>> getNetMetaRelMap(
-			String relationMappingFile) throws Exception {
-		HashMap<String, ArrayList<String>> ret = new HashMap<String, ArrayList<String>>();
+	public void processRelationMappingFile(String relationMappingFile)
+			throws Exception {
+		netMetaRelMap = new HashMap<String, ArrayList<String>>();
+		metaNetRelMap = new HashMap<String, String>();
 		ArrayList<String> arr;
 		BufferedReader br = new BufferedReader(new FileReader(new File(
 				relationMappingFile)));
@@ -353,12 +355,13 @@ public class AbstractsToCandidates {
 			} else {
 				metaRelations = line.split(" ");
 				arr = new ArrayList<>(Arrays.asList(metaRelations));
-				ret.put(netRelation, arr);
+				netMetaRelMap.put(netRelation, arr);
+				for (String metaRel : arr)
+					metaNetRelMap.put(metaRel, netRelation);
 			}
 			isFirst = !isFirst;
 		}
 		br.close();
-		return ret;
 	}
 
 	/**

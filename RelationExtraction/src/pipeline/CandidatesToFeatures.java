@@ -43,6 +43,8 @@ public class CandidatesToFeatures {
 	public GrammaticalStructureFactory gsf;
 	public BufferedWriter bw;
 
+	ArrayList<Sentence> sentences;
+
 	public ArrayList<Phrase> phrases;
 	public int revisedEntity1Index;
 	public int revisedEntity2Index;
@@ -57,6 +59,7 @@ public class CandidatesToFeatures {
 				.factory(new CoreLabelTokenFactory(), "");
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
 		bw = new BufferedWriter(new FileWriter(outputFileName));
+		sentences = new ArrayList<Sentence>();
 	}
 
 	public void getSentences(ArrayList<Candidate> candidates) throws Exception {
@@ -73,7 +76,6 @@ public class CandidatesToFeatures {
 		Candidate newCandid = new Candidate();
 		newCandid.utterance = null;
 
-		ArrayList<Sentence> sentences = new ArrayList<Sentence>();
 		Sentence sentence;
 
 		for (Candidate candidate : candidates) {
@@ -126,8 +128,6 @@ public class CandidatesToFeatures {
 
 			sentences.add(sentence);
 		}
-
-		printSentencesFeatures(sentences);
 
 	}
 
@@ -249,8 +249,10 @@ public class CandidatesToFeatures {
 		return false;
 	}
 
-	private void printSentencesFeatures(ArrayList<Sentence> sentences) {
+	public void writeFeatures() {
+		// lexical feature 1
 		String lf1;
+		// syntactic feature 1 
 		String sf1;
 		int index;
 		String word;
@@ -418,8 +420,8 @@ public class CandidatesToFeatures {
 		List<PCM> PCMList = utt.getPCMList();
 		PCM pcm;
 
-		System.out.println("initial:");
-		printPCMList(utt.getString(), uttStartIndex, PCMList);
+//		System.out.println("initial:");
+//		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		int prevPhraseStartIndex, prevEvStartIndex, prevEvEndIndex, prevPhraseEndIndex;
 		int succPhraseStartIndex, succEvStartIndex, succEvEndIndex, succPhraseEndIndex;
@@ -497,8 +499,8 @@ public class CandidatesToFeatures {
 		candid.prev.revisedPhraseIndex = revisedEntity1Index;
 		candid.succ.revisedPhraseIndex = revisedEntity2Index;
 
-		System.out.println("after splitting:");
-		printPCMList(utt.getString(), uttStartIndex, PCMList);
+//		System.out.println("after splitting:");
+//		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		// making ending indices array
 		phraseEndingIndices = new int[PCMList.size()];
@@ -523,8 +525,8 @@ public class CandidatesToFeatures {
 		PCMList.removeAll(entity1PCMCollection);
 		PCMList.removeAll(entity2PCMCollection);
 
-		System.out.println("after restoration:");
-		printPCMList(utt.getString(), uttStartIndex, PCMList);
+//		System.out.println("after restoration:");
+//		printPCMList(utt.getString(), uttStartIndex, PCMList);
 
 		return phraseEndingIndices;
 	}

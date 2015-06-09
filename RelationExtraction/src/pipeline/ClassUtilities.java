@@ -35,38 +35,27 @@ public class ClassUtilities {
 	public static class Candidate {
 		// String utteranceText;
 		public Utterance utterance;
-		public String netRelation;
-		public boolean isInverse;
 		public PreCandidate prev;
 		public PreCandidate succ;
-		// String prevCUI, succCUI;
-		// used in the future
-		// int prevPhraseIndex, prevMappingIndex, prevEvIndex, prevSTypeIndex;
-		// int succPhraseIndex, succMappingIndex, succEvIndex, succSTypeIndex;
-		// List<Position> prevConceptPosition, succConceptPosition;
-		public boolean isPositive;
+
 		// assumption: cuisOrder is always same as isInverse
-		// boolean cuisOrder
+		// too strong, abolish
+		public boolean isPositive;
+		public boolean isInverse;
+		// super relation
+		public String netRelation;
+		// umls relation
 		public String metaRelation;
 
-		// public Candidate(String text, String netRel, boolean isInv,
-		// String prevCUI, String succCUI,
-		// List<Position> prevConceptPosition,
-		// List<Position> succConceptPosition, boolean isPos,
-		// String metaRel)
-		public Candidate(Utterance utt, String netRel, boolean isInv,
-				PreCandidate prev, PreCandidate succ, boolean isPos,
-				String metaRel) {
+		// ???
+		public Candidate(Utterance utt, PreCandidate prev, PreCandidate succ,
+				boolean isPos, boolean isInv, String netRel, String metaRel) {
 			utterance = utt;
-			netRelation = netRel;
-			isInverse = isInv;
 			this.prev = prev;
 			this.succ = succ;
-			// this.prevCUI = prevCUI;
-			// this.succCUI = succCUI;
-			// this.prevConceptPosition = prevConceptPosition;
-			// this.succConceptPosition = succConceptPosition;
 			isPositive = isPos;
+			isInverse = isInv;
+			netRelation = netRel;
 			metaRelation = metaRel;
 		}
 
