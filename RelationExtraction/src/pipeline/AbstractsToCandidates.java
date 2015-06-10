@@ -21,7 +21,6 @@ import java.util.Arrays;
 //import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -42,31 +41,26 @@ public class AbstractsToCandidates {
 	// public static String relationMappingFile = "NETMETA";
 	// public static String semanticNetworkFile = "SRSTR";
 	// public static String semanticTypeAbbreviationFile = "SRDEF";
-	public static String relationMappingFile;
-	public static String semanticNetworkFile;
-	public static String semanticTypeAbbreviationFile;
-	public static String abstractsFile;
-	public static String metaRelationsFile;
+	private String abstractsFile;
+	// private String metaRelationsFile = "COMPACT_MRREL.RRF";
+
 	// in the format of <"stype1&stype2","netRel1&netRel2&...">
 	// the first type has relation to the second type
-	public static HashMap<String, String> stypePairRelationMap;
+	private HashMap<String, String> stypePairRelationMap;
 	// in the format of <"cui1&cui2","metaRel1&metaRel2&...">
 	// the first cui has relation to the second cui
-	public static HashMap<String, ArrayList<String>> cuiPairRelationMap;
+	private HashMap<String, ArrayList<String>> cuiPairRelationMap;
 	// connects net relation to meta relations, in the format of
 	// <"netRel1",["metaRel1","metaRel2",..]>
-	public static HashMap<String, ArrayList<String>> netMetaRelMap;
-	public static HashMap<String, String> metaNetRelMap;
-	SemanticNetwork semanticNet;
+	private HashMap<String, ArrayList<String>> netMetaRelMap;
+	private HashMap<String, String> metaNetRelMap;
+	private SemanticNetwork semanticNet;
+	private int currentAbstractIndex;
 
 	public AbstractsToCandidates(String relationMappingFile,
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
 			String abstractsFile, String metaRelationsFile) throws Exception {
-		this.relationMappingFile = relationMappingFile;
-		this.semanticNetworkFile = semanticNetworkFile;
-		this.semanticTypeAbbreviationFile = semanticTypeAbbreviationFile;
 		this.abstractsFile = abstractsFile;
-		this.metaRelationsFile = metaRelationsFile;
 
 		processRelationMappingFile(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
@@ -85,6 +79,7 @@ public class AbstractsToCandidates {
 		Metathesaurus meta = new Metathesaurus(metaRelationsFile, tmp);
 		// System.out.println(System.currentTimeMillis());
 		cuiPairRelationMap = meta.cuiPairRelationMap;
+
 	}
 
 	/**
@@ -119,8 +114,12 @@ public class AbstractsToCandidates {
 		int i = 0;
 		Result result;
 		ArrayList<Candidate> someCandidates;
+		currentAbstractIndex = -1;
+
 		System.out.println(System.currentTimeMillis());
 		while ((line = br.readLine()) != null) {
+			currentAbstractIndex++;
+
 			// deals with non-ascii characters here
 			boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
 			if (!isAscii)
@@ -284,7 +283,8 @@ public class AbstractsToCandidates {
 								for (String metaRel : metaRelations) {
 									netRelation = metaNetRelMap.get(metaRel);
 									heldNetRelationsSet.add(netRelation);
-									candidate = new Candidate(utterance,
+									candidate = new Candidate(
+											currentAbstractIndex, utterance,
 											preCandid1, preCandid2, true,
 											false, netRelation, metaRel);
 									aFewCandidates.add(candidate);
@@ -298,7 +298,8 @@ public class AbstractsToCandidates {
 								for (String metaRel : metaRelations) {
 									netRelation = metaNetRelMap.get(metaRel);
 									invHeldNetRelationsSet.add(netRelation);
-									candidate = new Candidate(utterance,
+									candidate = new Candidate(
+											currentAbstractIndex, utterance,
 											preCandid1, preCandid2, true, true,
 											netRelation, metaRel);
 									aFewCandidates.add(candidate);
@@ -319,9 +320,9 @@ public class AbstractsToCandidates {
 									.removeAll(heldNetRelationsSet);
 							for (String rel : potentialNetRelationSet) {
 								netRelation = rel;
-								candidate = new Candidate(utterance,
-										preCandid1, preCandid2, false, false,
-										netRelation, null);
+								candidate = new Candidate(currentAbstractIndex,
+										utterance, preCandid1, preCandid2,
+										false, false, netRelation, null);
 								aFewCandidates.add(candidate);
 							}
 						}
@@ -337,9 +338,9 @@ public class AbstractsToCandidates {
 									.removeAll(invHeldNetRelationsSet);
 							for (String rel : potentialNetRelationSet) {
 								netRelation = rel;
-								candidate = new Candidate(utterance,
-										preCandid1, preCandid2, false, true,
-										netRelation, null);
+								candidate = new Candidate(currentAbstractIndex,
+										utterance, preCandid1, preCandid2,
+										false, true, netRelation, null);
 								aFewCandidates.add(candidate);
 							}
 						}
@@ -354,19 +355,19 @@ public class AbstractsToCandidates {
 		return aFewCandidates;
 	}
 
-	public Candidate deepCopyCandidate(Candidate candid) {
+	private Candidate deepCopyCandidate(Candidate candid) {
 		// Candidate candidate = new Candidate(candid.utteranceText,
 		// candid.netRelation, candid.isInverse, candid.prevCUI,
 		// candid.succCUI, candid.prevConceptPosition,
 		// candid.succConceptPosition, candid.isPositive,
 		// candid.metaRelation);
-		Candidate candidate = new Candidate(candid.utterance, candid.prev,
-				candid.succ, candid.isPositive, candid.isInverse,
-				candid.netRelation, candid.metaRelation);
+		Candidate candidate = new Candidate(candid.abstractIndex,
+				candid.utterance, candid.prev, candid.succ, candid.isPositive,
+				candid.isInverse, candid.netRelation, candid.metaRelation);
 		return candidate;
 	}
 
-	public void processRelationMappingFile(String relationMappingFile)
+	private void processRelationMappingFile(String relationMappingFile)
 			throws Exception {
 		netMetaRelMap = new HashMap<String, ArrayList<String>>();
 		metaNetRelMap = new HashMap<String, String>();
@@ -398,8 +399,7 @@ public class AbstractsToCandidates {
 	 * @return Normalized version of str with accented characters replaced by
 	 *         unaccented version and with diacritics removed. E.g. Ö -> O
 	 */
-	public static String normalizeString(String str)
-			throws ClassNotFoundException {
+	private String normalizeString(String str) throws ClassNotFoundException {
 		// TextNormalizer code from phramer.org
 		// Allows compilation under both Java 5 and Java 6
 		StringFilter stringFilter = TextNormalizer

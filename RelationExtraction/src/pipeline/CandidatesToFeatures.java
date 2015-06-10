@@ -83,6 +83,7 @@ public class CandidatesToFeatures {
 			newCandid = candidate;
 
 			sentence = new Sentence();
+			sentence.abstractIndex = candidate.abstractIndex;
 			sentence.sentenceText = candidate.utterance.getString();
 			sentence.netRelation = candidate.netRelation;
 			sentence.isInverse = candidate.isInverse;

@@ -33,6 +33,8 @@ public class ClassUtilities {
 	}
 
 	public static class Candidate {
+		public int abstractIndex;
+
 		// String utteranceText;
 		public Utterance utterance;
 		public PreCandidate prev;
@@ -48,8 +50,10 @@ public class ClassUtilities {
 		public String metaRelation;
 
 		// ???
-		public Candidate(Utterance utt, PreCandidate prev, PreCandidate succ,
-				boolean isPos, boolean isInv, String netRel, String metaRel) {
+		public Candidate(int index, Utterance utt, PreCandidate prev,
+				PreCandidate succ, boolean isPos, boolean isInv, String netRel,
+				String metaRel) {
+			abstractIndex = index;
 			utterance = utt;
 			this.prev = prev;
 			this.succ = succ;
@@ -65,6 +69,8 @@ public class ClassUtilities {
 	}
 
 	public static class Sentence {
+		public int abstractIndex;
+
 		public ArrayList<Phrase> phrases;
 		public List<CoreLabel> words;
 		public String sentenceText;
