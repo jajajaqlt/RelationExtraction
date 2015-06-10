@@ -248,88 +248,109 @@ public class AbstractsToCandidates {
 			mappingIndex++;
 		}
 
-		String sTypePair, invSTypePair, cuiPair, invCUIPair;
+		String sTypePair, invSTypePair, cuiPair = null, invCUIPair = null;
 		ArrayList<String> metaRelations;
 		String netRelations;
 		String[] netRelationSplits;
 		String netRelation;
-		Set<String> heldNetRelationsSet, potentialNetRelationSet;
+		Set<String> heldNetRelationsSet = null, invHeldNetRelationsSet = null, potentialNetRelationSet;
+		boolean cuiPairFirstAppearance;
 
-		for (PreCandidate preCandid1 : list1) {
-			for (PreCandidate preCandid2 : list2) {
-				Candidate candidate;
+		// PreCandidate preCandid1, preCandid2;
+		for (ArrayList<PreCandidate> tempList1 : EvList1) {
+			for (ArrayList<PreCandidate> tempList2 : EvList2) {
+				cuiPairFirstAppearance = true;
 
-				preCandid1.rootSType = semanticNet.abbrRootAbbrMap
-						.get(preCandid1.sType);
-				preCandid2.rootSType = semanticNet.abbrRootAbbrMap
-						.get(preCandid2.sType);
+				for (PreCandidate preCandid1 : tempList1) {
+					for (PreCandidate preCandid2 : tempList2) {
+						Candidate candidate;
+						preCandid1.rootSType = semanticNet.abbrRootAbbrMap
+								.get(preCandid1.sType);
+						preCandid2.rootSType = semanticNet.abbrRootAbbrMap
+								.get(preCandid2.sType);
 
-				sTypePair = preCandid1.sType + "&" + preCandid2.sType;
-				invSTypePair = preCandid2.sType + "&" + preCandid1.sType;
-				cuiPair = preCandid1.cui + "&" + preCandid2.cui;
-				invCUIPair = preCandid2.cui + "&" + preCandid1.cui;
+						sTypePair = preCandid1.sType + "&" + preCandid2.sType;
+						invSTypePair = preCandid2.sType + "&"
+								+ preCandid1.sType;
 
-				// positive examples - forward direction
-				metaRelations = cuiPairRelationMap.get(cuiPair);
-				heldNetRelationsSet = new HashSet<String>();
-				if (metaRelations != null) {
-					for (String metaRel : metaRelations) {
-						netRelation = metaNetRelMap.get(metaRel);
-						heldNetRelationsSet.add(netRelation);
-						candidate = new Candidate(utterance, preCandid1,
-								preCandid2, true, false, netRelation, metaRel);
-						aFewCandidates.add(candidate);
+						if (cuiPairFirstAppearance) {
+							cuiPair = preCandid1.cui + "&" + preCandid2.cui;
+							invCUIPair = preCandid2.cui + "&" + preCandid1.cui;
+
+							// positive examples - forward direction
+							metaRelations = cuiPairRelationMap.get(cuiPair);
+							heldNetRelationsSet = new HashSet<String>();
+							if (metaRelations != null) {
+								for (String metaRel : metaRelations) {
+									netRelation = metaNetRelMap.get(metaRel);
+									heldNetRelationsSet.add(netRelation);
+									candidate = new Candidate(utterance,
+											preCandid1, preCandid2, true,
+											false, netRelation, metaRel);
+									aFewCandidates.add(candidate);
+								}
+							}
+
+							// positive examples - inverse direction
+							metaRelations = cuiPairRelationMap.get(invCUIPair);
+							invHeldNetRelationsSet = new HashSet<String>();
+							if (metaRelations != null) {
+								for (String metaRel : metaRelations) {
+									netRelation = metaNetRelMap.get(metaRel);
+									invHeldNetRelationsSet.add(netRelation);
+									candidate = new Candidate(utterance,
+											preCandid1, preCandid2, true, true,
+											netRelation, metaRel);
+									aFewCandidates.add(candidate);
+								}
+							}
+
+							cuiPairFirstAppearance = false;
+						}
+
+						// checks negative examples of other relations - forward
+						// direction
+						netRelations = stypePairRelationMap.get(sTypePair);
+						if (netRelations != null) {
+							netRelationSplits = netRelations.split("&");
+							potentialNetRelationSet = new HashSet<String>(
+									Arrays.asList(netRelationSplits));
+							potentialNetRelationSet
+									.removeAll(heldNetRelationsSet);
+							for (String rel : potentialNetRelationSet) {
+								netRelation = rel;
+								candidate = new Candidate(utterance,
+										preCandid1, preCandid2, false, false,
+										netRelation, null);
+								aFewCandidates.add(candidate);
+							}
+						}
+
+						// checks negative examples of other relations - inverse
+						// direction
+						netRelations = stypePairRelationMap.get(invSTypePair);
+						if (netRelations != null) {
+							netRelationSplits = netRelations.split("&");
+							potentialNetRelationSet = new HashSet<String>(
+									Arrays.asList(netRelationSplits));
+							potentialNetRelationSet
+									.removeAll(invHeldNetRelationsSet);
+							for (String rel : potentialNetRelationSet) {
+								netRelation = rel;
+								candidate = new Candidate(utterance,
+										preCandid1, preCandid2, false, true,
+										netRelation, null);
+								aFewCandidates.add(candidate);
+							}
+						}
+						// end of of checking negative examples of other
+						// relations - inverse direction
 					}
 				}
-
-				// checks negative examples of other relations - forward
-				// direction
-				netRelations = stypePairRelationMap.get(sTypePair);
-				if (netRelations != null) {
-					netRelationSplits = netRelations.split("&");
-					potentialNetRelationSet = new HashSet<String>(
-							Arrays.asList(netRelationSplits));
-					potentialNetRelationSet.removeAll(heldNetRelationsSet);
-					for (String rel : potentialNetRelationSet) {
-						netRelation = rel;
-						candidate = new Candidate(utterance, preCandid1,
-								preCandid2, false, false, netRelation, null);
-						aFewCandidates.add(candidate);
-					}
-				}
-
-				// positive examples - inverse direction
-				metaRelations = cuiPairRelationMap.get(invCUIPair);
-				heldNetRelationsSet = new HashSet<String>();
-				if (metaRelations != null) {
-					for (String metaRel : metaRelations) {
-						netRelation = metaNetRelMap.get(metaRel);
-						heldNetRelationsSet.add(netRelation);
-						candidate = new Candidate(utterance, preCandid1,
-								preCandid2, true, true, netRelation, metaRel);
-						aFewCandidates.add(candidate);
-					}
-				}
-
-				// checks negative examples of other relations - inverse
-				// direction
-				netRelations = stypePairRelationMap.get(invSTypePair);
-				if (netRelations != null) {
-					netRelationSplits = netRelations.split("&");
-					potentialNetRelationSet = new HashSet<String>(
-							Arrays.asList(netRelationSplits));
-					potentialNetRelationSet.removeAll(heldNetRelationsSet);
-					for (String rel : potentialNetRelationSet) {
-						netRelation = rel;
-						candidate = new Candidate(utterance, preCandid1,
-								preCandid2, false, true, netRelation, null);
-						aFewCandidates.add(candidate);
-					}
-				}
-
+				// end of pre-candidate double loop
 			}
 		}
-
+		// end of ev-list double loop
 		return aFewCandidates;
 	}
 
