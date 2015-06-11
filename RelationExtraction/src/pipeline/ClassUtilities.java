@@ -71,7 +71,11 @@ public class ClassUtilities {
 	public static class Sentence {
 		public int abstractIndex;
 
+		public String entity1Cui;
+		public String entity2Cui;
+		
 		public ArrayList<Phrase> phrases;
+		// 0-based word index
 		public List<CoreLabel> words;
 		public String sentenceText;
 
@@ -120,8 +124,7 @@ public class ClassUtilities {
 	// only saves lexical information
 	public static class Word {
 		public String tag;
-		// after adding tag => 0-based indices; after adding typed dependencies
-		// 1-based indices;
+		// 0-based word index
 		public int index;
 		public String wText;
 

@@ -49,6 +49,7 @@ public class CandidatesToFeatures {
 	private int revisedEntity1Index;
 	private int revisedEntity2Index;
 
+	// all indices here are 1-based
 	private HashMap<Integer, HashMap<Integer, TypedDependencyProperty>> dependencies;
 	private LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> fatPath;
 
@@ -83,6 +84,8 @@ public class CandidatesToFeatures {
 			newCandid = candidate;
 
 			sentence = new Sentence();
+			sentence.entity1Cui = candidate.prev.cui;
+			sentence.entity2Cui = candidate.succ.cui;
 			sentence.abstractIndex = candidate.abstractIndex;
 			sentence.sentenceText = candidate.utterance.getString();
 			sentence.netRelation = candidate.netRelation;
