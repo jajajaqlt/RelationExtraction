@@ -48,6 +48,8 @@ public class CandidatesToFeatures {
 	private ArrayList<Phrase> phrases;
 	private int revisedEntity1Index;
 	private int revisedEntity2Index;
+	private HashMap<Integer, TypedDependencyProperty> entity1Dependencies;
+	private HashMap<Integer, TypedDependencyProperty> entity2Dependencies;
 
 	// all indices here are 1-based
 	private HashMap<Integer, HashMap<Integer, TypedDependencyProperty>> dependencies;
@@ -126,8 +128,8 @@ public class CandidatesToFeatures {
 					constructDependencyPath(sentence, tdl);
 			}
 
-			sentence.entity1Dependencies = dependencies.get(-1);
-			sentence.entity2Dependencies = dependencies.get(-2);
+			sentence.entity1Dependencies = entity1Dependencies;
+			sentence.entity2Dependencies = entity2Dependencies;
 			sentence.path = fatPath;
 
 			sentences.add(sentence);
@@ -219,6 +221,7 @@ public class CandidatesToFeatures {
 			fromVertexIndex = Integer.parseInt(path.get(i - 1).name);
 			toVertexIndex = Integer.parseInt(path.get(i).name);
 			tdp = dependencies.get(fromVertexIndex).get(toVertexIndex);
+			// always gives the edge to the node where it is origniated
 			// right
 			if (tdp.direction) {
 				tmp = fatPath.get(fromVertexIndex);
@@ -238,6 +241,39 @@ public class CandidatesToFeatures {
 			}
 		}
 
+		// uses path to generate entity1Dependencies and entity2Dependencies
+		int index;
+
+		entity1Dependencies = new HashMap<Integer, TypedDependencyProperty>();
+		fromVertexIndex = -1;
+		entity1Dependencies = dependencies.get(fromVertexIndex);
+		toVertexIndex = Integer.parseInt(path.get(1).name);
+		entity1Dependencies.remove(toVertexIndex);
+		for (Map.Entry<Integer, TypedDependencyProperty> entry : entity1Dependencies
+				.entrySet()) {
+			index = entry.getKey();
+			tdp = entry.getValue();
+			if (tdp.direction)
+				tdp.position = true;
+			else
+				tdp.position = false;
+		}
+
+		entity2Dependencies = new HashMap<Integer, TypedDependencyProperty>();
+		fromVertexIndex = -2;
+		entity2Dependencies = dependencies.get(fromVertexIndex);
+		toVertexIndex = Integer.parseInt(path.get(path.size() - 2).name);
+		entity2Dependencies.remove(toVertexIndex);
+		for (Map.Entry<Integer, TypedDependencyProperty> entry : entity2Dependencies
+				.entrySet()) {
+			index = entry.getKey();
+			tdp = entry.getValue();
+			if (tdp.direction)
+				tdp.position = false;
+			else
+				tdp.position = true;
+		}
+
 	}
 
 	private boolean checkCandidateIndicesEquality(Candidate oldCandid,
@@ -253,7 +289,7 @@ public class CandidatesToFeatures {
 		return false;
 	}
 
-	public void writeFeatures() {
+	public void writeDemoFeatures() {
 		// lexical feature 1
 		String lf1;
 		// syntactic feature 1
@@ -289,9 +325,11 @@ public class CandidatesToFeatures {
 				tdpArr = m.getValue();
 				// ←↑→↓↖↙↗↘↕
 				if (index == -1)
-					sf1 += "→" + tdpArr.get(0).relation + " ";
+					// sf1 += "→" + tdpArr.get(0).relation + " ";
+					sf1 += "-" + tdpArr.get(0).relation + "-->" + " ";
 				else if (index == -2)
-					sf1 += "←" + tdpArr.get(0).relation + " ";
+					// sf1 += "←" + tdpArr.get(0).relation + " ";
+					sf1 += "<--" + tdpArr.get(0).relation + "-" + " ";
 				else {
 					word = s.words.get(index - 1).word();
 					for (TypedDependencyProperty tdp : tdpArr) {

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.trees.TypedDependency;
 import gov.nih.nlm.nls.metamap.Candidates;
 import gov.nih.nlm.nls.metamap.Ev;
 import gov.nih.nlm.nls.metamap.Map;
@@ -73,7 +72,7 @@ public class ClassUtilities {
 
 		public String entity1Cui;
 		public String entity2Cui;
-		
+
 		public ArrayList<Phrase> phrases;
 		// 0-based word index
 		public List<CoreLabel> words;
@@ -95,10 +94,15 @@ public class ClassUtilities {
 
 		// Mintz09: For each entity, one 'window' node that is not part of the
 		// dependency path
+		// all the edges connecting entity one node (exclusive of the one on the path)
 		HashMap<Integer, TypedDependencyProperty> entity1Dependencies;
+		// all the edges connecting entity two node (exclusive of the one on the path)
 		HashMap<Integer, TypedDependencyProperty> entity2Dependencies;
 
-		// map data structure keeps insertion order
+		// stores mapping of 1-based indices of all phrase nodes on the shortest
+		// path (inclusive of two entity nodes) to edges originating from those
+		// nodes respectively, i.e. each edge only appears once in this data structure
+		// also keeps the order of phrase nodes on the path
 		LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> path;
 
 	}
@@ -136,11 +140,13 @@ public class ClassUtilities {
 		}
 	}
 
+	// abstract form of an edge
 	public static class TypedDependencyProperty {
-		// true for to direction, false otherwise
+		// true for to direction, i.e. the associated vertex is the end-point of the edge
+		// false for from direction, i.e. the associated vertex is the start-point of the edge
 		public boolean direction;
 		public String relation;
-		// true for left, false for right
+		// true for arrow to the left, false for arrow to the right
 		public boolean position;
 
 		public TypedDependencyProperty(boolean d, String r) {

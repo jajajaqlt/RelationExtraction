@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import pipeline.AbstractsToCandidates;
 import pipeline.CandidatesToFeatures;
 import pipeline.ClassUtilities.Candidate;
-import pipeline.ClassUtilities.Sentence;
 
 /**
  * 
@@ -22,7 +21,7 @@ public class MainTest {
 
 		CandidatesToFeatures c2f = new CandidatesToFeatures("output.txt");
 		c2f.getSentences(candidates);
-		c2f.writeFeatures();
+		c2f.writeDemoFeatures();
 		boolean flag = false;
 		flag = true;
 	}
