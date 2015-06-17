@@ -83,9 +83,9 @@ public class ClassUtilities {
 		public boolean isInverse;
 		public boolean isPositive;
 		public String metaRelation;
-		// phrase index of precandidate prev, physically before
+		// phrase index of precandidate prev, physically before, 0-based
 		public int entity1Index;
-		// phrase index of precandidate succ, physically after
+		// phrase index of precandidate succ, physically after, 0-based
 		public int entity2Index;
 		// prev.rootSType
 		public String entity1NE;

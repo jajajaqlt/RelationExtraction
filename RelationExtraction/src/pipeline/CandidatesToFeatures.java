@@ -94,8 +94,8 @@ public class CandidatesToFeatures {
 			sentence.isInverse = candidate.isInverse;
 			sentence.isPositive = candidate.isPositive;
 			sentence.metaRelation = candidate.metaRelation;
-			sentence.entity1NE = candidate.prev.rootSType;
-			sentence.entity2NE = candidate.succ.rootSType;
+			sentence.entity1NE = candidate.prev.rootSType.toUpperCase();
+			sentence.entity2NE = candidate.succ.rootSType.toUpperCase();
 
 			if (oldCandid.utterance != newCandid.utterance) {
 				// if new utterance appears, re-parse for words, tags and typed
@@ -287,6 +287,109 @@ public class CandidatesToFeatures {
 				&& oldSucc.mappingIndex == newSucc.mappingIndex)
 			return true;
 		return false;
+	}
+
+	public void writeFeatures() {
+		String instance;
+		String newLine = "\n";
+		String inverseFlag;
+		int countOfWindowNodes = 2;
+		int entity1FirstWordIndex, entity2LastWordIndex;
+		Phrase entity1, entity2;
+		String middleWords, middleTags;
+		// closer word has smaller index
+		ArrayList<Word> leftWords, rightWords;
+		CoreLabel label;
+		int index;
+		
+		for (Sentence s : sentences) {
+			// header
+			instance = "instance{" + newLine;
+			instance += "index: " + s.abstractIndex + newLine;
+			instance += "cui1: " + s.entity1Cui + newLine;
+			instance += "cui1-type: " + s.entity1NE + newLine;
+			instance += "cui2: " + s.entity2Cui + newLine;
+			instance += "cui2-type: " + s.entity2NE + newLine;
+			instance += "positivity: " + (s.isPositive ? "true" : "false")
+					+ newLine;
+			instance += "inverse: " + (s.isInverse ? "true" : "false")
+					+ newLine;
+			
+			// a flag indicating which entity came first in the sentence
+			if (s.isInverse)
+				inverseFlag = "inverse_true";
+			else
+				inverseFlag = "inverse_false";
+			
+			instance += "net-relation: " + s.netRelation + newLine;
+			instance += "meta-relation: "
+					+ (s.metaRelation == null ? "null" : s.metaRelation)
+					+ newLine;
+			instance += "sentence: " + s.sentenceText;
+
+			// sentence-level features
+			instance += "sentence-level-features{" + newLine;
+			
+			// the sequence of words between the two entities
+			// the part-of-speech tags of these words
+			middleWords = "";
+			middleTags = "";
+			for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
+				for (Word w : s.phrases.get(i).words) {
+					middleWords += w.wText + " ";
+					middleTags += w.tag + " ";
+				}
+			}
+			middleWords = middleWords.substring(0, middleWords.length()-1);
+			middleTags = middleTags.substring(0, middleTags.length()-1);
+			
+			// a window of k words to the left/right of entity1/2 and their part of speech tags
+			// concatenates to make sentence-level lexical features 
+			entity1 = s.phrases.get(s.entity1Index);
+			entity1FirstWordIndex = entity1.words.get(0).index;
+			entity2 = s.phrases.get(s.entity2Index);
+			entity2LastWordIndex = entity2.words.get(entity2.words.size() - 1).index;
+			
+			leftWords = new ArrayList<Word>();
+			rightWords = new ArrayList<Word>();
+			
+			for (int i = 1; i <= countOfWindowNodes; i++) {
+				index = entity1FirstWordIndex - i;
+				if(index >= 0){
+					label = s.words.get(index);
+					leftWords.add(new Word(label.tag(), index, label.word()));
+				}else{
+					leftWords.add(new Word("#PAD#", index, "#PAD#"));
+				}
+				index = entity2LastWordIndex + i;
+				if(index >= 0){
+					label = s.words.get(index);
+					rightWords.add(new Word(label.tag(), index, label.word()));
+				}else{
+					rightWords.add(new Word("#PAD#", index, "#PAD#"));
+				}
+			}
+			
+			instance += "}" + newLine;
+
+			// chunk-level features
+			instance += "chunk-level-features{" + newLine;
+			instance += "}" + newLine;
+
+			// phrase-level features
+			instance += "phrase-level-features{" + newLine;
+			instance += "}" + newLine;
+
+			// word-level features
+			instance += "word-level-features{" + newLine;
+			instance += "}" + newLine;
+
+			// footer
+			instance += "}" + newLine;
+
+			System.out.println(instance);
+		}
+
 	}
 
 	public void writeDemoFeatures() {
