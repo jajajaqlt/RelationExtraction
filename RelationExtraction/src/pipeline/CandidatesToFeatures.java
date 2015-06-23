@@ -301,7 +301,8 @@ public class CandidatesToFeatures {
 		ArrayList<Word> leftWords, rightWords;
 		CoreLabel label;
 		int index;
-		
+		ArrayList<TypedDependencyProperty> tdpArr;
+
 		for (Sentence s : sentences) {
 			// header
 			instance = "instance{" + newLine;
@@ -314,24 +315,28 @@ public class CandidatesToFeatures {
 					+ newLine;
 			instance += "inverse: " + (s.isInverse ? "true" : "false")
 					+ newLine;
-			
+
 			// a flag indicating which entity came first in the sentence
 			if (s.isInverse)
 				inverseFlag = "inverse_true";
 			else
 				inverseFlag = "inverse_false";
-			
+
 			instance += "net-relation: " + s.netRelation + newLine;
 			instance += "meta-relation: "
 					+ (s.metaRelation == null ? "null" : s.metaRelation)
 					+ newLine;
-			instance += "sentence: " + s.sentenceText;
+			instance += "sentence: " + s.sentenceText + newLine;
 
 			// sentence-level features
 			instance += "sentence-level-features{" + newLine;
-			
+
 			// the sequence of words between the two entities
 			// the part-of-speech tags of these words
+			/**
+			 * Sets a threshold here in the future to deal with a long sequence
+			 * of words or tags. i.e. putting a ""
+			 */
 			middleWords = "";
 			middleTags = "";
 			for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
@@ -340,36 +345,209 @@ public class CandidatesToFeatures {
 					middleTags += w.tag + " ";
 				}
 			}
-			middleWords = middleWords.substring(0, middleWords.length()-1);
-			middleTags = middleTags.substring(0, middleTags.length()-1);
-			
-			// a window of k words to the left/right of entity1/2 and their part of speech tags
-			// concatenates to make sentence-level lexical features 
+			middleWords = middleWords.substring(0, middleWords.length() - 1);
+			middleTags = middleTags.substring(0, middleTags.length() - 1);
+
+			// a window of k words to the left/right of entity1/2 and their part
+			// of speech tags
 			entity1 = s.phrases.get(s.entity1Index);
 			entity1FirstWordIndex = entity1.words.get(0).index;
 			entity2 = s.phrases.get(s.entity2Index);
 			entity2LastWordIndex = entity2.words.get(entity2.words.size() - 1).index;
-			
+
 			leftWords = new ArrayList<Word>();
 			rightWords = new ArrayList<Word>();
-			
+
 			for (int i = 1; i <= countOfWindowNodes; i++) {
 				index = entity1FirstWordIndex - i;
-				if(index >= 0){
+				if (index >= 0) {
 					label = s.words.get(index);
 					leftWords.add(new Word(label.tag(), index, label.word()));
-				}else{
+				} else {
 					leftWords.add(new Word("#PAD#", index, "#PAD#"));
 				}
 				index = entity2LastWordIndex + i;
-				if(index >= 0){
+				if (index < s.words.size()) {
 					label = s.words.get(index);
 					rightWords.add(new Word(label.tag(), index, label.word()));
-				}else{
+				} else {
 					rightWords.add(new Word("#PAD#", index, "#PAD#"));
 				}
 			}
-			
+
+			String wordFeatureStem, tagFeatureStem;
+			// sentence-level lexical conjunction features
+			// word features
+			// example feature:
+			// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
+			wordFeatureStem = "|" + s.entity1NE + "|" + middleWords + "|"
+					+ s.entity2NE + "|";
+			instance += "feature: " + inverseFlag + wordFeatureStem + newLine;
+			for (int i = 0; i < countOfWindowNodes; i++) {
+				if (i == 0)
+					wordFeatureStem = leftWords.get(i).wText + wordFeatureStem
+							+ rightWords.get(i).wText;
+				else
+					wordFeatureStem = leftWords.get(i).wText + " "
+							+ wordFeatureStem + " " + rightWords.get(i).wText;
+				instance += "feature: " + inverseFlag + "|" + wordFeatureStem
+						+ newLine;
+			}
+
+			// tag features
+			// example feature:
+			// "inverse_true|Brothers ,|ORGANIZATION|, NNP NNP CC|ORGANIZATION|. B_1"
+			// comment: changes left/right words to left/right tags
+			tagFeatureStem = "|" + s.entity1NE + "|" + middleTags + "|"
+					+ s.entity2NE + "|";
+			instance += "feature: " + inverseFlag + tagFeatureStem + newLine;
+			for (int i = 0; i < countOfWindowNodes; i++) {
+				if (i == 0)
+					tagFeatureStem = leftWords.get(i).tag + tagFeatureStem
+							+ rightWords.get(i).tag;
+				else
+					tagFeatureStem = leftWords.get(i).tag + " "
+							+ tagFeatureStem + " " + rightWords.get(i).tag;
+				instance += "feature: " + inverseFlag + "|" + tagFeatureStem
+						+ newLine;
+			}
+
+			// sentence-level syntactic conjunction features
+			String strFeatureStem = "", depFeatureStem = "", dirFeatureStem = "";
+			/**
+			 * Sets a threshold here in the future to deal with a long
+			 * dependency path, and *LONG-PATH* for str and dir syntactic
+			 * features, *LONG-TYPE* for dep syntactic features.
+			 */
+
+			String word, arrow, type;
+			for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
+					.entrySet()) {
+				index = m.getKey();
+				tdpArr = m.getValue();
+				// ←↑→↓↖↙↗↘↕
+				// format: "[dependency-type]""arrow(<-/->)""word"...
+				if (index == -1) {
+					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
+					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
+					dirFeatureStem += "->";
+				} else if (index == -2) {
+					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
+					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
+					dirFeatureStem += "<-";
+				} else {
+					word = s.words.get(index - 1).word();
+					for (TypedDependencyProperty tdp : tdpArr) {
+						if (tdp.position) {
+							// left case
+							// word = "<--" + tdp.relation + "-" + word;
+							word = "[" + tdp.relation + "]" + "<-" + word;
+							depFeatureStem += "[" + tdp.relation + "]" + "<-";
+							dirFeatureStem += "<-";
+						} else {
+							// right case
+							// word = word + "-" + tdp.relation + "-->";
+							word = word + "[" + tdp.relation + "]" + "->";
+							depFeatureStem += "[" + tdp.relation + "]" + "->";
+							dirFeatureStem += "->";
+						}
+					}
+					strFeatureStem += word;
+				}
+			}
+
+			strFeatureStem = "|" + s.entity1NE + "|" + strFeatureStem + "|"
+					+ s.entity2NE + "|";
+			depFeatureStem = "|" + s.entity1NE + "|" + depFeatureStem + "|"
+					+ s.entity2NE + "|";
+			dirFeatureStem = "|" + s.entity1NE + "|" + dirFeatureStem + "|"
+					+ s.entity2NE + "|";
+
+			// no window node
+			instance += "feature: " + "str:" + inverseFlag + strFeatureStem
+					+ newLine;
+			instance += "feature: " + "dep:" + inverseFlag + depFeatureStem
+					+ newLine;
+			instance += "feature: " + "dir:" + inverseFlag + dirFeatureStem
+					+ newLine;
+
+			// having left window nodes
+			TypedDependencyProperty tdp;
+			for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity1Dependencies
+					.entrySet()) {
+				index = entry.getKey();
+				tdp = entry.getValue();
+				word = s.words.get(index - 1).word();
+				// format "word""[dependency-type]""arrow""feature-stem"
+				if (tdp.position)
+					arrow = "<-";
+				else
+					arrow = "->";
+				type = "[" + tdp.relation + "]";
+				instance += "feature: " + "str:" + inverseFlag + "|" + word
+						+ type + arrow + strFeatureStem + newLine;
+				instance += "feature: " + "dep:" + inverseFlag + "|" + type
+						+ arrow + depFeatureStem + newLine;
+				instance += "feature: " + "dir:" + inverseFlag + "|" + arrow
+						+ dirFeatureStem + newLine;
+			}
+
+			// having right window nodes
+			for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity2Dependencies
+					.entrySet()) {
+				index = entry.getKey();
+				tdp = entry.getValue();
+				word = s.words.get(index - 1).word();
+				// format "word""[dependency-type]""arrow""feature-stem"
+				if (tdp.position)
+					arrow = "<-";
+				else
+					arrow = "->";
+				type = "[" + tdp.relation + "]";
+				instance += "feature: " + "str:" + inverseFlag + strFeatureStem
+						+ type + arrow + word + newLine;
+				instance += "feature: " + "dep:" + inverseFlag + depFeatureStem
+						+ type + arrow + newLine;
+				instance += "feature: " + "dir:" + inverseFlag + dirFeatureStem
+						+ arrow + newLine;
+			}
+
+			// having window nodes on both sides
+			int index1, index2;
+			String word1, word2, arrow1, arrow2, type1, type2;
+			TypedDependencyProperty tdp1, tdp2;
+			for (Map.Entry<Integer, TypedDependencyProperty> entry1 : s.entity1Dependencies
+					.entrySet()) {
+				index1 = entry1.getKey();
+				tdp1 = entry1.getValue();
+				word1 = s.words.get(index1 - 1).word();
+				if (tdp1.position)
+					arrow1 = "<-";
+				else
+					arrow1 = "->";
+				type1 = "[" + tdp1.relation + "]";
+				for (Map.Entry<Integer, TypedDependencyProperty> entry2 : s.entity2Dependencies
+						.entrySet()) {
+					index2 = entry2.getKey();
+					tdp2 = entry2.getValue();
+					word2 = s.words.get(index2 - 1).word();
+					if (tdp2.position)
+						arrow2 = "<-";
+					else
+						arrow2 = "->";
+					type2 = "[" + tdp2.relation + "]";
+
+					instance += "feature: " + "str:" + inverseFlag + "|"
+							+ word1 + type1 + arrow1 + strFeatureStem + type2
+							+ arrow2 + word2 + newLine;
+					instance += "feature: " + "dep:" + inverseFlag + "|"
+							+ type1 + arrow1 + depFeatureStem + type2 + arrow2
+							+ newLine;
+					instance += "feature: " + "dir:" + inverseFlag + "|"
+							+ arrow1 + dirFeatureStem + arrow2 + newLine;
+				}
+			}
+
 			instance += "}" + newLine;
 
 			// chunk-level features

@@ -14,14 +14,15 @@ import pipeline.ClassUtilities.Candidate;
 public class MainTest {
 
 	public static void main(String[] args) throws Exception {
-
+		
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
 				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF");
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 
 		CandidatesToFeatures c2f = new CandidatesToFeatures("output.txt");
 		c2f.getSentences(candidates);
-		c2f.writeDemoFeatures();
+		//c2f.writeDemoFeatures();
+		c2f.writeFeatures();
 		boolean flag = false;
 		flag = true;
 	}
