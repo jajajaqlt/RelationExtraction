@@ -292,7 +292,7 @@ public class CandidatesToFeatures {
 	public void writeFeatures() {
 		String instance;
 		String newLine = "\n";
-		String inverseFlag;
+		String inverseFlag, inverseFlagAbbr;
 		int countOfWindowNodes = 2;
 		int entity1FirstWordIndex, entity2LastWordIndex;
 		Phrase entity1, entity2;
@@ -303,41 +303,49 @@ public class CandidatesToFeatures {
 		int index;
 		ArrayList<TypedDependencyProperty> tdpArr;
 		String entity1MatchedWords, entity2MatchedWords;
+		boolean includePadInFeatures = true;
+		String unitDelimiter = "\n";
 		for (Sentence s : sentences) {
+			String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
+			// feat1's are for word unit compound, feat2's are for tag unit
+			// compound
+			String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
 			// header
-			instance = "instance{" + newLine;
-			instance += "index: " + s.abstractIndex + newLine;
-			instance += "cui1: " + s.entity1Cui + newLine;
-			instance += "cui1-type: " + s.entity1NE + newLine;
+			header += "instance{" + newLine;
+			header += "index: " + s.abstractIndex + newLine;
+			header += "cui1: " + s.entity1Cui + newLine;
+			header += "cui1-type: " + s.entity1NE + newLine;
 			entity1MatchedWords = "";
 			for (Word w : s.phrases.get(s.entity1Index).words)
 				entity1MatchedWords += " " + w.wText;
-			instance += "cui1-matched-words:" + entity1MatchedWords + newLine;
-			instance += "cui2: " + s.entity2Cui + newLine;
-			instance += "cui2-type: " + s.entity2NE + newLine;
+			header += "cui1-matched-words:" + entity1MatchedWords + newLine;
+			header += "cui2: " + s.entity2Cui + newLine;
+			header += "cui2-type: " + s.entity2NE + newLine;
 			entity2MatchedWords = "";
 			for (Word w : s.phrases.get(s.entity2Index).words)
 				entity2MatchedWords += " " + w.wText;
-			instance += "cui2-matched-words:" + entity2MatchedWords + newLine;
-			instance += "positivity: " + (s.isPositive ? "true" : "false")
+			header += "cui2-matched-words:" + entity2MatchedWords + newLine;
+			header += "positivity: " + (s.isPositive ? "true" : "false")
 					+ newLine;
-			instance += "inverse: " + (s.isInverse ? "true" : "false")
-					+ newLine;
+			header += "inverse: " + (s.isInverse ? "true" : "false") + newLine;
 
 			// a flag indicating which entity came first in the sentence
-			if (s.isInverse)
+			if (s.isInverse) {
 				inverseFlag = "inverse_true";
-			else
+				inverseFlagAbbr = inverseFlag + "|";
+			} else {
 				inverseFlag = "inverse_false";
+				inverseFlagAbbr = inverseFlag + "|";
+			}
 
-			instance += "net-relation: " + s.netRelation + newLine;
-			instance += "meta-relation: "
+			header += "net-relation: " + s.netRelation + newLine;
+			header += "meta-relation: "
 					+ (s.metaRelation == null ? "null" : s.metaRelation)
 					+ newLine;
-			instance += "sentence: " + s.sentenceText + newLine;
+			header += "sentence: " + s.sentenceText + newLine;
 
 			// sentence-level features
-			instance += "sentence-level-features{" + newLine;
+			sentenceLvFeats += "sentence-level-features{" + newLine;
 
 			// the sequence of words between the two entities
 			// the part-of-speech tags of these words
@@ -345,16 +353,49 @@ public class CandidatesToFeatures {
 			 * Sets a threshold here in the future to deal with a long sequence
 			 * of words or tags. i.e. putting a ""
 			 */
+			// sets the value of central nodes of other resolution levels
+			wordLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+			wordLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+			phraseLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+			phraseLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+			chunkLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+			chunkLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
 			middleWords = "";
 			middleTags = "";
 			for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
+				phraseLvFeat1 += inverseFlagAbbr;
+				phraseLvFeat2 += inverseFlagAbbr;
 				for (Word w : s.phrases.get(i).words) {
+					wordLvFeat1 += inverseFlagAbbr;
+					wordLvFeat2 += inverseFlagAbbr;
 					middleWords += w.wText + " ";
 					middleTags += w.tag + " ";
+					wordLvFeat1 += w.wText;
+					wordLvFeat2 += w.tag;
+					wordLvFeat1 += unitDelimiter;
+					wordLvFeat2 += unitDelimiter;
+
+					phraseLvFeat1 += w.wText + " ";
+					phraseLvFeat2 += w.tag + " ";
 				}
+				phraseLvFeat1 = phraseLvFeat1.substring(0,
+						phraseLvFeat1.length() - 1)
+						+ unitDelimiter;
+				phraseLvFeat2 = phraseLvFeat2.substring(0,
+						phraseLvFeat2.length() - 1)
+						+ unitDelimiter;
 			}
 			middleWords = middleWords.substring(0, middleWords.length() - 1);
 			middleTags = middleTags.substring(0, middleTags.length() - 1);
+
+			wordLvFeat1 += inverseFlagAbbr + s.entity2NE;
+			wordLvFeat2 += inverseFlagAbbr + s.entity2NE;
+			phraseLvFeat1 += inverseFlagAbbr + s.entity2NE;
+			phraseLvFeat2 += inverseFlagAbbr + s.entity2NE;
+			chunkLvFeat1 += inverseFlagAbbr + middleWords + unitDelimiter
+					+ inverseFlagAbbr + s.entity2NE;
+			chunkLvFeat2 += inverseFlagAbbr + middleTags + unitDelimiter
+					+ inverseFlagAbbr + s.entity2NE;
 
 			// a window of k words to the left/right of entity1/2 and their part
 			// of speech tags
@@ -366,21 +407,66 @@ public class CandidatesToFeatures {
 			leftWords = new ArrayList<Word>();
 			rightWords = new ArrayList<Word>();
 
+			wordLvFeat1 = unitDelimiter + wordLvFeat1 + unitDelimiter;
+			wordLvFeat2 = unitDelimiter + wordLvFeat2 + unitDelimiter;
+			chunkLvFeat1 = unitDelimiter + chunkLvFeat1 + unitDelimiter;
+			chunkLvFeat2 = unitDelimiter + chunkLvFeat2 + unitDelimiter;
+
 			for (int i = 1; i <= countOfWindowNodes; i++) {
 				index = entity1FirstWordIndex - i;
 				if (index >= 0) {
 					label = s.words.get(index);
 					leftWords.add(new Word(label.tag(), index, label.word()));
+					wordLvFeat1 = unitDelimiter + inverseFlagAbbr
+							+ label.word() + wordLvFeat1;
+					wordLvFeat2 = unitDelimiter + inverseFlagAbbr + label.tag()
+							+ wordLvFeat2;
+					chunkLvFeat1 = " " + label.word() + chunkLvFeat1;
+					chunkLvFeat2 = " " + label.tag() + chunkLvFeat2;
 				} else {
 					leftWords.add(new Word("#PAD#", index, "#PAD#"));
+					if (includePadInFeatures) {
+						wordLvFeat1 = unitDelimiter + inverseFlagAbbr + "#PAD#"
+								+ wordLvFeat1;
+						wordLvFeat2 = unitDelimiter + inverseFlagAbbr + "#PAD#"
+								+ wordLvFeat2;
+						chunkLvFeat1 = " " + "#PAD#" + chunkLvFeat1;
+						chunkLvFeat2 = " " + "#PAD#" + chunkLvFeat2;
+					}
+					// else {
+					// wordLvFeat1 = unitDelimiter + wordLvFeat1.substring(1);
+					// wordLvFeat2 = unitDelimiter + wordLvFeat2.substring(1);
+					// }
+
 				}
+
 				index = entity2LastWordIndex + i;
 				if (index < s.words.size()) {
 					label = s.words.get(index);
 					rightWords.add(new Word(label.tag(), index, label.word()));
+					wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr + label.word()
+							+ unitDelimiter;
+					wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr + label.tag()
+							+ unitDelimiter;
+					chunkLvFeat1 = chunkLvFeat1 + label.word() + " ";
+					chunkLvFeat2 = chunkLvFeat2 + label.tag() + " ";
 				} else {
 					rightWords.add(new Word("#PAD#", index, "#PAD#"));
+					if (includePadInFeatures) {
+						wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr + "#PAD#"
+								+ unitDelimiter;
+						wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr + "#PAD#"
+								+ unitDelimiter;
+						chunkLvFeat1 = chunkLvFeat1 + "#PAD#" + " ";
+						chunkLvFeat2 = chunkLvFeat2 + "#PAD#" + " ";
+					}
+					// else {
+					// wordLvFeat1 = wordLvFeat1.substring(0,
+					// wordLvFeat1.length() - 1); = uni
+					// wordLvFeat2 = unitDelimiter + wordLvFeat2.substring(1);
+					// }
 				}
+
 			}
 
 			String wordFeatureStem, tagFeatureStem;
@@ -390,8 +476,8 @@ public class CandidatesToFeatures {
 			// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
 			wordFeatureStem = s.entity1NE + "|" + middleWords + "|"
 					+ s.entity2NE;
-			instance += "feature: " + inverseFlag + "|" + wordFeatureStem
-					+ newLine;
+			sentenceLvFeats += "feature: " + inverseFlag + "|"
+					+ wordFeatureStem + newLine;
 			for (int i = 0; i < countOfWindowNodes; i++) {
 				if (i == 0)
 					wordFeatureStem = leftWords.get(i).wText + "|"
@@ -399,8 +485,8 @@ public class CandidatesToFeatures {
 				else
 					wordFeatureStem = leftWords.get(i).wText + " "
 							+ wordFeatureStem + " " + rightWords.get(i).wText;
-				instance += "feature: " + inverseFlag + "|" + wordFeatureStem
-						+ newLine;
+				sentenceLvFeats += "feature: " + inverseFlag + "|"
+						+ wordFeatureStem + newLine;
 			}
 
 			// tag features
@@ -408,7 +494,7 @@ public class CandidatesToFeatures {
 			// "inverse_true|Brothers ,|ORGANIZATION|, NNP NNP CC|ORGANIZATION|. B_1"
 			// comment: changes left/right words to left/right tags
 			tagFeatureStem = s.entity1NE + "|" + middleTags + "|" + s.entity2NE;
-			instance += "feature: " + inverseFlag + "|" + tagFeatureStem
+			sentenceLvFeats += "feature: " + inverseFlag + "|" + tagFeatureStem
 					+ newLine;
 			for (int i = 0; i < countOfWindowNodes; i++) {
 				if (i == 0)
@@ -417,8 +503,8 @@ public class CandidatesToFeatures {
 				else
 					tagFeatureStem = leftWords.get(i).tag + " "
 							+ tagFeatureStem + " " + rightWords.get(i).tag;
-				instance += "feature: " + inverseFlag + "|" + tagFeatureStem
-						+ newLine;
+				sentenceLvFeats += "feature: " + inverseFlag + "|"
+						+ tagFeatureStem + newLine;
 			}
 
 			// sentence-level syntactic conjunction features
@@ -473,11 +559,11 @@ public class CandidatesToFeatures {
 					+ s.entity2NE;
 
 			// no window node
-			instance += "feature: " + "str:" + inverseFlag + "|"
+			sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
 					+ strFeatureStem + newLine;
-			instance += "feature: " + "dep:" + inverseFlag + "|"
+			sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
 					+ depFeatureStem + newLine;
-			instance += "feature: " + "dir:" + inverseFlag + "|"
+			sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
 					+ dirFeatureStem + newLine;
 
 			// having left window nodes
@@ -493,12 +579,12 @@ public class CandidatesToFeatures {
 				else
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
-				instance += "feature: " + "str:" + inverseFlag + "|" + word
-						+ type + arrow + "|" + strFeatureStem + newLine;
-				instance += "feature: " + "dep:" + inverseFlag + "|" + type
-						+ arrow + "|" + depFeatureStem + newLine;
-				instance += "feature: " + "dir:" + inverseFlag + "|" + arrow
-						+ "|" + dirFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+						+ word + type + arrow + "|" + strFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+						+ type + arrow + "|" + depFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+						+ arrow + "|" + dirFeatureStem + newLine;
 			}
 
 			// having right window nodes
@@ -513,12 +599,12 @@ public class CandidatesToFeatures {
 				else
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
-				instance += "feature: " + "str:" + inverseFlag + "|" + strFeatureStem
-						+ "|" + type + arrow + word + newLine;
-				instance += "feature: " + "dep:" + inverseFlag + "|" + depFeatureStem
-						+ "|" + type + arrow + newLine;
-				instance += "feature: " + "dir:" + inverseFlag + "|" + dirFeatureStem
-						+ "|" + arrow + newLine;
+				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+						+ strFeatureStem + "|" + type + arrow + word + newLine;
+				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+						+ depFeatureStem + "|" + type + arrow + newLine;
+				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+						+ dirFeatureStem + "|" + arrow + newLine;
 			}
 
 			// having window nodes on both sides
@@ -546,35 +632,53 @@ public class CandidatesToFeatures {
 						arrow2 = "->";
 					type2 = "[" + tdp2.relation + "]";
 
-					instance += "feature: " + "str:" + inverseFlag + "|"
-							+ word1 + type1 + arrow1 + "|" + strFeatureStem + "|" + type2
-							+ arrow2 + word2 + newLine;
-					instance += "feature: " + "dep:" + inverseFlag + "|"
-							+ type1 + arrow1 + "|" + depFeatureStem + "|" + type2 + arrow2
+					sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+							+ word1 + type1 + arrow1 + "|" + strFeatureStem
+							+ "|" + type2 + arrow2 + word2 + newLine;
+					sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+							+ type1 + arrow1 + "|" + depFeatureStem + "|"
+							+ type2 + arrow2 + newLine;
+					sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+							+ arrow1 + "|" + dirFeatureStem + "|" + arrow2
 							+ newLine;
-					instance += "feature: " + "dir:" + inverseFlag + "|"
-							+ arrow1 + "|" + dirFeatureStem + "|" + arrow2 + newLine;
 				}
 			}
 
-			instance += "}" + newLine;
+			// sentence-level bag of words features
+
+			sentenceLvFeats += "}" + newLine;
 
 			// chunk-level features
-			instance += "chunk-level-features{" + newLine;
-			instance += "}" + newLine;
+			chunkLvFeats += "chunk-level-features{" + newLine;
+			// both chunkLvFeat1 and chunkLvFeat2 are '\n'/' ' ended
+			chunkLvFeats += "word-feature: " + newLine
+					+ chunkLvFeat1.substring(1, chunkLvFeat1.length() - 1)
+					+ newLine;
+			chunkLvFeats += "tag-feature: " + newLine
+					+ chunkLvFeat2.substring(1, chunkLvFeat2.length() - 1)
+					+ newLine;
+			chunkLvFeats += "}" + newLine;
 
 			// phrase-level features
-			instance += "phrase-level-features{" + newLine;
-			instance += "}" + newLine;
+			phraseLvFeats += "phrase-level-features{" + newLine;
+			phraseLvFeats += "}" + newLine;
 
 			// word-level features
-			instance += "word-level-features{" + newLine;
-			instance += "}" + newLine;
+			wordLvFeats += "word-level-features{" + newLine;
+			// both wordLvFeat1 and wordLvFeat2 are '\n' ended
+			wordLvFeats += "word-feature: " + wordLvFeat1;
+			wordLvFeats += "tag-feature: " + wordLvFeat2;
+			wordLvFeats += "}" + newLine;
 
 			// footer
-			instance += "}" + newLine;
+			footer += "}" + newLine;
 
-			System.out.println(instance);
+			System.out.print(header);
+			System.out.print(sentenceLvFeats);
+			System.out.print(chunkLvFeats);
+			System.out.print(phraseLvFeats);
+			System.out.print(wordLvFeats);
+			System.out.print(footer);
 		}
 
 	}

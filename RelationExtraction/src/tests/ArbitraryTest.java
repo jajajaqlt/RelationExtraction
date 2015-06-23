@@ -39,15 +39,17 @@ public class ArbitraryTest {
 		// String b = a;
 		// System.out.println(a);
 		// System.out.println(b);
-		String word = "word";
-		ArrayList<String> words = new ArrayList<String>();
-		words.add(word);
-		words.add(word);
-		words.add(word);
-		for (String word1 : words) {
-
-		}
-		String word1 = "word1";
+//		String word = "word";
+//		ArrayList<String> words = new ArrayList<String>();
+//		words.add(word);
+//		words.add(word);
+//		words.add(word);
+//		for (String word1 : words) {
+//
+//		}
+//		String word1 = "word1";
+		String str = "//";
+		System.out.println(str.length());
 
 	}
 
