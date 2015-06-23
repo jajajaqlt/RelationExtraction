@@ -302,15 +302,23 @@ public class CandidatesToFeatures {
 		CoreLabel label;
 		int index;
 		ArrayList<TypedDependencyProperty> tdpArr;
-
+		String entity1MatchedWords, entity2MatchedWords;
 		for (Sentence s : sentences) {
 			// header
 			instance = "instance{" + newLine;
 			instance += "index: " + s.abstractIndex + newLine;
 			instance += "cui1: " + s.entity1Cui + newLine;
 			instance += "cui1-type: " + s.entity1NE + newLine;
+			entity1MatchedWords = "";
+			for (Word w : s.phrases.get(s.entity1Index).words)
+				entity1MatchedWords += " " + w.wText;
+			instance += "cui1-matched-words:" + entity1MatchedWords + newLine;
 			instance += "cui2: " + s.entity2Cui + newLine;
 			instance += "cui2-type: " + s.entity2NE + newLine;
+			entity2MatchedWords = "";
+			for (Word w : s.phrases.get(s.entity2Index).words)
+				entity2MatchedWords += " " + w.wText;
+			instance += "cui2-matched-words:" + entity2MatchedWords + newLine;
 			instance += "positivity: " + (s.isPositive ? "true" : "false")
 					+ newLine;
 			instance += "inverse: " + (s.isInverse ? "true" : "false")
@@ -380,13 +388,14 @@ public class CandidatesToFeatures {
 			// word features
 			// example feature:
 			// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
-			wordFeatureStem = "|" + s.entity1NE + "|" + middleWords + "|"
-					+ s.entity2NE + "|";
-			instance += "feature: " + inverseFlag + wordFeatureStem + newLine;
+			wordFeatureStem = s.entity1NE + "|" + middleWords + "|"
+					+ s.entity2NE;
+			instance += "feature: " + inverseFlag + "|" + wordFeatureStem
+					+ newLine;
 			for (int i = 0; i < countOfWindowNodes; i++) {
 				if (i == 0)
-					wordFeatureStem = leftWords.get(i).wText + wordFeatureStem
-							+ rightWords.get(i).wText;
+					wordFeatureStem = leftWords.get(i).wText + "|"
+							+ wordFeatureStem + "|" + rightWords.get(i).wText;
 				else
 					wordFeatureStem = leftWords.get(i).wText + " "
 							+ wordFeatureStem + " " + rightWords.get(i).wText;
@@ -398,13 +407,13 @@ public class CandidatesToFeatures {
 			// example feature:
 			// "inverse_true|Brothers ,|ORGANIZATION|, NNP NNP CC|ORGANIZATION|. B_1"
 			// comment: changes left/right words to left/right tags
-			tagFeatureStem = "|" + s.entity1NE + "|" + middleTags + "|"
-					+ s.entity2NE + "|";
-			instance += "feature: " + inverseFlag + tagFeatureStem + newLine;
+			tagFeatureStem = s.entity1NE + "|" + middleTags + "|" + s.entity2NE;
+			instance += "feature: " + inverseFlag + "|" + tagFeatureStem
+					+ newLine;
 			for (int i = 0; i < countOfWindowNodes; i++) {
 				if (i == 0)
-					tagFeatureStem = leftWords.get(i).tag + tagFeatureStem
-							+ rightWords.get(i).tag;
+					tagFeatureStem = leftWords.get(i).tag + "|"
+							+ tagFeatureStem + "|" + rightWords.get(i).tag;
 				else
 					tagFeatureStem = leftWords.get(i).tag + " "
 							+ tagFeatureStem + " " + rightWords.get(i).tag;
@@ -456,20 +465,20 @@ public class CandidatesToFeatures {
 				}
 			}
 
-			strFeatureStem = "|" + s.entity1NE + "|" + strFeatureStem + "|"
-					+ s.entity2NE + "|";
-			depFeatureStem = "|" + s.entity1NE + "|" + depFeatureStem + "|"
-					+ s.entity2NE + "|";
-			dirFeatureStem = "|" + s.entity1NE + "|" + dirFeatureStem + "|"
-					+ s.entity2NE + "|";
+			strFeatureStem = s.entity1NE + "|" + strFeatureStem + "|"
+					+ s.entity2NE;
+			depFeatureStem = s.entity1NE + "|" + depFeatureStem + "|"
+					+ s.entity2NE;
+			dirFeatureStem = s.entity1NE + "|" + dirFeatureStem + "|"
+					+ s.entity2NE;
 
 			// no window node
-			instance += "feature: " + "str:" + inverseFlag + strFeatureStem
-					+ newLine;
-			instance += "feature: " + "dep:" + inverseFlag + depFeatureStem
-					+ newLine;
-			instance += "feature: " + "dir:" + inverseFlag + dirFeatureStem
-					+ newLine;
+			instance += "feature: " + "str:" + inverseFlag + "|"
+					+ strFeatureStem + newLine;
+			instance += "feature: " + "dep:" + inverseFlag + "|"
+					+ depFeatureStem + newLine;
+			instance += "feature: " + "dir:" + inverseFlag + "|"
+					+ dirFeatureStem + newLine;
 
 			// having left window nodes
 			TypedDependencyProperty tdp;
@@ -485,11 +494,11 @@ public class CandidatesToFeatures {
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
 				instance += "feature: " + "str:" + inverseFlag + "|" + word
-						+ type + arrow + strFeatureStem + newLine;
+						+ type + arrow + "|" + strFeatureStem + newLine;
 				instance += "feature: " + "dep:" + inverseFlag + "|" + type
-						+ arrow + depFeatureStem + newLine;
+						+ arrow + "|" + depFeatureStem + newLine;
 				instance += "feature: " + "dir:" + inverseFlag + "|" + arrow
-						+ dirFeatureStem + newLine;
+						+ "|" + dirFeatureStem + newLine;
 			}
 
 			// having right window nodes
@@ -504,12 +513,12 @@ public class CandidatesToFeatures {
 				else
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
-				instance += "feature: " + "str:" + inverseFlag + strFeatureStem
-						+ type + arrow + word + newLine;
-				instance += "feature: " + "dep:" + inverseFlag + depFeatureStem
-						+ type + arrow + newLine;
-				instance += "feature: " + "dir:" + inverseFlag + dirFeatureStem
-						+ arrow + newLine;
+				instance += "feature: " + "str:" + inverseFlag + "|" + strFeatureStem
+						+ "|" + type + arrow + word + newLine;
+				instance += "feature: " + "dep:" + inverseFlag + "|" + depFeatureStem
+						+ "|" + type + arrow + newLine;
+				instance += "feature: " + "dir:" + inverseFlag + "|" + dirFeatureStem
+						+ "|" + arrow + newLine;
 			}
 
 			// having window nodes on both sides
@@ -538,13 +547,13 @@ public class CandidatesToFeatures {
 					type2 = "[" + tdp2.relation + "]";
 
 					instance += "feature: " + "str:" + inverseFlag + "|"
-							+ word1 + type1 + arrow1 + strFeatureStem + type2
+							+ word1 + type1 + arrow1 + "|" + strFeatureStem + "|" + type2
 							+ arrow2 + word2 + newLine;
 					instance += "feature: " + "dep:" + inverseFlag + "|"
-							+ type1 + arrow1 + depFeatureStem + type2 + arrow2
+							+ type1 + arrow1 + "|" + depFeatureStem + "|" + type2 + arrow2
 							+ newLine;
 					instance += "feature: " + "dir:" + inverseFlag + "|"
-							+ arrow1 + dirFeatureStem + arrow2 + newLine;
+							+ arrow1 + "|" + dirFeatureStem + "|" + arrow2 + newLine;
 				}
 			}
 

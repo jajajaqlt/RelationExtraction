@@ -4,6 +4,7 @@ import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import pipeline.Dijkstra;
@@ -18,26 +19,36 @@ public class ArbitraryTest {
 		// System.out.println(ints.contains(1));
 		// System.out.println(ints.contains(0));
 
-//		String line = "süme string";
-//		boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
-//		System.out.println("Is the sentence in ascii?");
-//		System.out.println(isAscii);
-//		System.out.println("Converted:");
-//		String normalizedText = normalizeString(line);
-//		System.out.println(normalizedText);
-//		System.out.println("Question mark replaced:");
-//		String asciiText2 = filterNonAscii(line);
-//		System.out.println(asciiText2);
+		// String line = "süme string";
+		// boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
+		// System.out.println("Is the sentence in ascii?");
+		// System.out.println(isAscii);
+		// System.out.println("Converted:");
+		// String normalizedText = normalizeString(line);
+		// System.out.println(normalizedText);
+		// System.out.println("Question mark replaced:");
+		// String asciiText2 = filterNonAscii(line);
+		// System.out.println(asciiText2);
 		// String asciiText = filterNonAscii(normalizedText);
-		   Method m[] = Dijkstra.class.getDeclaredMethods();
-	        for (int i = 0; i < m.length; i++)
-	        {
-	          System.out.println(m[i].toString());
-	        }
-	        String a = "ABC";
-	        String b = a;
-	        System.out.println(a);
-	        System.out.println(b);
+		// Method m[] = Dijkstra.class.getDeclaredMethods();
+		// for (int i = 0; i < m.length; i++)
+		// {
+		// System.out.println(m[i].toString());
+		// }
+		// String a = "ABC";
+		// String b = a;
+		// System.out.println(a);
+		// System.out.println(b);
+		String word = "word";
+		ArrayList<String> words = new ArrayList<String>();
+		words.add(word);
+		words.add(word);
+		words.add(word);
+		for (String word1 : words) {
+
+		}
+		String word1 = "word1";
+
 	}
 
 	/**
