@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.print.attribute.standard.PDLOverrideSupported;
+
 import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.Edge;
 import pipeline.ClassUtilities.PCMImpl2;
@@ -304,7 +306,7 @@ public class CandidatesToFeatures {
 		int index;
 		ArrayList<TypedDependencyProperty> tdpArr;
 		String entity1MatchedWords, entity2MatchedWords;
-		boolean includePadInFeatures = false;
+		boolean includePadInFeatures = true;
 		String unitDelimiter = "\n";
 		int unitDelimiterLength = unitDelimiter.length();
 		for (Sentence s : sentences) {
@@ -437,11 +439,6 @@ public class CandidatesToFeatures {
 						chunkLvFeat1 = " " + "#PAD#" + chunkLvFeat1;
 						chunkLvFeat2 = " " + "#PAD#" + chunkLvFeat2;
 					}
-					// else {
-					// wordLvFeat1 = unitDelimiter + wordLvFeat1.substring(1);
-					// wordLvFeat2 = unitDelimiter + wordLvFeat2.substring(1);
-					// }
-
 				}
 
 				index = entity2LastWordIndex + i;
@@ -464,15 +461,11 @@ public class CandidatesToFeatures {
 						chunkLvFeat1 = chunkLvFeat1 + "#PAD#" + " ";
 						chunkLvFeat2 = chunkLvFeat2 + "#PAD#" + " ";
 					}
-					// else {
-					// wordLvFeat1 = wordLvFeat1.substring(0,
-					// wordLvFeat1.length() - 1); = uni
-					// wordLvFeat2 = unitDelimiter + wordLvFeat2.substring(1);
-					// }
 				}
 
 			}
 
+			// final processing of chunk-level features
 			int inverseFlagAbbrLength = inverseFlagAbbr.length();
 
 			if (!chunkLvFeat1.substring(0, unitDelimiterLength).equals(
@@ -501,6 +494,117 @@ public class CandidatesToFeatures {
 			else
 				chunkLvFeat2 = chunkLvFeat2.substring(0,
 						chunkLvFeat2.length() - 1);
+
+			// final processing of phrase-level features
+			int accumulate = 0, cur, diff;
+			String before1, before2, before, after;
+			Phrase p;
+			Word w2;
+			if (s.entity1Index != 0) {
+				accumulate = 0;
+				cur = s.entity1Index - 1;
+				while (accumulate < countOfWindowNodes && cur >= 0) {
+					phraseLvFeat1 = unitDelimiter + phraseLvFeat1;
+					phraseLvFeat2 = unitDelimiter + phraseLvFeat2;
+					before1 = "";
+					before2 = "";
+					p = s.phrases.get(cur);
+					diff = countOfWindowNodes - accumulate;
+					if (diff >= p.words.size()) {
+						for (Word w : p.words) {
+							before1 += w.wText + " ";
+							before2 += w.tag + " ";
+						}
+						phraseLvFeat1 = inverseFlagAbbr
+								+ before1.substring(0, before1.length() - 1)
+								+ phraseLvFeat1;
+						phraseLvFeat2 = inverseFlagAbbr
+								+ before2.substring(0, before2.length() - 1)
+								+ phraseLvFeat2;
+					} else {
+						for (int i = 0; i < diff; i++) {
+							w2 = p.words.get(p.words.size() - 1 - i);
+							phraseLvFeat1 = " " + w2.wText + phraseLvFeat1;
+							phraseLvFeat2 = " " + w2.tag + phraseLvFeat2;
+						}
+						phraseLvFeat1 = inverseFlagAbbr
+								+ phraseLvFeat1.substring(1);
+						phraseLvFeat2 = inverseFlagAbbr
+								+ phraseLvFeat2.substring(1);
+					}
+
+					// not true in else-clause, but works fine
+					accumulate += p.words.size();
+					cur--;
+				}
+			}
+
+			// padding
+			if (includePadInFeatures) {
+				diff = countOfWindowNodes - accumulate;
+				if (diff > 0) {
+					before = inverseFlagAbbr;
+					for (int i = 0; i < diff; i++) {
+						before += "#PAD# ";
+					}
+					phraseLvFeat1 = before.substring(0, before.length() - 1)
+							+ unitDelimiter + phraseLvFeat1;
+					phraseLvFeat2 = before.substring(0, before.length() - 1)
+							+ unitDelimiter + phraseLvFeat2;
+				}
+			}
+
+			int pSize = s.phrases.size();
+			if (s.entity2Index != pSize) {
+				accumulate = 0;
+				cur = s.entity2Index + 1;
+				while (accumulate < countOfWindowNodes && cur < pSize) {
+					phraseLvFeat1 = phraseLvFeat1 + unitDelimiter
+							+ inverseFlagAbbr;
+					phraseLvFeat2 = phraseLvFeat2 + unitDelimiter
+							+ inverseFlagAbbr;
+					p = s.phrases.get(cur);
+					diff = countOfWindowNodes - accumulate;
+					if (diff >= p.words.size()) {
+						for (Word w : p.words) {
+							phraseLvFeat1 = phraseLvFeat1 + w.wText + " ";
+							phraseLvFeat2 = phraseLvFeat2 + w.tag + " ";
+						}
+					} else {
+						for (int i = 0; i < diff; i++) {
+							w2 = p.words.get(i);
+							phraseLvFeat1 = phraseLvFeat1 + w2.wText + " ";
+							phraseLvFeat2 = phraseLvFeat2 + w2.tag + " ";
+						}
+					}
+					phraseLvFeat1 = phraseLvFeat1.substring(0,
+							phraseLvFeat1.length() - 1);
+					phraseLvFeat2 = phraseLvFeat2.substring(0,
+							phraseLvFeat2.length() - 1);
+					// not true in else-clause, but works fine
+					accumulate += p.words.size();
+					cur++;
+				}
+			}
+
+			// padding
+			if (includePadInFeatures) {
+				diff = countOfWindowNodes - accumulate;
+				if (diff > 0) {
+					after = inverseFlagAbbr;
+					for (int i = 0; i < diff; i++) {
+						after += "#PAD# ";
+					}
+					phraseLvFeat1 += unitDelimiter
+							+ after.substring(0, after.length() - 1);
+					phraseLvFeat2 += unitDelimiter
+							+ after.substring(0, after.length() - 1);
+				}
+			}
+
+			// final processing of word-level features
+			wordLvFeat1 = wordLvFeat1.substring(1, wordLvFeat1.length() - 1);
+			wordLvFeat2 = wordLvFeat2.substring(1, wordLvFeat2.length() - 1);
 
 			String wordFeatureStem, tagFeatureStem;
 			// sentence-level lexical conjunction features
@@ -690,17 +794,16 @@ public class CandidatesToFeatures {
 
 			// phrase-level features
 			phraseLvFeats += "phrase-level-features{" + newLine;
+			phraseLvFeats += "word-feature:" + newLine + phraseLvFeat1
+					+ newLine;
+			phraseLvFeats += "tag-feature:" + newLine + phraseLvFeat2 + newLine;
 			phraseLvFeats += "}" + newLine;
 
 			// word-level features
 			wordLvFeats += "word-level-features{" + newLine;
-			// both wordLvFeat1 and wordLvFeat2 are unitDelimiter ended
-			wordLvFeats += "word-feature:" + newLine
-					+ wordLvFeat1.substring(1, wordLvFeat1.length() - 1)
-					+ newLine;
-			wordLvFeats += "tag-feature:" + newLine
-					+ wordLvFeat2.substring(1, wordLvFeat2.length() - 1)
-					+ newLine;
+			// both wordLvFeat1 and wordLvFeat2 are '' ended
+			wordLvFeats += "word-feature:" + newLine + wordLvFeat1 + newLine;
+			wordLvFeats += "tag-feature:" + newLine + wordLvFeat2 + newLine;
 			wordLvFeats += "}" + newLine;
 
 			// footer
