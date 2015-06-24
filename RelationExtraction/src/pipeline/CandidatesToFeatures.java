@@ -10,8 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.print.attribute.standard.PDLOverrideSupported;
-
 import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.Edge;
 import pipeline.ClassUtilities.PCMImpl2;
@@ -24,7 +22,6 @@ import pipeline.ClassUtilities.TypedDependencyProperty;
 import pipeline.ClassUtilities.Vertex;
 import pipeline.ClassUtilities.Word;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.CoreAnnotations.AbbrAnnotation;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
@@ -58,13 +55,24 @@ public class CandidatesToFeatures {
 	private HashMap<Integer, HashMap<Integer, TypedDependencyProperty>> dependencies;
 	private LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> fatPath;
 
+	// true for writing to the output file, false for outputting to the standard
+	// output
+	private boolean outputMethod;
+
 	public CandidatesToFeatures(String outputFileName) throws Exception {
 		lp = LexicalizedParser
 				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 		tokenizerFactory = PTBTokenizer
 				.factory(new CoreLabelTokenFactory(), "");
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
-		bw = new BufferedWriter(new FileWriter(outputFileName));
+
+		if (!outputFileName.equals("")) {
+			bw = new BufferedWriter(new FileWriter(outputFileName));
+			outputMethod = true;
+		} else {
+			outputMethod = false;
+		}
+
 		sentences = new ArrayList<Sentence>();
 	}
 
@@ -292,7 +300,7 @@ public class CandidatesToFeatures {
 		return false;
 	}
 
-	public void writeFeatures() {
+	public void writeFeatures() throws Exception {
 		String instance;
 		String newLine = "\n";
 		String inverseFlag, inverseFlagAbbr;
@@ -809,14 +817,21 @@ public class CandidatesToFeatures {
 			// footer
 			footer += "}" + newLine;
 
-			System.out.print(header);
-			System.out.print(sentenceLvFeats);
-			System.out.print(chunkLvFeats);
-			System.out.print(phraseLvFeats);
-			System.out.print(wordLvFeats);
-			System.out.print(footer);
+			// System.out.print(header);
+			// System.out.print(sentenceLvFeats);
+			// System.out.print(chunkLvFeats);
+			// System.out.print(phraseLvFeats);
+			// System.out.print(wordLvFeats);
+			// System.out.print(footer);
+			instance = header + sentenceLvFeats + chunkLvFeats + phraseLvFeats
+					+ wordLvFeats + footer;
+			if (outputMethod)
+				bw.write(instance);
+			else
+				System.out.print(instance);
 		}
-
+		if (outputMethod)
+			bw.close();
 	}
 
 	public void writeDemoFeatures() {

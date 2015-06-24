@@ -1,0 +1,162 @@
+instance{
+index: 0
+cui1: C0012634
+cui1-type: PHPR
+cui1-matched-words: disease
+cui2: C1711365
+cui2-type: ACTY
+cui2-matched-words: limited-field radiotherapy
+positivity: false
+inverse: true
+net-relation: treats
+meta-relation: null
+sentence: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
+sentence-level-features{
+feature: inverse_true|PHPR|who received|ACTY
+feature: inverse_true|supradiaphragmatic|PHPR|who received|ACTY|to
+feature: inverse_true|with supradiaphragmatic|PHPR|who received|ACTY|to regions
+feature: inverse_true|PHPR|WP VBD|ACTY
+feature: inverse_true|JJ|PHPR|WP VBD|ACTY|TO
+feature: inverse_true|IN JJ|PHPR|WP VBD|ACTY|TO NNS
+feature: str:inverse_true|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|PHPR|<-->->|ACTY
+feature: str:inverse_true|with[case]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|[case]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
+feature: str:inverse_true|supradiaphragmatic[amod]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|[amod]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
+}
+chunk-level-features{
+word-feature:
+inverse_true|with supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who received
+inverse_true|ACTY
+inverse_true|to regions
+tag-feature:
+inverse_true|IN JJ
+inverse_true|PHPR
+inverse_true|WP VBD
+inverse_true|ACTY
+inverse_true|TO NNS
+}
+phrase-level-features{
+word-feature:
+inverse_true|with supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who
+inverse_true|received
+inverse_true|ACTY
+inverse_true|to regions
+tag-feature:
+inverse_true|IN JJ
+inverse_true|PHPR
+inverse_true|WP
+inverse_true|VBD
+inverse_true|ACTY
+inverse_true|TO NNS
+}
+word-level-features{
+word-feature:
+inverse_true|with
+inverse_true|supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who
+inverse_true|received
+inverse_true|ACTY
+inverse_true|to
+inverse_true|regions
+tag-feature:
+inverse_true|IN
+inverse_true|JJ
+inverse_true|PHPR
+inverse_true|WP
+inverse_true|VBD
+inverse_true|ACTY
+inverse_true|TO
+inverse_true|NNS
+}
+}
+instance{
+index: 0
+cui1: C0012634
+cui1-type: PHPR
+cui1-matched-words: disease
+cui2: C1711365
+cui2-type: ACTY
+cui2-matched-words: limited-field radiotherapy
+positivity: false
+inverse: true
+net-relation: prevents
+meta-relation: null
+sentence: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
+sentence-level-features{
+feature: inverse_true|PHPR|who received|ACTY
+feature: inverse_true|supradiaphragmatic|PHPR|who received|ACTY|to
+feature: inverse_true|with supradiaphragmatic|PHPR|who received|ACTY|to regions
+feature: inverse_true|PHPR|WP VBD|ACTY
+feature: inverse_true|JJ|PHPR|WP VBD|ACTY|TO
+feature: inverse_true|IN JJ|PHPR|WP VBD|ACTY|TO NNS
+feature: str:inverse_true|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|PHPR|<-->->|ACTY
+feature: str:inverse_true|with[case]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|[case]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
+feature: str:inverse_true|supradiaphragmatic[amod]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
+feature: dep:inverse_true|[amod]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
+feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
+}
+chunk-level-features{
+word-feature:
+inverse_true|with supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who received
+inverse_true|ACTY
+inverse_true|to regions
+tag-feature:
+inverse_true|IN JJ
+inverse_true|PHPR
+inverse_true|WP VBD
+inverse_true|ACTY
+inverse_true|TO NNS
+}
+phrase-level-features{
+word-feature:
+inverse_true|with supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who
+inverse_true|received
+inverse_true|ACTY
+inverse_true|to regions
+tag-feature:
+inverse_true|IN JJ
+inverse_true|PHPR
+inverse_true|WP
+inverse_true|VBD
+inverse_true|ACTY
+inverse_true|TO NNS
+}
+word-level-features{
+word-feature:
+inverse_true|with
+inverse_true|supradiaphragmatic
+inverse_true|PHPR
+inverse_true|who
+inverse_true|received
+inverse_true|ACTY
+inverse_true|to
+inverse_true|regions
+tag-feature:
+inverse_true|IN
+inverse_true|JJ
+inverse_true|PHPR
+inverse_true|WP
+inverse_true|VBD
+inverse_true|ACTY
+inverse_true|TO
+inverse_true|NNS
+}
+}
