@@ -22,6 +22,7 @@ import pipeline.ClassUtilities.TypedDependencyProperty;
 import pipeline.ClassUtilities.Vertex;
 import pipeline.ClassUtilities.Word;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.CoreAnnotations.AbbrAnnotation;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
@@ -303,8 +304,9 @@ public class CandidatesToFeatures {
 		int index;
 		ArrayList<TypedDependencyProperty> tdpArr;
 		String entity1MatchedWords, entity2MatchedWords;
-		boolean includePadInFeatures = true;
+		boolean includePadInFeatures = false;
 		String unitDelimiter = "\n";
+		int unitDelimiterLength = unitDelimiter.length();
 		for (Sentence s : sentences) {
 			String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
 			// feat1's are for word unit compound, feat2's are for tag unit
@@ -409,8 +411,10 @@ public class CandidatesToFeatures {
 
 			wordLvFeat1 = unitDelimiter + wordLvFeat1 + unitDelimiter;
 			wordLvFeat2 = unitDelimiter + wordLvFeat2 + unitDelimiter;
-			chunkLvFeat1 = unitDelimiter + chunkLvFeat1 + unitDelimiter;
-			chunkLvFeat2 = unitDelimiter + chunkLvFeat2 + unitDelimiter;
+			chunkLvFeat1 = unitDelimiter + chunkLvFeat1 + unitDelimiter
+					+ inverseFlagAbbr;
+			chunkLvFeat2 = unitDelimiter + chunkLvFeat2 + unitDelimiter
+					+ inverseFlagAbbr;
 
 			for (int i = 1; i <= countOfWindowNodes; i++) {
 				index = entity1FirstWordIndex - i;
@@ -468,6 +472,35 @@ public class CandidatesToFeatures {
 				}
 
 			}
+
+			int inverseFlagAbbrLength = inverseFlagAbbr.length();
+
+			if (!chunkLvFeat1.substring(0, unitDelimiterLength).equals(
+					unitDelimiter))
+				chunkLvFeat1 = inverseFlagAbbr + chunkLvFeat1.substring(1);
+			else
+				chunkLvFeat1 = chunkLvFeat1.substring(unitDelimiterLength);
+			if (chunkLvFeat1.substring(
+					chunkLvFeat1.length() - inverseFlagAbbrLength).equals(
+					inverseFlagAbbr))
+				chunkLvFeat1 = chunkLvFeat1.substring(0, chunkLvFeat1.length()
+						- inverseFlagAbbrLength);
+			else
+				chunkLvFeat1 = chunkLvFeat1.substring(0,
+						chunkLvFeat1.length() - 1);
+			if (!chunkLvFeat2.substring(0, unitDelimiterLength).equals(
+					unitDelimiter))
+				chunkLvFeat2 = inverseFlagAbbr + chunkLvFeat2.substring(1);
+			else
+				chunkLvFeat2 = chunkLvFeat2.substring(unitDelimiterLength);
+			if (chunkLvFeat2.substring(
+					chunkLvFeat2.length() - inverseFlagAbbrLength).equals(
+					inverseFlagAbbr))
+				chunkLvFeat2 = chunkLvFeat2.substring(0, chunkLvFeat2.length()
+						- inverseFlagAbbrLength);
+			else
+				chunkLvFeat2 = chunkLvFeat2.substring(0,
+						chunkLvFeat2.length() - 1);
 
 			String wordFeatureStem, tagFeatureStem;
 			// sentence-level lexical conjunction features
@@ -650,13 +683,9 @@ public class CandidatesToFeatures {
 
 			// chunk-level features
 			chunkLvFeats += "chunk-level-features{" + newLine;
-			// both chunkLvFeat1 and chunkLvFeat2 are '\n'/' ' ended
-			chunkLvFeats += "word-feature: " + newLine
-					+ chunkLvFeat1.substring(1, chunkLvFeat1.length() - 1)
-					+ newLine;
-			chunkLvFeats += "tag-feature: " + newLine
-					+ chunkLvFeat2.substring(1, chunkLvFeat2.length() - 1)
-					+ newLine;
+			// both chunkLvFeat1 and chunkLvFeat2 are '' ended
+			chunkLvFeats += "word-feature:" + newLine + chunkLvFeat1 + newLine;
+			chunkLvFeats += "tag-feature:" + newLine + chunkLvFeat2 + newLine;
 			chunkLvFeats += "}" + newLine;
 
 			// phrase-level features
@@ -665,9 +694,13 @@ public class CandidatesToFeatures {
 
 			// word-level features
 			wordLvFeats += "word-level-features{" + newLine;
-			// both wordLvFeat1 and wordLvFeat2 are '\n' ended
-			wordLvFeats += "word-feature: " + wordLvFeat1;
-			wordLvFeats += "tag-feature: " + wordLvFeat2;
+			// both wordLvFeat1 and wordLvFeat2 are unitDelimiter ended
+			wordLvFeats += "word-feature:" + newLine
+					+ wordLvFeat1.substring(1, wordLvFeat1.length() - 1)
+					+ newLine;
+			wordLvFeats += "tag-feature:" + newLine
+					+ wordLvFeat2.substring(1, wordLvFeat2.length() - 1)
+					+ newLine;
 			wordLvFeats += "}" + newLine;
 
 			// footer
