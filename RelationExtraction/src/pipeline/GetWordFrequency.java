@@ -64,10 +64,29 @@ public class GetWordFrequency {
 		}
 		br.close();
 
+		Map<String, Integer> stemmedWordFrequencyMap = new TreeMap<String, Integer>();
+		Integer newFrequency;
+
+		for (Map.Entry<String, Integer> entry : wordFrequencyMap.entrySet()) {
+			word = entry.getKey();
+			frequency = entry.getValue();
+
+			// stemming
+			stemmer.setCurrent(word);
+			stemmer.stem();
+			word = stemmer.getCurrent();
+
+			newFrequency = stemmedWordFrequencyMap.get(word);
+			newFrequency = (newFrequency == null) ? frequency
+					: (frequency + newFrequency);
+			stemmedWordFrequencyMap.put(word, newFrequency);
+		}
+
 		String outputFile = "wordFrequency.txt";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
 				outputFile)));
-		for (Map.Entry<String, Integer> entry : wordFrequencyMap.entrySet()) {
+		for (Map.Entry<String, Integer> entry : stemmedWordFrequencyMap
+				.entrySet()) {
 			bw.write(entry.getKey() + " " + entry.getValue());
 			bw.newLine();
 		}
