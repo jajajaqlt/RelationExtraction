@@ -36,7 +36,7 @@ public class GetWordFrequency {
 		// String your_stemmed_word = stemmer.getCurrent();
 		// System.out.println(your_stemmed_word);
 
-		String inputFile = "F:\\Data\\Medline_Abstracts\\all_abstracts_1-100.txt";
+		String inputFile = "F:\\Data\\Medline_Abstracts\\all_abstracts.txt";
 		BufferedReader br = new BufferedReader(new FileReader(new File(
 				inputFile)));
 
