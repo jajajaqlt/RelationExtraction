@@ -16,7 +16,8 @@ public class Pipeline {
 				semanticTypeAbbreviationFile, abstractsFile, metaRelationsFile);
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 		// uses wordDictFile, tagDictFile and depTypeDictFile here later
-		CandidatesToFeatures c2f = new CandidatesToFeatures(outputFile);
+		CandidatesToFeatures c2f = new CandidatesToFeatures(outputFile,
+				wordDictFile, tagDictFile, depTypeDictFile);
 		c2f.getSentences(candidates);
 		c2f.writeFeatures();
 

@@ -1,6 +1,8 @@
 package pipeline;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.util.HashIndex;
 import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Utterance;
@@ -59,7 +62,12 @@ public class CandidatesToFeatures {
 	// output
 	private boolean outputMethod;
 
-	public CandidatesToFeatures(String outputFileName) throws Exception {
+	private HashIndex<String> wordIndex;
+	private HashIndex<String> tagIndex;
+	private HashIndex<String> depIndex;
+
+	public CandidatesToFeatures(String outputFileName, String wordDictFile,
+			String tagDictFile, String depTypeDictFile) throws Exception {
 		lp = LexicalizedParser
 				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 		tokenizerFactory = PTBTokenizer
@@ -73,7 +81,34 @@ public class CandidatesToFeatures {
 			outputMethod = false;
 		}
 
+		initializeIndices(wordDictFile, tagDictFile, depTypeDictFile);
+
 		sentences = new ArrayList<Sentence>();
+	}
+
+	private void initializeIndices(String wordDictFile, String tagDictFile,
+			String depTypeDictFile) throws Exception {
+		String line;
+		BufferedReader br = new BufferedReader(new FileReader(wordDictFile));
+		wordIndex = new HashIndex<String>();
+		while ((line = br.readLine()) != null) {
+			wordIndex.add(line);
+		}
+		br.close();
+
+		br = new BufferedReader(new FileReader(tagDictFile));
+		tagIndex = new HashIndex<String>();
+		while ((line = br.readLine()) != null) {
+			tagIndex.add(line);
+		}
+		br.close();
+
+		br = new BufferedReader(new FileReader(depTypeDictFile));
+		depIndex = new HashIndex<String>();
+		while ((line = br.readLine()) != null) {
+			depIndex.add(line);
+		}
+		br.close();
 	}
 
 	public void getSentences(ArrayList<Candidate> candidates) throws Exception {
