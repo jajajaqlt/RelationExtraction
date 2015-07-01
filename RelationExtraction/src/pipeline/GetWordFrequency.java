@@ -59,7 +59,7 @@ public class GetWordFrequency {
 				wordFrequencyMap.put(word, frequency);
 			}
 			index++;
-			if (index % 1000 == 0)
+			if (index % 10000 == 0)
 				System.out.println("Current abstract is #" + index + ".");
 		}
 		br.close();
