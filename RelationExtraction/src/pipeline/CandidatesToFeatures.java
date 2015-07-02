@@ -893,22 +893,39 @@ public class CandidatesToFeatures {
 			// chunk-level features
 			chunkLvFeats += "chunk-level-features{" + newLine;
 			// both chunkLvFeat1 and chunkLvFeat2 are '' ended
-			chunkLvFeats += "word-feature:" + newLine + chunkLvFeat1 + newLine;
-			chunkLvFeats += "tag-feature:" + newLine + chunkLvFeat2 + newLine;
+			chunkLvFeats += "word-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(chunkLvFeat1, "w",
+							inverseFlagAbbr, newLine) + newLine;
+			chunkLvFeats += "tag-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(chunkLvFeat2, "t",
+							inverseFlagAbbr, newLine) + newLine;
 			chunkLvFeats += "}" + newLine;
 
 			// phrase-level features
 			phraseLvFeats += "phrase-level-features{" + newLine;
-			phraseLvFeats += "word-feature:" + newLine + phraseLvFeat1
-					+ newLine;
-			phraseLvFeats += "tag-feature:" + newLine + phraseLvFeat2 + newLine;
+			phraseLvFeats += "word-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(phraseLvFeat1, "w",
+							inverseFlagAbbr, newLine) + newLine;
+			phraseLvFeats += "tag-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(phraseLvFeat2, "t",
+							inverseFlagAbbr, newLine) + newLine;
 			phraseLvFeats += "}" + newLine;
 
 			// word-level features
 			wordLvFeats += "word-level-features{" + newLine;
 			// both wordLvFeat1 and wordLvFeat2 are '' ended
-			wordLvFeats += "word-feature:" + newLine + wordLvFeat1 + newLine;
-			wordLvFeats += "tag-feature:" + newLine + wordLvFeat2 + newLine;
+			wordLvFeats += "word-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(wordLvFeat1, "w",
+							inverseFlagAbbr, newLine) + newLine;
+			wordLvFeats += "tag-feature:"
+					+ newLine
+					+ addIndicesToFeatureGroup(wordLvFeat2, "t",
+							inverseFlagAbbr, newLine) + newLine;
 			wordLvFeats += "}" + newLine;
 
 			// footer
@@ -929,6 +946,36 @@ public class CandidatesToFeatures {
 		}
 		if (outputMethod)
 			bw.close();
+	}
+
+	// featGroup is "" ended
+	private String addIndicesToFeatureGroup(String featGroup, String type,
+			String invFlag, String delimiter) {
+		// ret is "" ended
+		String ret = "";
+		String[] lines, tokens;
+		String line, token;
+		int flagSize = invFlag.length();
+		String index;
+
+		lines = featGroup.split(delimiter);
+		for (int i = 0; i < lines.length; i++) {
+			line = lines[i];
+			ret += line + delimiter;
+			ret += "bow: ";
+			line = line.substring(flagSize);
+			tokens = line.split(" ");
+			for (int j = 0; j < tokens.length; j++) {
+				token = tokens[j];
+				index = getIndex(token, type);
+				ret += index;
+			}
+			ret += delimiter;
+		}
+
+		ret = ret.substring(0, ret.length() - delimiter.length());
+
+		return ret;
 	}
 
 	public void writeDemoFeatures() {
