@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.tartarus.snowball.SnowballStemmer;
+
 import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.Edge;
 import pipeline.ClassUtilities.PCMImpl2;
@@ -66,6 +68,8 @@ public class CandidatesToFeatures {
 	private HashIndex<String> tagIndex;
 	private HashIndex<String> depIndex;
 
+	private SnowballStemmer stemmer;
+
 	public CandidatesToFeatures(String outputFileName, String wordDictFile,
 			String tagDictFile, String depTypeDictFile) throws Exception {
 		lp = LexicalizedParser
@@ -82,6 +86,10 @@ public class CandidatesToFeatures {
 		}
 
 		initializeIndices(wordDictFile, tagDictFile, depTypeDictFile);
+
+		Class stemClass = Class.forName("org.tartarus.snowball.ext."
+				+ "english" + "Stemmer");
+		stemmer = (SnowballStemmer) stemClass.newInstance();
 
 		sentences = new ArrayList<Sentence>();
 	}
@@ -352,6 +360,10 @@ public class CandidatesToFeatures {
 		boolean includePadInFeatures = true;
 		String unitDelimiter = "\n";
 		int unitDelimiterLength = unitDelimiter.length();
+
+		// sentence-level bag of words features
+		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
+
 		for (Sentence s : sentences) {
 			String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
 			// feat1's are for word unit compound, feat2's are for tag unit
@@ -687,6 +699,44 @@ public class CandidatesToFeatures {
 						+ tagFeatureStem + newLine;
 			}
 
+			// sentence-level bag of words features
+			// word indices and tag indices
+			String[] splits1, splits2;
+			String word, tag, stemmedWord;
+			sLvWordIndices = "";
+			sLvTagIndices = "";
+			splits1 = middleWords.split(" ");
+			splits2 = middleTags.split(" ");
+
+			for (int i = 0; i < splits1.length; i++) {
+				word = splits1[i];
+				sLvWordIndices += getIndex(word, "w");
+
+				tag = splits2[i];
+				sLvTagIndices += getIndex(tag, "t");
+			}
+
+			for (int i = 0; i < leftWords.size(); i++) {
+				word = leftWords.get(i).wText;
+				sLvWordIndices = getIndex(word, "w") + sLvWordIndices;
+
+				tag = leftWords.get(i).tag;
+				sLvTagIndices = getIndex(tag, "t") + sLvTagIndices;
+			}
+
+			for (int i = 0; i < rightWords.size(); i++) {
+				word = rightWords.get(i).wText;
+				sLvWordIndices += getIndex(word, "w");
+
+				tag = rightWords.get(i).tag;
+
+				sLvTagIndices += getIndex(tag, "t");
+			}
+
+			// sentence-level bag of words features: dep indices
+			sLvDepTypeIndices = "";
+			sLvDepWordIndices = "";
+
 			// sentence-level syntactic conjunction features
 			String strFeatureStem = "", depFeatureStem = "", dirFeatureStem = "";
 			/**
@@ -695,7 +745,7 @@ public class CandidatesToFeatures {
 			 * features, *LONG-TYPE* for dep syntactic features.
 			 */
 
-			String word, arrow, type;
+			String arrow, type;
 			for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
 					.entrySet()) {
 				index = m.getKey();
@@ -706,12 +756,15 @@ public class CandidatesToFeatures {
 					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
 					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
 					dirFeatureStem += "->";
+					sLvDepTypeIndices += getIndex(tdpArr.get(0).relation, "d");
 				} else if (index == -2) {
 					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
 					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
 					dirFeatureStem += "<-";
+					sLvDepTypeIndices += getIndex(tdpArr.get(0).relation, "d");
 				} else {
 					word = s.words.get(index - 1).word();
+					sLvDepWordIndices += getIndex(word, "w");
 					for (TypedDependencyProperty tdp : tdpArr) {
 						if (tdp.position) {
 							// left case
@@ -726,6 +779,7 @@ public class CandidatesToFeatures {
 							depFeatureStem += "[" + tdp.relation + "]" + "->";
 							dirFeatureStem += "->";
 						}
+						sLvDepTypeIndices += getIndex(tdp.relation, "d");
 					}
 					strFeatureStem += word;
 				}
@@ -753,12 +807,15 @@ public class CandidatesToFeatures {
 				index = entry.getKey();
 				tdp = entry.getValue();
 				word = s.words.get(index - 1).word();
+				sLvDepWordIndices = getIndex(word, "w") + sLvDepWordIndices;
 				// format "word""[dependency-type]""arrow""feature-stem"
 				if (tdp.position)
 					arrow = "<-";
 				else
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
+				sLvDepTypeIndices = getIndex(tdp.relation, "d")
+						+ sLvDepTypeIndices;
 				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
 						+ word + type + arrow + "|" + strFeatureStem + newLine;
 				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
@@ -773,12 +830,14 @@ public class CandidatesToFeatures {
 				index = entry.getKey();
 				tdp = entry.getValue();
 				word = s.words.get(index - 1).word();
+				sLvDepWordIndices += getIndex(word, "w");
 				// format "word""[dependency-type]""arrow""feature-stem"
 				if (tdp.position)
 					arrow = "<-";
 				else
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
+				sLvDepTypeIndices += getIndex(word, "d");
 				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
 						+ strFeatureStem + "|" + type + arrow + word + newLine;
 				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
@@ -825,7 +884,10 @@ public class CandidatesToFeatures {
 			}
 
 			// sentence-level bag of words features
-
+			sentenceLvFeats += "bow-feature: " + sLvWordIndices + newLine;
+			sentenceLvFeats += "bow-feature: " + sLvTagIndices + newLine;
+			sentenceLvFeats += "bow-feature: " + sLvDepTypeIndices + newLine;
+			sentenceLvFeats += "bow-feature: " + sLvDepWordIndices + newLine;
 			sentenceLvFeats += "}" + newLine;
 
 			// chunk-level features
@@ -930,6 +992,30 @@ public class CandidatesToFeatures {
 			System.out.println(features);
 		}
 
+	}
+
+	private String getIndex(String token, String type) {
+		int index = -1;
+		if (type.equals("w")) {
+			String stemmedWord;
+			stemmer.setCurrent(token);
+			stemmer.stem();
+			stemmedWord = stemmer.getCurrent();
+			index = wordIndex.indexOf(stemmedWord);
+		}
+
+		if (type.equals("t")) {
+			index = tagIndex.indexOf(token);
+		}
+
+		if (type.equals("d")) {
+			index = depIndex.indexOf(token);
+		}
+
+		if (index != -1)
+			return "" + index + " ";
+		else
+			return "";
 	}
 
 	private void printPhrases() {
