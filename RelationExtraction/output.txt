@@ -1,162 +1,273 @@
-instance{
-index: 0
-cui1: C0012634
-cui1-type: PHPR
-cui1-matched-words: disease
-cui2: C1711365
-cui2-type: ACTY
-cui2-matched-words: limited-field radiotherapy
-positivity: false
-inverse: true
-net-relation: treats
-meta-relation: null
-sentence: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
-sentence-level-features{
-feature: inverse_true|PHPR|who received|ACTY
-feature: inverse_true|supradiaphragmatic|PHPR|who received|ACTY|to
-feature: inverse_true|with supradiaphragmatic|PHPR|who received|ACTY|to regions
-feature: inverse_true|PHPR|WP VBD|ACTY
-feature: inverse_true|JJ|PHPR|WP VBD|ACTY|TO
-feature: inverse_true|IN JJ|PHPR|WP VBD|ACTY|TO NNS
-feature: str:inverse_true|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|PHPR|<-->->|ACTY
-feature: str:inverse_true|with[case]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|[case]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
-feature: str:inverse_true|supradiaphragmatic[amod]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|[amod]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
-}
-chunk-level-features{
-word-feature:
-inverse_true|with supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who received
-inverse_true|ACTY
-inverse_true|to regions
-tag-feature:
-inverse_true|IN JJ
-inverse_true|PHPR
-inverse_true|WP VBD
-inverse_true|ACTY
-inverse_true|TO NNS
-}
-phrase-level-features{
-word-feature:
-inverse_true|with supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who
-inverse_true|received
-inverse_true|ACTY
-inverse_true|to regions
-tag-feature:
-inverse_true|IN JJ
-inverse_true|PHPR
-inverse_true|WP
-inverse_true|VBD
-inverse_true|ACTY
-inverse_true|TO NNS
-}
-word-level-features{
-word-feature:
-inverse_true|with
-inverse_true|supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who
-inverse_true|received
-inverse_true|ACTY
-inverse_true|to
-inverse_true|regions
-tag-feature:
-inverse_true|IN
-inverse_true|JJ
-inverse_true|PHPR
-inverse_true|WP
-inverse_true|VBD
-inverse_true|ACTY
-inverse_true|TO
-inverse_true|NNS
-}
-}
-instance{
-index: 0
-cui1: C0012634
-cui1-type: PHPR
-cui1-matched-words: disease
-cui2: C1711365
-cui2-type: ACTY
-cui2-matched-words: limited-field radiotherapy
-positivity: false
-inverse: true
-net-relation: prevents
-meta-relation: null
-sentence: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
-sentence-level-features{
-feature: inverse_true|PHPR|who received|ACTY
-feature: inverse_true|supradiaphragmatic|PHPR|who received|ACTY|to
-feature: inverse_true|with supradiaphragmatic|PHPR|who received|ACTY|to regions
-feature: inverse_true|PHPR|WP VBD|ACTY
-feature: inverse_true|JJ|PHPR|WP VBD|ACTY|TO
-feature: inverse_true|IN JJ|PHPR|WP VBD|ACTY|TO NNS
-feature: str:inverse_true|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|PHPR|<-->->|ACTY
-feature: str:inverse_true|with[case]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|[case]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
-feature: str:inverse_true|supradiaphragmatic[amod]<-|PHPR|[nmod]<-patients[acl:relcl]->received[dobj]->|ACTY
-feature: dep:inverse_true|[amod]<-|PHPR|[nmod]<-[acl:relcl]->[dobj]->|ACTY
-feature: dir:inverse_true|<-|PHPR|<-->->|ACTY
-}
-chunk-level-features{
-word-feature:
-inverse_true|with supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who received
-inverse_true|ACTY
-inverse_true|to regions
-tag-feature:
-inverse_true|IN JJ
-inverse_true|PHPR
-inverse_true|WP VBD
-inverse_true|ACTY
-inverse_true|TO NNS
-}
-phrase-level-features{
-word-feature:
-inverse_true|with supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who
-inverse_true|received
-inverse_true|ACTY
-inverse_true|to regions
-tag-feature:
-inverse_true|IN JJ
-inverse_true|PHPR
-inverse_true|WP
-inverse_true|VBD
-inverse_true|ACTY
-inverse_true|TO NNS
-}
-word-level-features{
-word-feature:
-inverse_true|with
-inverse_true|supradiaphragmatic
-inverse_true|PHPR
-inverse_true|who
-inverse_true|received
-inverse_true|ACTY
-inverse_true|to
-inverse_true|regions
-tag-feature:
-inverse_true|IN
-inverse_true|JJ
-inverse_true|PHPR
-inverse_true|WP
-inverse_true|VBD
-inverse_true|ACTY
-inverse_true|TO
-inverse_true|NNS
-}
-}
+Acronyms and Abbreviations:
+ None.
+Negations:
+type: nega
+Trigger: not: [(116, 3),]
+ConceptPairs: [(C0596545,Experience),]
+ConceptPositionList: [(172, 11),]
+Utterance:
+ Id: 00000000.tx.1
+ Utterance text: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
+ Position: (0, 198)
+Phrase:
+ text: None of the 15 patients
+ phrase_positional_info: (0, 23)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -686
+   Score: -760
+   Concept Id: C0549184
+   Concept Name: None
+   Preferred Name: None
+   Matched Words: [none]
+   Semantic Types: [qnco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH]
+   Positional Info: [(0, 4)]
+   Score: -760
+   Concept Id: C0030705
+   Concept Name: Patients
+   Preferred Name: Patients
+   Matched Words: [patients]
+   Semantic Types: [podg]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [LNC, MTH, NCI, SNOMEDCT_US]
+   Positional Info: [(15, 8)]
+Phrase:
+ text: with supradiaphragmatic disease
+ phrase_positional_info: (24, 31)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -861
+   Score: -861
+   Concept Id: C0012634
+   Concept Name: Disease
+   Preferred Name: Disease
+   Matched Words: [disease]
+   Semantic Types: [dsyn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CSP, MTH, NCI, SNOMEDCT_US]
+   Positional Info: [(48, 7)]
+Phrase:
+ text: who
+ phrase_positional_info: (56, 3)
+Candidates:
+Mappings:
+Phrase:
+ text: received
+ phrase_positional_info: (60, 8)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C1514756
+   Concept Name: Received
+   Preferred Name: Receive
+   Matched Words: [received]
+   Semantic Types: [qlco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [NCI]
+   Positional Info: [(60, 8)]
+Phrase:
+ text: limited-field radiotherapy to regions
+ phrase_positional_info: (69, 37)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -752
+   Score: -797
+   Concept Id: C1711365
+   Concept Name: limited radiotherapy
+   Preferred Name: Limited Radiation Therapy
+   Matched Words: [limited, radiotherapy]
+   Semantic Types: [topp]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [NCI, NLMSubSyn]
+   Positional Info: [(69, 7), (83, 12)]
+   Score: -593
+   Concept Id: C2349184
+   Concept Name: Field
+   Preferred Name: Force Field
+   Matched Words: [field]
+   Semantic Types: [cnce]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [MTH, NCI, NLMSubSyn]
+   Positional Info: [(77, 5)]
+   Score: -560
+   Concept Id: C0017446
+   Concept Name: Region
+   Preferred Name: Geographic Locations
+   Matched Words: [region]
+   Semantic Types: [geoa]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [CSP, MTH, NCI]
+   Positional Info: [(99, 7)]
+ Mapping:
+  Map Score: -752
+   Score: -593
+   Concept Id: C0439801
+   Concept Name: Limited
+   Preferred Name: Limited (extensiveness)
+   Matched Words: [limited]
+   Semantic Types: [ftcn]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [CHV, MTH, SNOMEDCT_US]
+   Positional Info: [(69, 7)]
+   Score: -797
+   Concept Id: C1882536
+   Concept Name: radiotherapy field
+   Preferred Name: Radiation Field
+   Matched Words: [radiotherapy, field]
+   Semantic Types: [blor]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [NCI, NLMSubSyn]
+   Positional Info: [(77, 18)]
+   Score: -560
+   Concept Id: C0017446
+   Concept Name: Region
+   Preferred Name: Geographic Locations
+   Matched Words: [region]
+   Semantic Types: [geoa]
+   is Head?: false
+   is Overmatch?: false
+   Sources: [CSP, MTH, NCI]
+   Positional Info: [(99, 7)]
+Phrase:
+ text: that
+ phrase_positional_info: (107, 4)
+Candidates:
+Mappings:
+Phrase:
+ text: did
+ phrase_positional_info: (112, 3)
+Candidates:
+Mappings:
+Phrase:
+ text: not
+ phrase_positional_info: (116, 3)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C1518422
+   Concept Name: Not
+   Preferred Name: Negation
+   Matched Words: [not]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [MTH, NCI]
+   Positional Info: [(116, 3)]
+Phrase:
+ text: include
+ phrase_positional_info: (120, 7)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0332257
+   Concept Name: include
+   Preferred Name: Including (qualifier)
+   Matched Words: [include]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MTH, SNOMEDCT_US]
+   Positional Info: [(120, 7)]
+Phrase:
+ text: the mediastinal
+ phrase_positional_info: (128, 15)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0025066
+   Concept Name: Mediastinal
+   Preferred Name: Mediastinum
+   Matched Words: [mediastinal]
+   Semantic Types: [blor]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [FMA, MTH, SNOMEDCT_US]
+   Positional Info: [(132, 11)]
+Phrase:
+ text: or
+ phrase_positional_info: (144, 2)
+Candidates:
+Mappings:
+Phrase:
+ text: hilar nodes subsequently
+ phrase_positional_info: (147, 24)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -790
+   Score: -827
+   Concept Id: C0205150
+   Concept Name: Hilar
+   Preferred Name: Hilar
+   Matched Words: [hilar]
+   Semantic Types: [spco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [SNOMEDCT_US]
+   Positional Info: [(147, 5)]
+   Score: -827
+   Concept Id: C0746922
+   Concept Name: nodes
+   Preferred Name: Anatomic Node
+   Matched Words: [nodes]
+   Semantic Types: [bpoc]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MTH, NCI]
+   Positional Info: [(153, 5)]
+Phrase:
+ text: experienced
+ phrase_positional_info: (172, 11)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -966
+   Score: -966
+   Concept Id: C0596545
+   Concept Name: Experience
+   Preferred Name: Experience
+   Matched Words: [experience]
+   Semantic Types: [menp]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MTH]
+   Positional Info: [(172, 11)]
+Phrase:
+ text: relapse there.
+ phrase_positional_info: (184, 14)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -861
+   Score: -861
+   Concept Id: C0205336
+   Concept Name: relapse
+   Preferred Name: Relapsing course
+   Matched Words: [relapse]
+   Semantic Types: [tmco]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MTH]
+   Positional Info: [(184, 7)]

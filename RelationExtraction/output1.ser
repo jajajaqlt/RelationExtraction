@@ -1,0 +1,59 @@
+Acronyms and Abbreviations:
+ None.
+Negations:
+ None.
+Utterance:
+ Id: 00000000.tx.1
+ Utterance text: Aspirin treats heart disease.
+ Position: (0, 29)
+Phrase:
+ text: Aspirin
+ phrase_positional_info: (0, 7)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0004057
+   Concept Name: Aspirin
+   Preferred Name: Aspirin
+   Matched Words: [aspirin]
+   Semantic Types: [orch, phsu]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CHV, MSH, NCI, PDQ, SNOMEDCT_US]
+   Positional Info: [(0, 7)]
+Phrase:
+ text: treats
+ phrase_positional_info: (8, 6)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C1292734
+   Concept Name: TREAT
+   Preferred Name: Treatment intent
+   Matched Words: [treat]
+   Semantic Types: [ftcn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [NCI, NLMSubSyn, SNOMEDCT_US]
+   Positional Info: [(8, 6)]
+Phrase:
+ text: heart disease.
+ phrase_positional_info: (15, 14)
+Candidates:
+Mappings:
+ Mapping:
+  Map Score: -1000
+   Score: -1000
+   Concept Id: C0018799
+   Concept Name: Heart disease
+   Preferred Name: Heart Diseases
+   Matched Words: [heart, disease]
+   Semantic Types: [dsyn]
+   is Head?: true
+   is Overmatch?: false
+   Sources: [CCS, CHV, CST, ICD10CM, MSH, MTH, NCI, NLMSubSyn, SNOMEDCT_US]
+   Positional Info: [(15, 13)]
