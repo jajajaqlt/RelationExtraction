@@ -370,7 +370,7 @@ public class CandidatesToFeatures {
 			// compound
 			String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
 			// header
-			header += "instance{" + newLine;
+			header += "<instance>" + newLine;
 			header += "index: " + s.abstractIndex + newLine;
 			header += "cui1: " + s.entity1Cui + newLine;
 			header += "cui1-type: " + s.entity1NE + newLine;
@@ -404,7 +404,7 @@ public class CandidatesToFeatures {
 			header += "sentence: " + s.sentenceText + newLine;
 
 			// sentence-level features
-			sentenceLvFeats += "sentence-level-features{" + newLine;
+			sentenceLvFeats += "<sentence-level-features>" + newLine;
 
 			// the sequence of words between the two entities
 			// the part-of-speech tags of these words
@@ -745,6 +745,11 @@ public class CandidatesToFeatures {
 			 * features, *LONG-TYPE* for dep syntactic features.
 			 */
 
+			/**
+			 * Reasons for not doing long-path:
+			 * 1. Takes time and effect is not clear.
+			 * 2. On average, a sentence is not very long due to nature of abstract.
+			 */
 			String arrow, type;
 			for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
 					.entrySet()) {
@@ -884,52 +889,55 @@ public class CandidatesToFeatures {
 			}
 
 			// sentence-level bag of words features
-			sentenceLvFeats += "bow-feature: " + sLvWordIndices + newLine;
-			sentenceLvFeats += "bow-feature: " + sLvTagIndices + newLine;
-			sentenceLvFeats += "bow-feature: " + sLvDepTypeIndices + newLine;
-			sentenceLvFeats += "bow-feature: " + sLvDepWordIndices + newLine;
-			sentenceLvFeats += "}" + newLine;
+			sentenceLvFeats += "bag-of-words-features:" + newLine;
+			sentenceLvFeats += "bow-word-feature: " + sLvWordIndices + newLine;
+			sentenceLvFeats += "bow-tag-feature: " + sLvTagIndices + newLine;
+			sentenceLvFeats += "bow-dep-feature: " + sLvDepTypeIndices
+					+ newLine;
+			sentenceLvFeats += "bow-dep-word-feature: " + sLvDepWordIndices
+					+ newLine;
+			sentenceLvFeats += "</sentence-level-features>" + newLine;
 
 			// chunk-level features
-			chunkLvFeats += "chunk-level-features{" + newLine;
+			chunkLvFeats += "<chunk-level-features>" + newLine;
 			// both chunkLvFeat1 and chunkLvFeat2 are '' ended
-			chunkLvFeats += "word-feature:"
+			chunkLvFeats += "word-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(chunkLvFeat1, "w",
 							inverseFlagAbbr, newLine) + newLine;
-			chunkLvFeats += "tag-feature:"
+			chunkLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(chunkLvFeat2, "t",
 							inverseFlagAbbr, newLine) + newLine;
-			chunkLvFeats += "}" + newLine;
+			chunkLvFeats += "</chunk-level-features>" + newLine;
 
 			// phrase-level features
-			phraseLvFeats += "phrase-level-features{" + newLine;
-			phraseLvFeats += "word-feature:"
+			phraseLvFeats += "<phrase-level-features>" + newLine;
+			phraseLvFeats += "word-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(phraseLvFeat1, "w",
 							inverseFlagAbbr, newLine) + newLine;
-			phraseLvFeats += "tag-feature:"
+			phraseLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(phraseLvFeat2, "t",
 							inverseFlagAbbr, newLine) + newLine;
-			phraseLvFeats += "}" + newLine;
+			phraseLvFeats += "</phrase-level-features>" + newLine;
 
 			// word-level features
-			wordLvFeats += "word-level-features{" + newLine;
+			wordLvFeats += "<word-level-features>" + newLine;
 			// both wordLvFeat1 and wordLvFeat2 are '' ended
-			wordLvFeats += "word-feature:"
+			wordLvFeats += "word-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(wordLvFeat1, "w",
 							inverseFlagAbbr, newLine) + newLine;
-			wordLvFeats += "tag-feature:"
+			wordLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(wordLvFeat2, "t",
 							inverseFlagAbbr, newLine) + newLine;
-			wordLvFeats += "}" + newLine;
+			wordLvFeats += "</word-level-features>" + newLine;
 
 			// footer
-			footer += "}" + newLine;
+			footer += "</instance>" + newLine;
 
 			// System.out.print(header);
 			// System.out.print(sentenceLvFeats);
