@@ -18,7 +18,8 @@ public class MainTestThruLib {
 		// //c2f.writeDemoFeatures();
 		// c2f.writeFeatures();
 		Pipeline.run("NETMETA", "SRSTR", "SRDEF", "COMPACT_MRREL.RRF",
-				"input.txt", "", "wordDict.txt", "tagDict.txt", "depDict.txt");
+				"all_abstracts_1-2000.txt", "output.txt", "errorLog.txt",
+				"wordDict.txt", "tagDict.txt", "depDict.txt");
 	}
 
 }

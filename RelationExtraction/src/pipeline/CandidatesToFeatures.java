@@ -2,8 +2,10 @@ package pipeline;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,8 +72,11 @@ public class CandidatesToFeatures {
 
 	private SnowballStemmer stemmer;
 
-	public CandidatesToFeatures(String outputFileName, String wordDictFile,
-			String tagDictFile, String depTypeDictFile) throws Exception {
+	private String errorLogFile;
+
+	public CandidatesToFeatures(String outputFileName, String errorLogFile,
+			String wordDictFile, String tagDictFile, String depTypeDictFile)
+			throws Exception {
 		lp = LexicalizedParser
 				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 		tokenizerFactory = PTBTokenizer
@@ -92,6 +97,8 @@ public class CandidatesToFeatures {
 		stemmer = (SnowballStemmer) stemClass.newInstance();
 
 		sentences = new ArrayList<Sentence>();
+
+		this.errorLogFile = errorLogFile;
 	}
 
 	private void initializeIndices(String wordDictFile, String tagDictFile,
@@ -348,6 +355,8 @@ public class CandidatesToFeatures {
 	}
 
 	public void writeFeatures() throws Exception {
+		System.out.println("Write features start time: "
+				+ System.currentTimeMillis());
 		String instance;
 		String newLine = "\n";
 		String inverseFlag, inverseFlagAbbr;
@@ -368,9 +377,19 @@ public class CandidatesToFeatures {
 		// sentence-level bag of words features
 		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
 
+		File errorLog = new File(errorLogFile);
+		PrintStream ps = new PrintStream(errorLog);
+
+		String header = "", footer, sentenceLvFeats, chunkLvFeats, phraseLvFeats, wordLvFeats;
+
 		for (Sentence s : sentences) {
 			try {
-				String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
+				header = "";
+				footer = "";
+				sentenceLvFeats = "";
+				chunkLvFeats = "";
+				phraseLvFeats = "";
+				wordLvFeats = "";
 				// feat1's are for word unit compound, feat2's are for tag unit
 				// compound
 				String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
@@ -985,12 +1004,17 @@ public class CandidatesToFeatures {
 				else
 					System.out.print(instance);
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Error sentence is: " + s.sentenceText);
+				e.printStackTrace(ps);
+				ps.println("Error instance is:");
+				ps.println(header);
+				// System.err.println("Error sentence is: " + s.sentenceText);
 			}
 		}
+		ps.close();
 		if (outputMethod)
 			bw.close();
+		System.out.println("Write features end time: "
+				+ System.currentTimeMillis());
 	}
 
 	// featGroup is "" ended

@@ -19,8 +19,8 @@ public class MainTest {
 				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF");
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 
-		CandidatesToFeatures c2f = new CandidatesToFeatures("", "wordDict.txt",
-				"tagDict.txt", "depDict.txt");
+		CandidatesToFeatures c2f = new CandidatesToFeatures("", "errorLog.txt",
+				"wordDict.txt", "tagDict.txt", "depDict.txt");
 		c2f.getSentences(candidates);
 		// c2f.writeDemoFeatures();
 		c2f.writeFeatures();
