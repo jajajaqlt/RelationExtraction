@@ -229,24 +229,28 @@ public class CandidatesToFeatures {
 		int govIndex, depIndex;
 		String reln;
 		for (TypedDependency td : tdl) {
+			// det ( area-3 , The-1 ); arrow is from 'area' to 'The'
 			govIndex = td.gov().index();
 			depIndex = td.dep().index();
-			if (entity1WordIndices.contains(govIndex))
-				govIndex = -1;
-			if (entity1WordIndices.contains(depIndex))
-				depIndex = -1;
-			if (entity2WordIndices.contains(govIndex))
-				govIndex = -2;
-			if (entity2WordIndices.contains(depIndex))
-				depIndex = -2;
+			// root(ROOT-0, bypassed-6)
+			if (govIndex != 0) {
+				if (entity1WordIndices.contains(govIndex))
+					govIndex = -1;
+				if (entity1WordIndices.contains(depIndex))
+					depIndex = -1;
+				if (entity2WordIndices.contains(govIndex))
+					govIndex = -2;
+				if (entity2WordIndices.contains(depIndex))
+					depIndex = -2;
 
-			// entities are always in different phrases
-			if (govIndex != depIndex) {
-				reln = td.reln().toString();
-				dependencies.get(govIndex).put(depIndex,
-						new TypedDependencyProperty(true, reln));
-				dependencies.get(depIndex).put(govIndex,
-						new TypedDependencyProperty(false, reln));
+				// entities are always in different phrases
+				if (govIndex != depIndex) {
+					reln = td.reln().toString();
+					dependencies.get(govIndex).put(depIndex,
+							new TypedDependencyProperty(true, reln));
+					dependencies.get(depIndex).put(govIndex,
+							new TypedDependencyProperty(false, reln));
+				}
 			}
 		}
 
@@ -365,592 +369,625 @@ public class CandidatesToFeatures {
 		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
 
 		for (Sentence s : sentences) {
-			String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
-			// feat1's are for word unit compound, feat2's are for tag unit
-			// compound
-			String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
-			// header
-			header += "<instance>" + newLine;
-			header += "index: " + s.abstractIndex + newLine;
-			header += "cui1: " + s.entity1Cui + newLine;
-			header += "cui1-type: " + s.entity1NE + newLine;
-			entity1MatchedWords = "";
-			for (Word w : s.phrases.get(s.entity1Index).words)
-				entity1MatchedWords += " " + w.wText;
-			header += "cui1-matched-words:" + entity1MatchedWords + newLine;
-			header += "cui2: " + s.entity2Cui + newLine;
-			header += "cui2-type: " + s.entity2NE + newLine;
-			entity2MatchedWords = "";
-			for (Word w : s.phrases.get(s.entity2Index).words)
-				entity2MatchedWords += " " + w.wText;
-			header += "cui2-matched-words:" + entity2MatchedWords + newLine;
-			header += "positivity: " + (s.isPositive ? "true" : "false")
-					+ newLine;
-			header += "inverse: " + (s.isInverse ? "true" : "false") + newLine;
+			try {
+				String header = "", footer = "", sentenceLvFeats = "", chunkLvFeats = "", phraseLvFeats = "", wordLvFeats = "";
+				// feat1's are for word unit compound, feat2's are for tag unit
+				// compound
+				String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
+				// header
+				header += "<instance>" + newLine;
+				header += "index: " + s.abstractIndex + newLine;
+				header += "cui1: " + s.entity1Cui + newLine;
+				header += "cui1-type: " + s.entity1NE + newLine;
+				entity1MatchedWords = "";
+				for (Word w : s.phrases.get(s.entity1Index).words)
+					entity1MatchedWords += " " + w.wText;
+				header += "cui1-matched-words:" + entity1MatchedWords + newLine;
+				header += "cui2: " + s.entity2Cui + newLine;
+				header += "cui2-type: " + s.entity2NE + newLine;
+				entity2MatchedWords = "";
+				for (Word w : s.phrases.get(s.entity2Index).words)
+					entity2MatchedWords += " " + w.wText;
+				header += "cui2-matched-words:" + entity2MatchedWords + newLine;
+				header += "positivity: " + (s.isPositive ? "true" : "false")
+						+ newLine;
+				header += "inverse: " + (s.isInverse ? "true" : "false")
+						+ newLine;
 
-			// a flag indicating which entity came first in the sentence
-			if (s.isInverse) {
-				inverseFlag = "inverse_true";
-				inverseFlagAbbr = inverseFlag + "|";
-			} else {
-				inverseFlag = "inverse_false";
-				inverseFlagAbbr = inverseFlag + "|";
-			}
-
-			header += "net-relation: " + s.netRelation + newLine;
-			header += "meta-relation: "
-					+ (s.metaRelation == null ? "null" : s.metaRelation)
-					+ newLine;
-			header += "sentence: " + s.sentenceText + newLine;
-
-			// sentence-level features
-			sentenceLvFeats += "<sentence-level-features>" + newLine;
-
-			// the sequence of words between the two entities
-			// the part-of-speech tags of these words
-			/**
-			 * Sets a threshold here in the future to deal with a long sequence
-			 * of words or tags. i.e. putting a ""
-			 */
-			// sets the value of central nodes of other resolution levels
-			wordLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			wordLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			phraseLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			phraseLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			chunkLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			chunkLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
-			middleWords = "";
-			middleTags = "";
-			for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
-				phraseLvFeat1 += inverseFlagAbbr;
-				phraseLvFeat2 += inverseFlagAbbr;
-				for (Word w : s.phrases.get(i).words) {
-					wordLvFeat1 += inverseFlagAbbr;
-					wordLvFeat2 += inverseFlagAbbr;
-					middleWords += w.wText + " ";
-					middleTags += w.tag + " ";
-					wordLvFeat1 += w.wText;
-					wordLvFeat2 += w.tag;
-					wordLvFeat1 += unitDelimiter;
-					wordLvFeat2 += unitDelimiter;
-
-					phraseLvFeat1 += w.wText + " ";
-					phraseLvFeat2 += w.tag + " ";
-				}
-				phraseLvFeat1 = phraseLvFeat1.substring(0,
-						phraseLvFeat1.length() - 1)
-						+ unitDelimiter;
-				phraseLvFeat2 = phraseLvFeat2.substring(0,
-						phraseLvFeat2.length() - 1)
-						+ unitDelimiter;
-			}
-			middleWords = middleWords.substring(0, middleWords.length() - 1);
-			middleTags = middleTags.substring(0, middleTags.length() - 1);
-
-			wordLvFeat1 += inverseFlagAbbr + s.entity2NE;
-			wordLvFeat2 += inverseFlagAbbr + s.entity2NE;
-			phraseLvFeat1 += inverseFlagAbbr + s.entity2NE;
-			phraseLvFeat2 += inverseFlagAbbr + s.entity2NE;
-			chunkLvFeat1 += inverseFlagAbbr + middleWords + unitDelimiter
-					+ inverseFlagAbbr + s.entity2NE;
-			chunkLvFeat2 += inverseFlagAbbr + middleTags + unitDelimiter
-					+ inverseFlagAbbr + s.entity2NE;
-
-			// a window of k words to the left/right of entity1/2 and their part
-			// of speech tags
-			entity1 = s.phrases.get(s.entity1Index);
-			entity1FirstWordIndex = entity1.words.get(0).index;
-			entity2 = s.phrases.get(s.entity2Index);
-			entity2LastWordIndex = entity2.words.get(entity2.words.size() - 1).index;
-
-			leftWords = new ArrayList<Word>();
-			rightWords = new ArrayList<Word>();
-
-			wordLvFeat1 = unitDelimiter + wordLvFeat1 + unitDelimiter;
-			wordLvFeat2 = unitDelimiter + wordLvFeat2 + unitDelimiter;
-			chunkLvFeat1 = unitDelimiter + chunkLvFeat1 + unitDelimiter
-					+ inverseFlagAbbr;
-			chunkLvFeat2 = unitDelimiter + chunkLvFeat2 + unitDelimiter
-					+ inverseFlagAbbr;
-
-			for (int i = 1; i <= countOfWindowNodes; i++) {
-				index = entity1FirstWordIndex - i;
-				if (index >= 0) {
-					label = s.words.get(index);
-					leftWords.add(new Word(label.tag(), index, label.word()));
-					wordLvFeat1 = unitDelimiter + inverseFlagAbbr
-							+ label.word() + wordLvFeat1;
-					wordLvFeat2 = unitDelimiter + inverseFlagAbbr + label.tag()
-							+ wordLvFeat2;
-					chunkLvFeat1 = " " + label.word() + chunkLvFeat1;
-					chunkLvFeat2 = " " + label.tag() + chunkLvFeat2;
+				// a flag indicating which entity came first in the sentence
+				if (s.isInverse) {
+					inverseFlag = "inverse_true";
+					inverseFlagAbbr = inverseFlag + "|";
 				} else {
-					leftWords.add(new Word("#PAD#", index, "#PAD#"));
-					if (includePadInFeatures) {
-						wordLvFeat1 = unitDelimiter + inverseFlagAbbr + "#PAD#"
-								+ wordLvFeat1;
-						wordLvFeat2 = unitDelimiter + inverseFlagAbbr + "#PAD#"
-								+ wordLvFeat2;
-						chunkLvFeat1 = " " + "#PAD#" + chunkLvFeat1;
-						chunkLvFeat2 = " " + "#PAD#" + chunkLvFeat2;
-					}
+					inverseFlag = "inverse_false";
+					inverseFlagAbbr = inverseFlag + "|";
 				}
 
-				index = entity2LastWordIndex + i;
-				if (index < s.words.size()) {
-					label = s.words.get(index);
-					rightWords.add(new Word(label.tag(), index, label.word()));
-					wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr + label.word()
-							+ unitDelimiter;
-					wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr + label.tag()
-							+ unitDelimiter;
-					chunkLvFeat1 = chunkLvFeat1 + label.word() + " ";
-					chunkLvFeat2 = chunkLvFeat2 + label.tag() + " ";
-				} else {
-					rightWords.add(new Word("#PAD#", index, "#PAD#"));
-					if (includePadInFeatures) {
-						wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr + "#PAD#"
-								+ unitDelimiter;
-						wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr + "#PAD#"
-								+ unitDelimiter;
-						chunkLvFeat1 = chunkLvFeat1 + "#PAD#" + " ";
-						chunkLvFeat2 = chunkLvFeat2 + "#PAD#" + " ";
-					}
-				}
+				header += "net-relation: " + s.netRelation + newLine;
+				header += "meta-relation: "
+						+ (s.metaRelation == null ? "null" : s.metaRelation)
+						+ newLine;
+				header += "sentence: " + s.sentenceText + newLine;
 
-			}
+				// sentence-level features
+				sentenceLvFeats += "<sentence-level-features>" + newLine;
 
-			// final processing of chunk-level features
-			int inverseFlagAbbrLength = inverseFlagAbbr.length();
+				// the sequence of words between the two entities
+				// the part-of-speech tags of these words
+				/**
+				 * Sets a threshold here in the future to deal with a long
+				 * sequence of words or tags. i.e. putting a ""
+				 */
+				// sets the value of central nodes of other resolution levels
+				wordLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				wordLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				phraseLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				phraseLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				chunkLvFeat1 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				chunkLvFeat2 += inverseFlagAbbr + s.entity1NE + unitDelimiter;
+				middleWords = "";
+				middleTags = "";
+				for (int i = s.entity1Index + 1; i < s.entity2Index; i++) {
+					phraseLvFeat1 += inverseFlagAbbr;
+					phraseLvFeat2 += inverseFlagAbbr;
+					for (Word w : s.phrases.get(i).words) {
+						wordLvFeat1 += inverseFlagAbbr;
+						wordLvFeat2 += inverseFlagAbbr;
+						middleWords += w.wText + " ";
+						middleTags += w.tag + " ";
+						wordLvFeat1 += w.wText;
+						wordLvFeat2 += w.tag;
+						wordLvFeat1 += unitDelimiter;
+						wordLvFeat2 += unitDelimiter;
 
-			if (!chunkLvFeat1.substring(0, unitDelimiterLength).equals(
-					unitDelimiter))
-				chunkLvFeat1 = inverseFlagAbbr + chunkLvFeat1.substring(1);
-			else
-				chunkLvFeat1 = chunkLvFeat1.substring(unitDelimiterLength);
-			if (chunkLvFeat1.substring(
-					chunkLvFeat1.length() - inverseFlagAbbrLength).equals(
-					inverseFlagAbbr))
-				chunkLvFeat1 = chunkLvFeat1.substring(0, chunkLvFeat1.length()
-						- inverseFlagAbbrLength);
-			else
-				chunkLvFeat1 = chunkLvFeat1.substring(0,
-						chunkLvFeat1.length() - 1);
-			if (!chunkLvFeat2.substring(0, unitDelimiterLength).equals(
-					unitDelimiter))
-				chunkLvFeat2 = inverseFlagAbbr + chunkLvFeat2.substring(1);
-			else
-				chunkLvFeat2 = chunkLvFeat2.substring(unitDelimiterLength);
-			if (chunkLvFeat2.substring(
-					chunkLvFeat2.length() - inverseFlagAbbrLength).equals(
-					inverseFlagAbbr))
-				chunkLvFeat2 = chunkLvFeat2.substring(0, chunkLvFeat2.length()
-						- inverseFlagAbbrLength);
-			else
-				chunkLvFeat2 = chunkLvFeat2.substring(0,
-						chunkLvFeat2.length() - 1);
-
-			// final processing of phrase-level features
-			int accumulate = 0, cur, diff;
-			String before1, before2, before, after;
-			Phrase p;
-			Word w2;
-			if (s.entity1Index != 0) {
-				accumulate = 0;
-				cur = s.entity1Index - 1;
-				while (accumulate < countOfWindowNodes && cur >= 0) {
-					phraseLvFeat1 = unitDelimiter + phraseLvFeat1;
-					phraseLvFeat2 = unitDelimiter + phraseLvFeat2;
-					before1 = "";
-					before2 = "";
-					p = s.phrases.get(cur);
-					diff = countOfWindowNodes - accumulate;
-					if (diff >= p.words.size()) {
-						for (Word w : p.words) {
-							before1 += w.wText + " ";
-							before2 += w.tag + " ";
-						}
-						phraseLvFeat1 = inverseFlagAbbr
-								+ before1.substring(0, before1.length() - 1)
-								+ phraseLvFeat1;
-						phraseLvFeat2 = inverseFlagAbbr
-								+ before2.substring(0, before2.length() - 1)
-								+ phraseLvFeat2;
-					} else {
-						for (int i = 0; i < diff; i++) {
-							w2 = p.words.get(p.words.size() - 1 - i);
-							phraseLvFeat1 = " " + w2.wText + phraseLvFeat1;
-							phraseLvFeat2 = " " + w2.tag + phraseLvFeat2;
-						}
-						phraseLvFeat1 = inverseFlagAbbr
-								+ phraseLvFeat1.substring(1);
-						phraseLvFeat2 = inverseFlagAbbr
-								+ phraseLvFeat2.substring(1);
-					}
-
-					// not true in else-clause, but works fine
-					accumulate += p.words.size();
-					cur--;
-				}
-			}
-
-			// padding
-			if (includePadInFeatures) {
-				diff = countOfWindowNodes - accumulate;
-				if (diff > 0) {
-					before = inverseFlagAbbr;
-					for (int i = 0; i < diff; i++) {
-						before += "#PAD# ";
-					}
-					phraseLvFeat1 = before.substring(0, before.length() - 1)
-							+ unitDelimiter + phraseLvFeat1;
-					phraseLvFeat2 = before.substring(0, before.length() - 1)
-							+ unitDelimiter + phraseLvFeat2;
-				}
-			}
-
-			int pSize = s.phrases.size();
-			if (s.entity2Index != pSize) {
-				accumulate = 0;
-				cur = s.entity2Index + 1;
-				while (accumulate < countOfWindowNodes && cur < pSize) {
-					phraseLvFeat1 = phraseLvFeat1 + unitDelimiter
-							+ inverseFlagAbbr;
-					phraseLvFeat2 = phraseLvFeat2 + unitDelimiter
-							+ inverseFlagAbbr;
-					p = s.phrases.get(cur);
-					diff = countOfWindowNodes - accumulate;
-					if (diff >= p.words.size()) {
-						for (Word w : p.words) {
-							phraseLvFeat1 = phraseLvFeat1 + w.wText + " ";
-							phraseLvFeat2 = phraseLvFeat2 + w.tag + " ";
-						}
-					} else {
-						for (int i = 0; i < diff; i++) {
-							w2 = p.words.get(i);
-							phraseLvFeat1 = phraseLvFeat1 + w2.wText + " ";
-							phraseLvFeat2 = phraseLvFeat2 + w2.tag + " ";
-						}
+						phraseLvFeat1 += w.wText + " ";
+						phraseLvFeat2 += w.tag + " ";
 					}
 					phraseLvFeat1 = phraseLvFeat1.substring(0,
-							phraseLvFeat1.length() - 1);
+							phraseLvFeat1.length() - 1)
+							+ unitDelimiter;
 					phraseLvFeat2 = phraseLvFeat2.substring(0,
-							phraseLvFeat2.length() - 1);
-					// not true in else-clause, but works fine
-					accumulate += p.words.size();
-					cur++;
+							phraseLvFeat2.length() - 1)
+							+ unitDelimiter;
 				}
-			}
+				middleWords = middleWords
+						.substring(0, middleWords.length() - 1);
+				middleTags = middleTags.substring(0, middleTags.length() - 1);
 
-			// padding
-			if (includePadInFeatures) {
-				diff = countOfWindowNodes - accumulate;
-				if (diff > 0) {
-					after = inverseFlagAbbr;
-					for (int i = 0; i < diff; i++) {
-						after += "#PAD# ";
+				wordLvFeat1 += inverseFlagAbbr + s.entity2NE;
+				wordLvFeat2 += inverseFlagAbbr + s.entity2NE;
+				phraseLvFeat1 += inverseFlagAbbr + s.entity2NE;
+				phraseLvFeat2 += inverseFlagAbbr + s.entity2NE;
+				chunkLvFeat1 += inverseFlagAbbr + middleWords + unitDelimiter
+						+ inverseFlagAbbr + s.entity2NE;
+				chunkLvFeat2 += inverseFlagAbbr + middleTags + unitDelimiter
+						+ inverseFlagAbbr + s.entity2NE;
+
+				// a window of k words to the left/right of entity1/2 and their
+				// part
+				// of speech tags
+				entity1 = s.phrases.get(s.entity1Index);
+				entity1FirstWordIndex = entity1.words.get(0).index;
+				entity2 = s.phrases.get(s.entity2Index);
+				entity2LastWordIndex = entity2.words
+						.get(entity2.words.size() - 1).index;
+
+				leftWords = new ArrayList<Word>();
+				rightWords = new ArrayList<Word>();
+
+				wordLvFeat1 = unitDelimiter + wordLvFeat1 + unitDelimiter;
+				wordLvFeat2 = unitDelimiter + wordLvFeat2 + unitDelimiter;
+				chunkLvFeat1 = unitDelimiter + chunkLvFeat1 + unitDelimiter
+						+ inverseFlagAbbr;
+				chunkLvFeat2 = unitDelimiter + chunkLvFeat2 + unitDelimiter
+						+ inverseFlagAbbr;
+
+				for (int i = 1; i <= countOfWindowNodes; i++) {
+					index = entity1FirstWordIndex - i;
+					if (index >= 0) {
+						label = s.words.get(index);
+						leftWords
+								.add(new Word(label.tag(), index, label.word()));
+						wordLvFeat1 = unitDelimiter + inverseFlagAbbr
+								+ label.word() + wordLvFeat1;
+						wordLvFeat2 = unitDelimiter + inverseFlagAbbr
+								+ label.tag() + wordLvFeat2;
+						chunkLvFeat1 = " " + label.word() + chunkLvFeat1;
+						chunkLvFeat2 = " " + label.tag() + chunkLvFeat2;
+					} else {
+						leftWords.add(new Word("#PAD#", index, "#PAD#"));
+						if (includePadInFeatures) {
+							wordLvFeat1 = unitDelimiter + inverseFlagAbbr
+									+ "#PAD#" + wordLvFeat1;
+							wordLvFeat2 = unitDelimiter + inverseFlagAbbr
+									+ "#PAD#" + wordLvFeat2;
+							chunkLvFeat1 = " " + "#PAD#" + chunkLvFeat1;
+							chunkLvFeat2 = " " + "#PAD#" + chunkLvFeat2;
+						}
 					}
-					phraseLvFeat1 += unitDelimiter
-							+ after.substring(0, after.length() - 1);
-					phraseLvFeat2 += unitDelimiter
-							+ after.substring(0, after.length() - 1);
+
+					index = entity2LastWordIndex + i;
+					if (index < s.words.size()) {
+						label = s.words.get(index);
+						rightWords.add(new Word(label.tag(), index, label
+								.word()));
+						wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr
+								+ label.word() + unitDelimiter;
+						wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr
+								+ label.tag() + unitDelimiter;
+						chunkLvFeat1 = chunkLvFeat1 + label.word() + " ";
+						chunkLvFeat2 = chunkLvFeat2 + label.tag() + " ";
+					} else {
+						rightWords.add(new Word("#PAD#", index, "#PAD#"));
+						if (includePadInFeatures) {
+							wordLvFeat1 = wordLvFeat1 + inverseFlagAbbr
+									+ "#PAD#" + unitDelimiter;
+							wordLvFeat2 = wordLvFeat2 + inverseFlagAbbr
+									+ "#PAD#" + unitDelimiter;
+							chunkLvFeat1 = chunkLvFeat1 + "#PAD#" + " ";
+							chunkLvFeat2 = chunkLvFeat2 + "#PAD#" + " ";
+						}
+					}
+
 				}
-			}
 
-			// final processing of word-level features
-			wordLvFeat1 = wordLvFeat1.substring(1, wordLvFeat1.length() - 1);
-			wordLvFeat2 = wordLvFeat2.substring(1, wordLvFeat2.length() - 1);
+				// final processing of chunk-level features
+				int inverseFlagAbbrLength = inverseFlagAbbr.length();
 
-			String wordFeatureStem, tagFeatureStem;
-			// sentence-level lexical conjunction features
-			// word features
-			// example feature:
-			// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
-			wordFeatureStem = s.entity1NE + "|" + middleWords + "|"
-					+ s.entity2NE;
-			sentenceLvFeats += "feature: " + inverseFlag + "|"
-					+ wordFeatureStem + newLine;
-			for (int i = 0; i < countOfWindowNodes; i++) {
-				if (i == 0)
-					wordFeatureStem = leftWords.get(i).wText + "|"
-							+ wordFeatureStem + "|" + rightWords.get(i).wText;
+				if (!chunkLvFeat1.substring(0, unitDelimiterLength).equals(
+						unitDelimiter))
+					chunkLvFeat1 = inverseFlagAbbr + chunkLvFeat1.substring(1);
 				else
-					wordFeatureStem = leftWords.get(i).wText + " "
-							+ wordFeatureStem + " " + rightWords.get(i).wText;
+					chunkLvFeat1 = chunkLvFeat1.substring(unitDelimiterLength);
+				if (chunkLvFeat1.substring(
+						chunkLvFeat1.length() - inverseFlagAbbrLength).equals(
+						inverseFlagAbbr))
+					chunkLvFeat1 = chunkLvFeat1.substring(0,
+							chunkLvFeat1.length() - inverseFlagAbbrLength);
+				else
+					chunkLvFeat1 = chunkLvFeat1.substring(0,
+							chunkLvFeat1.length() - 1);
+				if (!chunkLvFeat2.substring(0, unitDelimiterLength).equals(
+						unitDelimiter))
+					chunkLvFeat2 = inverseFlagAbbr + chunkLvFeat2.substring(1);
+				else
+					chunkLvFeat2 = chunkLvFeat2.substring(unitDelimiterLength);
+				if (chunkLvFeat2.substring(
+						chunkLvFeat2.length() - inverseFlagAbbrLength).equals(
+						inverseFlagAbbr))
+					chunkLvFeat2 = chunkLvFeat2.substring(0,
+							chunkLvFeat2.length() - inverseFlagAbbrLength);
+				else
+					chunkLvFeat2 = chunkLvFeat2.substring(0,
+							chunkLvFeat2.length() - 1);
+
+				// final processing of phrase-level features
+				int accumulate = 0, cur, diff;
+				String before1, before2, before, after;
+				Phrase p;
+				Word w2;
+				if (s.entity1Index != 0) {
+					accumulate = 0;
+					cur = s.entity1Index - 1;
+					while (accumulate < countOfWindowNodes && cur >= 0) {
+						phraseLvFeat1 = unitDelimiter + phraseLvFeat1;
+						phraseLvFeat2 = unitDelimiter + phraseLvFeat2;
+						before1 = "";
+						before2 = "";
+						p = s.phrases.get(cur);
+						diff = countOfWindowNodes - accumulate;
+						if (diff >= p.words.size()) {
+							for (Word w : p.words) {
+								before1 += w.wText + " ";
+								before2 += w.tag + " ";
+							}
+							phraseLvFeat1 = inverseFlagAbbr
+									+ before1
+											.substring(0, before1.length() - 1)
+									+ phraseLvFeat1;
+							phraseLvFeat2 = inverseFlagAbbr
+									+ before2
+											.substring(0, before2.length() - 1)
+									+ phraseLvFeat2;
+						} else {
+							for (int i = 0; i < diff; i++) {
+								w2 = p.words.get(p.words.size() - 1 - i);
+								phraseLvFeat1 = " " + w2.wText + phraseLvFeat1;
+								phraseLvFeat2 = " " + w2.tag + phraseLvFeat2;
+							}
+							phraseLvFeat1 = inverseFlagAbbr
+									+ phraseLvFeat1.substring(1);
+							phraseLvFeat2 = inverseFlagAbbr
+									+ phraseLvFeat2.substring(1);
+						}
+
+						// not true in else-clause, but works fine
+						accumulate += p.words.size();
+						cur--;
+					}
+				}
+
+				// padding
+				if (includePadInFeatures) {
+					diff = countOfWindowNodes - accumulate;
+					if (diff > 0) {
+						before = inverseFlagAbbr;
+						for (int i = 0; i < diff; i++) {
+							before += "#PAD# ";
+						}
+						phraseLvFeat1 = before
+								.substring(0, before.length() - 1)
+								+ unitDelimiter + phraseLvFeat1;
+						phraseLvFeat2 = before
+								.substring(0, before.length() - 1)
+								+ unitDelimiter + phraseLvFeat2;
+					}
+				}
+
+				int pSize = s.phrases.size();
+				if (s.entity2Index != pSize) {
+					accumulate = 0;
+					cur = s.entity2Index + 1;
+					while (accumulate < countOfWindowNodes && cur < pSize) {
+						phraseLvFeat1 = phraseLvFeat1 + unitDelimiter
+								+ inverseFlagAbbr;
+						phraseLvFeat2 = phraseLvFeat2 + unitDelimiter
+								+ inverseFlagAbbr;
+						p = s.phrases.get(cur);
+						diff = countOfWindowNodes - accumulate;
+						if (diff >= p.words.size()) {
+							for (Word w : p.words) {
+								phraseLvFeat1 = phraseLvFeat1 + w.wText + " ";
+								phraseLvFeat2 = phraseLvFeat2 + w.tag + " ";
+							}
+						} else {
+							for (int i = 0; i < diff; i++) {
+								w2 = p.words.get(i);
+								phraseLvFeat1 = phraseLvFeat1 + w2.wText + " ";
+								phraseLvFeat2 = phraseLvFeat2 + w2.tag + " ";
+							}
+						}
+						phraseLvFeat1 = phraseLvFeat1.substring(0,
+								phraseLvFeat1.length() - 1);
+						phraseLvFeat2 = phraseLvFeat2.substring(0,
+								phraseLvFeat2.length() - 1);
+						// not true in else-clause, but works fine
+						accumulate += p.words.size();
+						cur++;
+					}
+				}
+
+				// padding
+				if (includePadInFeatures) {
+					diff = countOfWindowNodes - accumulate;
+					if (diff > 0) {
+						after = inverseFlagAbbr;
+						for (int i = 0; i < diff; i++) {
+							after += "#PAD# ";
+						}
+						phraseLvFeat1 += unitDelimiter
+								+ after.substring(0, after.length() - 1);
+						phraseLvFeat2 += unitDelimiter
+								+ after.substring(0, after.length() - 1);
+					}
+				}
+
+				// final processing of word-level features
+				wordLvFeat1 = wordLvFeat1
+						.substring(1, wordLvFeat1.length() - 1);
+				wordLvFeat2 = wordLvFeat2
+						.substring(1, wordLvFeat2.length() - 1);
+
+				String wordFeatureStem, tagFeatureStem;
+				// sentence-level lexical conjunction features
+				// word features
+				// example feature:
+				// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
+				wordFeatureStem = s.entity1NE + "|" + middleWords + "|"
+						+ s.entity2NE;
 				sentenceLvFeats += "feature: " + inverseFlag + "|"
 						+ wordFeatureStem + newLine;
-			}
+				for (int i = 0; i < countOfWindowNodes; i++) {
+					if (i == 0)
+						wordFeatureStem = leftWords.get(i).wText + "|"
+								+ wordFeatureStem + "|"
+								+ rightWords.get(i).wText;
+					else
+						wordFeatureStem = leftWords.get(i).wText + " "
+								+ wordFeatureStem + " "
+								+ rightWords.get(i).wText;
+					sentenceLvFeats += "feature: " + inverseFlag + "|"
+							+ wordFeatureStem + newLine;
+				}
 
-			// tag features
-			// example feature:
-			// "inverse_true|Brothers ,|ORGANIZATION|, NNP NNP CC|ORGANIZATION|. B_1"
-			// comment: changes left/right words to left/right tags
-			tagFeatureStem = s.entity1NE + "|" + middleTags + "|" + s.entity2NE;
-			sentenceLvFeats += "feature: " + inverseFlag + "|" + tagFeatureStem
-					+ newLine;
-			for (int i = 0; i < countOfWindowNodes; i++) {
-				if (i == 0)
-					tagFeatureStem = leftWords.get(i).tag + "|"
-							+ tagFeatureStem + "|" + rightWords.get(i).tag;
-				else
-					tagFeatureStem = leftWords.get(i).tag + " "
-							+ tagFeatureStem + " " + rightWords.get(i).tag;
+				// tag features
+				// example feature:
+				// "inverse_true|Brothers ,|ORGANIZATION|, NNP NNP CC|ORGANIZATION|. B_1"
+				// comment: changes left/right words to left/right tags
+				tagFeatureStem = s.entity1NE + "|" + middleTags + "|"
+						+ s.entity2NE;
 				sentenceLvFeats += "feature: " + inverseFlag + "|"
 						+ tagFeatureStem + newLine;
-			}
+				for (int i = 0; i < countOfWindowNodes; i++) {
+					if (i == 0)
+						tagFeatureStem = leftWords.get(i).tag + "|"
+								+ tagFeatureStem + "|" + rightWords.get(i).tag;
+					else
+						tagFeatureStem = leftWords.get(i).tag + " "
+								+ tagFeatureStem + " " + rightWords.get(i).tag;
+					sentenceLvFeats += "feature: " + inverseFlag + "|"
+							+ tagFeatureStem + newLine;
+				}
 
-			// sentence-level bag of words features
-			// word indices and tag indices
-			String[] splits1, splits2;
-			String word, tag, stemmedWord;
-			sLvWordIndices = "";
-			sLvTagIndices = "";
-			splits1 = middleWords.split(" ");
-			splits2 = middleTags.split(" ");
+				// sentence-level bag of words features
+				// word indices and tag indices
+				String[] splits1, splits2;
+				String word, tag, stemmedWord;
+				sLvWordIndices = "";
+				sLvTagIndices = "";
+				splits1 = middleWords.split(" ");
+				splits2 = middleTags.split(" ");
 
-			for (int i = 0; i < splits1.length; i++) {
-				word = splits1[i];
-				sLvWordIndices += getIndex(word, "w");
+				for (int i = 0; i < splits1.length; i++) {
+					word = splits1[i];
+					sLvWordIndices += getIndex(word, "w");
 
-				tag = splits2[i];
-				sLvTagIndices += getIndex(tag, "t");
-			}
+					tag = splits2[i];
+					sLvTagIndices += getIndex(tag, "t");
+				}
 
-			for (int i = 0; i < leftWords.size(); i++) {
-				word = leftWords.get(i).wText;
-				sLvWordIndices = getIndex(word, "w") + sLvWordIndices;
+				for (int i = 0; i < leftWords.size(); i++) {
+					word = leftWords.get(i).wText;
+					sLvWordIndices = getIndex(word, "w") + sLvWordIndices;
 
-				tag = leftWords.get(i).tag;
-				sLvTagIndices = getIndex(tag, "t") + sLvTagIndices;
-			}
+					tag = leftWords.get(i).tag;
+					sLvTagIndices = getIndex(tag, "t") + sLvTagIndices;
+				}
 
-			for (int i = 0; i < rightWords.size(); i++) {
-				word = rightWords.get(i).wText;
-				sLvWordIndices += getIndex(word, "w");
+				for (int i = 0; i < rightWords.size(); i++) {
+					word = rightWords.get(i).wText;
+					sLvWordIndices += getIndex(word, "w");
 
-				tag = rightWords.get(i).tag;
+					tag = rightWords.get(i).tag;
 
-				sLvTagIndices += getIndex(tag, "t");
-			}
+					sLvTagIndices += getIndex(tag, "t");
+				}
 
-			// sentence-level bag of words features: dep indices
-			sLvDepTypeIndices = "";
-			sLvDepWordIndices = "";
+				// sentence-level bag of words features: dep indices
+				sLvDepTypeIndices = "";
+				sLvDepWordIndices = "";
 
-			// sentence-level syntactic conjunction features
-			String strFeatureStem = "", depFeatureStem = "", dirFeatureStem = "";
-			/**
-			 * Sets a threshold here in the future to deal with a long
-			 * dependency path, and *LONG-PATH* for str and dir syntactic
-			 * features, *LONG-TYPE* for dep syntactic features.
-			 */
+				// sentence-level syntactic conjunction features
+				String strFeatureStem = "", depFeatureStem = "", dirFeatureStem = "";
+				/**
+				 * Sets a threshold here in the future to deal with a long
+				 * dependency path, and *LONG-PATH* for str and dir syntactic
+				 * features, *LONG-TYPE* for dep syntactic features.
+				 */
 
-			/**
-			 * Reasons for not doing long-path:
-			 * 1. Takes time and effect is not clear.
-			 * 2. On average, a sentence is not very long due to nature of abstract.
-			 */
-			String arrow, type;
-			for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
-					.entrySet()) {
-				index = m.getKey();
-				tdpArr = m.getValue();
-				// ←↑→↓↖↙↗↘↕
-				// format: "[dependency-type]""arrow(<-/->)""word"...
-				if (index == -1) {
-					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
-					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "->";
-					dirFeatureStem += "->";
-					sLvDepTypeIndices += getIndex(tdpArr.get(0).relation, "d");
-				} else if (index == -2) {
-					strFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
-					depFeatureStem += "[" + tdpArr.get(0).relation + "]" + "<-";
-					dirFeatureStem += "<-";
-					sLvDepTypeIndices += getIndex(tdpArr.get(0).relation, "d");
-				} else {
+				/**
+				 * Reasons for not doing long-path: 1. Takes time and effect is
+				 * not clear. 2. On average, a sentence is not very long due to
+				 * nature of abstract.
+				 */
+				String arrow, type;
+				for (Map.Entry<Integer, ArrayList<TypedDependencyProperty>> m : s.path
+						.entrySet()) {
+					index = m.getKey();
+					tdpArr = m.getValue();
+					// ←↑→↓↖↙↗↘↕
+					// format: "[dependency-type]""arrow(<-/->)""word"...
+					if (index == -1) {
+						strFeatureStem += "[" + tdpArr.get(0).relation + "]"
+								+ "->";
+						depFeatureStem += "[" + tdpArr.get(0).relation + "]"
+								+ "->";
+						dirFeatureStem += "->";
+						sLvDepTypeIndices += getIndex(tdpArr.get(0).relation,
+								"d");
+					} else if (index == -2) {
+						strFeatureStem += "[" + tdpArr.get(0).relation + "]"
+								+ "<-";
+						depFeatureStem += "[" + tdpArr.get(0).relation + "]"
+								+ "<-";
+						dirFeatureStem += "<-";
+						sLvDepTypeIndices += getIndex(tdpArr.get(0).relation,
+								"d");
+					} else {
+						word = s.words.get(index - 1).word();
+						sLvDepWordIndices += getIndex(word, "w");
+						for (TypedDependencyProperty tdp : tdpArr) {
+							if (tdp.position) {
+								// left case
+								// word = "<--" + tdp.relation + "-" + word;
+								word = "[" + tdp.relation + "]" + "<-" + word;
+								depFeatureStem += "[" + tdp.relation + "]"
+										+ "<-";
+								dirFeatureStem += "<-";
+							} else {
+								// right case
+								// word = word + "-" + tdp.relation + "-->";
+								word = word + "[" + tdp.relation + "]" + "->";
+								depFeatureStem += "[" + tdp.relation + "]"
+										+ "->";
+								dirFeatureStem += "->";
+							}
+							sLvDepTypeIndices += getIndex(tdp.relation, "d");
+						}
+						strFeatureStem += word;
+					}
+				}
+
+				strFeatureStem = s.entity1NE + "|" + strFeatureStem + "|"
+						+ s.entity2NE;
+				depFeatureStem = s.entity1NE + "|" + depFeatureStem + "|"
+						+ s.entity2NE;
+				dirFeatureStem = s.entity1NE + "|" + dirFeatureStem + "|"
+						+ s.entity2NE;
+
+				// no window node
+				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+						+ strFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+						+ depFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+						+ dirFeatureStem + newLine;
+
+				// having left window nodes
+				TypedDependencyProperty tdp;
+				for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity1Dependencies
+						.entrySet()) {
+					index = entry.getKey();
+					tdp = entry.getValue();
+					word = s.words.get(index - 1).word();
+					sLvDepWordIndices = getIndex(word, "w") + sLvDepWordIndices;
+					// format "word""[dependency-type]""arrow""feature-stem"
+					if (tdp.position)
+						arrow = "<-";
+					else
+						arrow = "->";
+					type = "[" + tdp.relation + "]";
+					sLvDepTypeIndices = getIndex(tdp.relation, "d")
+							+ sLvDepTypeIndices;
+					sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+							+ word + type + arrow + "|" + strFeatureStem
+							+ newLine;
+					sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+							+ type + arrow + "|" + depFeatureStem + newLine;
+					sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+							+ arrow + "|" + dirFeatureStem + newLine;
+				}
+
+				// having right window nodes
+				for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity2Dependencies
+						.entrySet()) {
+					index = entry.getKey();
+					tdp = entry.getValue();
 					word = s.words.get(index - 1).word();
 					sLvDepWordIndices += getIndex(word, "w");
-					for (TypedDependencyProperty tdp : tdpArr) {
-						if (tdp.position) {
-							// left case
-							// word = "<--" + tdp.relation + "-" + word;
-							word = "[" + tdp.relation + "]" + "<-" + word;
-							depFeatureStem += "[" + tdp.relation + "]" + "<-";
-							dirFeatureStem += "<-";
-						} else {
-							// right case
-							// word = word + "-" + tdp.relation + "-->";
-							word = word + "[" + tdp.relation + "]" + "->";
-							depFeatureStem += "[" + tdp.relation + "]" + "->";
-							dirFeatureStem += "->";
-						}
-						sLvDepTypeIndices += getIndex(tdp.relation, "d");
-					}
-					strFeatureStem += word;
-				}
-			}
-
-			strFeatureStem = s.entity1NE + "|" + strFeatureStem + "|"
-					+ s.entity2NE;
-			depFeatureStem = s.entity1NE + "|" + depFeatureStem + "|"
-					+ s.entity2NE;
-			dirFeatureStem = s.entity1NE + "|" + dirFeatureStem + "|"
-					+ s.entity2NE;
-
-			// no window node
-			sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-					+ strFeatureStem + newLine;
-			sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-					+ depFeatureStem + newLine;
-			sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-					+ dirFeatureStem + newLine;
-
-			// having left window nodes
-			TypedDependencyProperty tdp;
-			for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity1Dependencies
-					.entrySet()) {
-				index = entry.getKey();
-				tdp = entry.getValue();
-				word = s.words.get(index - 1).word();
-				sLvDepWordIndices = getIndex(word, "w") + sLvDepWordIndices;
-				// format "word""[dependency-type]""arrow""feature-stem"
-				if (tdp.position)
-					arrow = "<-";
-				else
-					arrow = "->";
-				type = "[" + tdp.relation + "]";
-				sLvDepTypeIndices = getIndex(tdp.relation, "d")
-						+ sLvDepTypeIndices;
-				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-						+ word + type + arrow + "|" + strFeatureStem + newLine;
-				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-						+ type + arrow + "|" + depFeatureStem + newLine;
-				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-						+ arrow + "|" + dirFeatureStem + newLine;
-			}
-
-			// having right window nodes
-			for (Map.Entry<Integer, TypedDependencyProperty> entry : s.entity2Dependencies
-					.entrySet()) {
-				index = entry.getKey();
-				tdp = entry.getValue();
-				word = s.words.get(index - 1).word();
-				sLvDepWordIndices += getIndex(word, "w");
-				// format "word""[dependency-type]""arrow""feature-stem"
-				if (tdp.position)
-					arrow = "<-";
-				else
-					arrow = "->";
-				type = "[" + tdp.relation + "]";
-				sLvDepTypeIndices += getIndex(word, "d");
-				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-						+ strFeatureStem + "|" + type + arrow + word + newLine;
-				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-						+ depFeatureStem + "|" + type + arrow + newLine;
-				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-						+ dirFeatureStem + "|" + arrow + newLine;
-			}
-
-			// having window nodes on both sides
-			int index1, index2;
-			String word1, word2, arrow1, arrow2, type1, type2;
-			TypedDependencyProperty tdp1, tdp2;
-			for (Map.Entry<Integer, TypedDependencyProperty> entry1 : s.entity1Dependencies
-					.entrySet()) {
-				index1 = entry1.getKey();
-				tdp1 = entry1.getValue();
-				word1 = s.words.get(index1 - 1).word();
-				if (tdp1.position)
-					arrow1 = "<-";
-				else
-					arrow1 = "->";
-				type1 = "[" + tdp1.relation + "]";
-				for (Map.Entry<Integer, TypedDependencyProperty> entry2 : s.entity2Dependencies
-						.entrySet()) {
-					index2 = entry2.getKey();
-					tdp2 = entry2.getValue();
-					word2 = s.words.get(index2 - 1).word();
-					if (tdp2.position)
-						arrow2 = "<-";
+					// format "word""[dependency-type]""arrow""feature-stem"
+					if (tdp.position)
+						arrow = "<-";
 					else
-						arrow2 = "->";
-					type2 = "[" + tdp2.relation + "]";
-
+						arrow = "->";
+					type = "[" + tdp.relation + "]";
+					sLvDepTypeIndices += getIndex(word, "d");
 					sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-							+ word1 + type1 + arrow1 + "|" + strFeatureStem
-							+ "|" + type2 + arrow2 + word2 + newLine;
-					sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-							+ type1 + arrow1 + "|" + depFeatureStem + "|"
-							+ type2 + arrow2 + newLine;
-					sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-							+ arrow1 + "|" + dirFeatureStem + "|" + arrow2
+							+ strFeatureStem + "|" + type + arrow + word
 							+ newLine;
+					sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+							+ depFeatureStem + "|" + type + arrow + newLine;
+					sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+							+ dirFeatureStem + "|" + arrow + newLine;
 				}
+
+				// having window nodes on both sides
+				int index1, index2;
+				String word1, word2, arrow1, arrow2, type1, type2;
+				TypedDependencyProperty tdp1, tdp2;
+				for (Map.Entry<Integer, TypedDependencyProperty> entry1 : s.entity1Dependencies
+						.entrySet()) {
+					index1 = entry1.getKey();
+					tdp1 = entry1.getValue();
+					word1 = s.words.get(index1 - 1).word();
+					if (tdp1.position)
+						arrow1 = "<-";
+					else
+						arrow1 = "->";
+					type1 = "[" + tdp1.relation + "]";
+					for (Map.Entry<Integer, TypedDependencyProperty> entry2 : s.entity2Dependencies
+							.entrySet()) {
+						index2 = entry2.getKey();
+						tdp2 = entry2.getValue();
+						word2 = s.words.get(index2 - 1).word();
+						if (tdp2.position)
+							arrow2 = "<-";
+						else
+							arrow2 = "->";
+						type2 = "[" + tdp2.relation + "]";
+
+						sentenceLvFeats += "feature: " + "str:" + inverseFlag
+								+ "|" + word1 + type1 + arrow1 + "|"
+								+ strFeatureStem + "|" + type2 + arrow2 + word2
+								+ newLine;
+						sentenceLvFeats += "feature: " + "dep:" + inverseFlag
+								+ "|" + type1 + arrow1 + "|" + depFeatureStem
+								+ "|" + type2 + arrow2 + newLine;
+						sentenceLvFeats += "feature: " + "dir:" + inverseFlag
+								+ "|" + arrow1 + "|" + dirFeatureStem + "|"
+								+ arrow2 + newLine;
+					}
+				}
+
+				// sentence-level bag of words features
+				sentenceLvFeats += "bag-of-words-features:" + newLine;
+				sentenceLvFeats += "bow-word-feature: " + sLvWordIndices
+						+ newLine;
+				sentenceLvFeats += "bow-tag-feature: " + sLvTagIndices
+						+ newLine;
+				sentenceLvFeats += "bow-dep-feature: " + sLvDepTypeIndices
+						+ newLine;
+				sentenceLvFeats += "bow-dep-word-feature: " + sLvDepWordIndices
+						+ newLine;
+				sentenceLvFeats += "</sentence-level-features>" + newLine;
+
+				// chunk-level features
+				chunkLvFeats += "<chunk-level-features>" + newLine;
+				// both chunkLvFeat1 and chunkLvFeat2 are '' ended
+				chunkLvFeats += "word-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(chunkLvFeat1, "w",
+								inverseFlagAbbr, newLine) + newLine;
+				chunkLvFeats += "tag-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(chunkLvFeat2, "t",
+								inverseFlagAbbr, newLine) + newLine;
+				chunkLvFeats += "</chunk-level-features>" + newLine;
+
+				// phrase-level features
+				phraseLvFeats += "<phrase-level-features>" + newLine;
+				phraseLvFeats += "word-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(phraseLvFeat1, "w",
+								inverseFlagAbbr, newLine) + newLine;
+				phraseLvFeats += "tag-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(phraseLvFeat2, "t",
+								inverseFlagAbbr, newLine) + newLine;
+				phraseLvFeats += "</phrase-level-features>" + newLine;
+
+				// word-level features
+				wordLvFeats += "<word-level-features>" + newLine;
+				// both wordLvFeat1 and wordLvFeat2 are '' ended
+				wordLvFeats += "word-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(wordLvFeat1, "w",
+								inverseFlagAbbr, newLine) + newLine;
+				wordLvFeats += "tag-features:"
+						+ newLine
+						+ addIndicesToFeatureGroup(wordLvFeat2, "t",
+								inverseFlagAbbr, newLine) + newLine;
+				wordLvFeats += "</word-level-features>" + newLine;
+
+				// footer
+				footer += "</instance>" + newLine;
+
+				// System.out.print(header);
+				// System.out.print(sentenceLvFeats);
+				// System.out.print(chunkLvFeats);
+				// System.out.print(phraseLvFeats);
+				// System.out.print(wordLvFeats);
+				// System.out.print(footer);
+				instance = header + sentenceLvFeats + chunkLvFeats
+						+ phraseLvFeats + wordLvFeats + footer;
+				if (outputMethod)
+					bw.write(instance);
+				else
+					System.out.print(instance);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Error sentence is: " + s.sentenceText);
 			}
-
-			// sentence-level bag of words features
-			sentenceLvFeats += "bag-of-words-features:" + newLine;
-			sentenceLvFeats += "bow-word-feature: " + sLvWordIndices + newLine;
-			sentenceLvFeats += "bow-tag-feature: " + sLvTagIndices + newLine;
-			sentenceLvFeats += "bow-dep-feature: " + sLvDepTypeIndices
-					+ newLine;
-			sentenceLvFeats += "bow-dep-word-feature: " + sLvDepWordIndices
-					+ newLine;
-			sentenceLvFeats += "</sentence-level-features>" + newLine;
-
-			// chunk-level features
-			chunkLvFeats += "<chunk-level-features>" + newLine;
-			// both chunkLvFeat1 and chunkLvFeat2 are '' ended
-			chunkLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(chunkLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
-			chunkLvFeats += "tag-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(chunkLvFeat2, "t",
-							inverseFlagAbbr, newLine) + newLine;
-			chunkLvFeats += "</chunk-level-features>" + newLine;
-
-			// phrase-level features
-			phraseLvFeats += "<phrase-level-features>" + newLine;
-			phraseLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(phraseLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
-			phraseLvFeats += "tag-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(phraseLvFeat2, "t",
-							inverseFlagAbbr, newLine) + newLine;
-			phraseLvFeats += "</phrase-level-features>" + newLine;
-
-			// word-level features
-			wordLvFeats += "<word-level-features>" + newLine;
-			// both wordLvFeat1 and wordLvFeat2 are '' ended
-			wordLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(wordLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
-			wordLvFeats += "tag-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(wordLvFeat2, "t",
-							inverseFlagAbbr, newLine) + newLine;
-			wordLvFeats += "</word-level-features>" + newLine;
-
-			// footer
-			footer += "</instance>" + newLine;
-
-			// System.out.print(header);
-			// System.out.print(sentenceLvFeats);
-			// System.out.print(chunkLvFeats);
-			// System.out.print(phraseLvFeats);
-			// System.out.print(wordLvFeats);
-			// System.out.print(footer);
-			instance = header + sentenceLvFeats + chunkLvFeats + phraseLvFeats
-					+ wordLvFeats + footer;
-			if (outputMethod)
-				bw.write(instance);
-			else
-				System.out.print(instance);
 		}
 		if (outputMethod)
 			bw.close();
