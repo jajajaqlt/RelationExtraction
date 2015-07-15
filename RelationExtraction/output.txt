@@ -1,273 +1,567 @@
-Acronyms and Abbreviations:
- None.
-Negations:
-type: nega
-Trigger: not: [(116, 3),]
-ConceptPairs: [(C0596545,Experience),]
-ConceptPositionList: [(172, 11),]
-Utterance:
- Id: 00000000.tx.1
- Utterance text: None of the 15 patients with supradiaphragmatic disease who received limited-field radiotherapy to regions that did not include the mediastinal or hilar nodes subsequently experienced relapse there.
- Position: (0, 198)
-Phrase:
- text: None of the 15 patients
- phrase_positional_info: (0, 23)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -686
-   Score: -760
-   Concept Id: C0549184
-   Concept Name: None
-   Preferred Name: None
-   Matched Words: [none]
-   Semantic Types: [qnco]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [MTH]
-   Positional Info: [(0, 4)]
-   Score: -760
-   Concept Id: C0030705
-   Concept Name: Patients
-   Preferred Name: Patients
-   Matched Words: [patients]
-   Semantic Types: [podg]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [LNC, MTH, NCI, SNOMEDCT_US]
-   Positional Info: [(15, 8)]
-Phrase:
- text: with supradiaphragmatic disease
- phrase_positional_info: (24, 31)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -861
-   Score: -861
-   Concept Id: C0012634
-   Concept Name: Disease
-   Preferred Name: Disease
-   Matched Words: [disease]
-   Semantic Types: [dsyn]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [CSP, MTH, NCI, SNOMEDCT_US]
-   Positional Info: [(48, 7)]
-Phrase:
- text: who
- phrase_positional_info: (56, 3)
-Candidates:
-Mappings:
-Phrase:
- text: received
- phrase_positional_info: (60, 8)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -1000
-   Score: -1000
-   Concept Id: C1514756
-   Concept Name: Received
-   Preferred Name: Receive
-   Matched Words: [received]
-   Semantic Types: [qlco]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [NCI]
-   Positional Info: [(60, 8)]
-Phrase:
- text: limited-field radiotherapy to regions
- phrase_positional_info: (69, 37)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -752
-   Score: -797
-   Concept Id: C1711365
-   Concept Name: limited radiotherapy
-   Preferred Name: Limited Radiation Therapy
-   Matched Words: [limited, radiotherapy]
-   Semantic Types: [topp]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [NCI, NLMSubSyn]
-   Positional Info: [(69, 7), (83, 12)]
-   Score: -593
-   Concept Id: C2349184
-   Concept Name: Field
-   Preferred Name: Force Field
-   Matched Words: [field]
-   Semantic Types: [cnce]
-   is Head?: false
-   is Overmatch?: false
-   Sources: [MTH, NCI, NLMSubSyn]
-   Positional Info: [(77, 5)]
-   Score: -560
-   Concept Id: C0017446
-   Concept Name: Region
-   Preferred Name: Geographic Locations
-   Matched Words: [region]
-   Semantic Types: [geoa]
-   is Head?: false
-   is Overmatch?: false
-   Sources: [CSP, MTH, NCI]
-   Positional Info: [(99, 7)]
- Mapping:
-  Map Score: -752
-   Score: -593
-   Concept Id: C0439801
-   Concept Name: Limited
-   Preferred Name: Limited (extensiveness)
-   Matched Words: [limited]
-   Semantic Types: [ftcn]
-   is Head?: false
-   is Overmatch?: false
-   Sources: [CHV, MTH, SNOMEDCT_US]
-   Positional Info: [(69, 7)]
-   Score: -797
-   Concept Id: C1882536
-   Concept Name: radiotherapy field
-   Preferred Name: Radiation Field
-   Matched Words: [radiotherapy, field]
-   Semantic Types: [blor]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [NCI, NLMSubSyn]
-   Positional Info: [(77, 18)]
-   Score: -560
-   Concept Id: C0017446
-   Concept Name: Region
-   Preferred Name: Geographic Locations
-   Matched Words: [region]
-   Semantic Types: [geoa]
-   is Head?: false
-   is Overmatch?: false
-   Sources: [CSP, MTH, NCI]
-   Positional Info: [(99, 7)]
-Phrase:
- text: that
- phrase_positional_info: (107, 4)
-Candidates:
-Mappings:
-Phrase:
- text: did
- phrase_positional_info: (112, 3)
-Candidates:
-Mappings:
-Phrase:
- text: not
- phrase_positional_info: (116, 3)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -1000
-   Score: -1000
-   Concept Id: C1518422
-   Concept Name: Not
-   Preferred Name: Negation
-   Matched Words: [not]
-   Semantic Types: [ftcn]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [MTH, NCI]
-   Positional Info: [(116, 3)]
-Phrase:
- text: include
- phrase_positional_info: (120, 7)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -1000
-   Score: -1000
-   Concept Id: C0332257
-   Concept Name: include
-   Preferred Name: Including (qualifier)
-   Matched Words: [include]
-   Semantic Types: [ftcn]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [CHV, MTH, SNOMEDCT_US]
-   Positional Info: [(120, 7)]
-Phrase:
- text: the mediastinal
- phrase_positional_info: (128, 15)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -1000
-   Score: -1000
-   Concept Id: C0025066
-   Concept Name: Mediastinal
-   Preferred Name: Mediastinum
-   Matched Words: [mediastinal]
-   Semantic Types: [blor]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [FMA, MTH, SNOMEDCT_US]
-   Positional Info: [(132, 11)]
-Phrase:
- text: or
- phrase_positional_info: (144, 2)
-Candidates:
-Mappings:
-Phrase:
- text: hilar nodes subsequently
- phrase_positional_info: (147, 24)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -790
-   Score: -827
-   Concept Id: C0205150
-   Concept Name: Hilar
-   Preferred Name: Hilar
-   Matched Words: [hilar]
-   Semantic Types: [spco]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [SNOMEDCT_US]
-   Positional Info: [(147, 5)]
-   Score: -827
-   Concept Id: C0746922
-   Concept Name: nodes
-   Preferred Name: Anatomic Node
-   Matched Words: [nodes]
-   Semantic Types: [bpoc]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [CHV, MTH, NCI]
-   Positional Info: [(153, 5)]
-Phrase:
- text: experienced
- phrase_positional_info: (172, 11)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -966
-   Score: -966
-   Concept Id: C0596545
-   Concept Name: Experience
-   Preferred Name: Experience
-   Matched Words: [experience]
-   Semantic Types: [menp]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [CHV, MTH]
-   Positional Info: [(172, 11)]
-Phrase:
- text: relapse there.
- phrase_positional_info: (184, 14)
-Candidates:
-Mappings:
- Mapping:
-  Map Score: -861
-   Score: -861
-   Concept Id: C0205336
-   Concept Name: relapse
-   Preferred Name: Relapsing course
-   Matched Words: [relapse]
-   Semantic Types: [tmco]
-   is Head?: true
-   is Overmatch?: false
-   Sources: [CHV, MTH]
-   Positional Info: [(184, 7)]
+<instance>
+index: 0
+cui1: C0126577
+cui1-type: PHOB
+cui1-matched-words: M/8
+cui2: C0026837
+cui2-type: CNCE
+cui2-matched-words: rigor
+positivity: false
+inverse: false
+net-relation: treats
+meta-relation: null
+sentence: If M/8 solutions-nearly equimolecular to "physiological" solutions of sodium chloride-are used, even when injected intra-arterially, calcium salts hasten and magnesium salts retard the onset of rigor.
+<sentence-level-features>
+feature: inverse_false|PHOB|solutions-nearly equimolecular to `` physiological '' solutions of sodium chloride-are used , even when injected intra-arterially , calcium salts hasten and magnesium salts retard the onset of|CNCE
+feature: inverse_false|If|PHOB|solutions-nearly equimolecular to `` physiological '' solutions of sodium chloride-are used , even when injected intra-arterially , calcium salts hasten and magnesium salts retard the onset of|CNCE|.
+feature: inverse_false|#PAD# If|PHOB|solutions-nearly equimolecular to `` physiological '' solutions of sodium chloride-are used , even when injected intra-arterially , calcium salts hasten and magnesium salts retard the onset of|CNCE|. #PAD#
+feature: inverse_false|PHOB|JJ NN TO `` JJ '' NNS IN NN NN VBD , RB WRB VBD NN , NN NN NNS CC NN NNS VBD DT NN IN|CNCE
+feature: inverse_false|IN|PHOB|JJ NN TO `` JJ '' NNS IN NN NN VBD , RB WRB VBD NN , NN NN NNS CC NN NNS VBD DT NN IN|CNCE|.
+feature: inverse_false|#PAD# IN|PHOB|JJ NN TO `` JJ '' NNS IN NN NN VBD , RB WRB VBD NN , NN NN NNS CC NN NNS VBD DT NN IN|CNCE|. #PAD#
+feature: str:inverse_false|PHOB|[nummod]<-equimolecular[nsubj]<-used[advcl]<-retard[dobj]->onset[nmod]->|CNCE
+feature: dep:inverse_false|PHOB|[nummod]<-[nsubj]<-[advcl]<-[dobj]->[nmod]->|CNCE
+feature: dir:inverse_false|PHOB|<-<-<-->->|CNCE
+feature: str:inverse_false|PHOB|[nummod]<-equimolecular[nsubj]<-used[advcl]<-retard[dobj]->onset[nmod]->|CNCE|[case]->of
+feature: dep:inverse_false|PHOB|[nummod]<-[nsubj]<-[advcl]<-[dobj]->[nmod]->|CNCE|[case]->
+feature: dir:inverse_false|PHOB|<-<-<-->->|CNCE|->
+bag-of-words-features:
+bow-word-feature: 0 576 401 743 3 270 526 1288 2859 1288 2197 647 0 
+bow-tag-feature: 0 6 7 12 25 45 7 44 13 6 12 12 28 40 20 36 28 12 40 12 12 13 1 12 13 28 3 12 6 39 0 
+bow-dep-feature: 39 37 2 23 33 
+bow-dep-word-feature: 3 2197 647 
+</sentence-level-features>
+<chunk-level-features>
+word-features:
+inverse_false|#PAD# If
+bow: 0 
+inverse_false|PHOB
+bow: 
+inverse_false|solutions-nearly equimolecular to `` physiological '' solutions of sodium chloride-are used , even when injected intra-arterially , calcium salts hasten and magnesium salts retard the onset of
+bow: 576 401 743 3 270 526 1288 2859 1288 2197 647 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 0 
+tag-features:
+inverse_false|#PAD# IN
+bow: 0 6 
+inverse_false|PHOB
+bow: 
+inverse_false|JJ NN TO `` JJ '' NNS IN NN NN VBD , RB WRB VBD NN , NN NN NNS CC NN NNS VBD DT NN IN
+bow: 7 12 25 45 7 44 13 6 12 12 28 40 20 36 28 12 40 12 12 13 1 12 13 28 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 39 0 
+</chunk-level-features>
+<phrase-level-features>
+word-features:
+inverse_false|#PAD#
+bow: 0 
+inverse_false|If
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|solutions-nearly equimolecular to `` physiological '' solutions of sodium chloride-are
+bow: 576 401 743 
+inverse_false|used
+bow: 3 
+inverse_false|,
+bow: 
+inverse_false|even
+bow: 
+inverse_false|when
+bow: 
+inverse_false|injected intra-arterially ,
+bow: 270 
+inverse_false|calcium salts
+bow: 526 1288 
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|magnesium salts
+bow: 2859 1288 
+inverse_false|retard
+bow: 2197 
+inverse_false|the onset of
+bow: 647 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|#PAD#
+bow: 0 
+inverse_false|IN
+bow: 6 
+inverse_false|PHOB
+bow: 
+inverse_false|JJ NN TO `` JJ '' NNS IN NN NN
+bow: 7 12 25 45 7 44 13 6 12 12 
+inverse_false|VBD
+bow: 28 
+inverse_false|,
+bow: 40 
+inverse_false|RB
+bow: 20 
+inverse_false|WRB
+bow: 36 
+inverse_false|VBD NN ,
+bow: 28 12 40 
+inverse_false|NN NN
+bow: 12 12 
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|NN NNS
+bow: 12 13 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT NN IN
+bow: 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</phrase-level-features>
+<word-level-features>
+word-features:
+inverse_false|#PAD#
+bow: 0 
+inverse_false|If
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|solutions-nearly
+bow: 
+inverse_false|equimolecular
+bow: 
+inverse_false|to
+bow: 
+inverse_false|``
+bow: 
+inverse_false|physiological
+bow: 576 
+inverse_false|''
+bow: 
+inverse_false|solutions
+bow: 401 
+inverse_false|of
+bow: 
+inverse_false|sodium
+bow: 743 
+inverse_false|chloride-are
+bow: 
+inverse_false|used
+bow: 3 
+inverse_false|,
+bow: 
+inverse_false|even
+bow: 
+inverse_false|when
+bow: 
+inverse_false|injected
+bow: 270 
+inverse_false|intra-arterially
+bow: 
+inverse_false|,
+bow: 
+inverse_false|calcium
+bow: 526 
+inverse_false|salts
+bow: 1288 
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|magnesium
+bow: 2859 
+inverse_false|salts
+bow: 1288 
+inverse_false|retard
+bow: 2197 
+inverse_false|the
+bow: 
+inverse_false|onset
+bow: 647 
+inverse_false|of
+bow: 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|#PAD#
+bow: 0 
+inverse_false|IN
+bow: 6 
+inverse_false|PHOB
+bow: 
+inverse_false|JJ
+bow: 7 
+inverse_false|NN
+bow: 12 
+inverse_false|TO
+bow: 25 
+inverse_false|``
+bow: 45 
+inverse_false|JJ
+bow: 7 
+inverse_false|''
+bow: 44 
+inverse_false|NNS
+bow: 13 
+inverse_false|IN
+bow: 6 
+inverse_false|NN
+bow: 12 
+inverse_false|NN
+bow: 12 
+inverse_false|VBD
+bow: 28 
+inverse_false|,
+bow: 40 
+inverse_false|RB
+bow: 20 
+inverse_false|WRB
+bow: 36 
+inverse_false|VBD
+bow: 28 
+inverse_false|NN
+bow: 12 
+inverse_false|,
+bow: 40 
+inverse_false|NN
+bow: 12 
+inverse_false|NN
+bow: 12 
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|NN
+bow: 12 
+inverse_false|NNS
+bow: 13 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT
+bow: 3 
+inverse_false|NN
+bow: 12 
+inverse_false|IN
+bow: 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</word-level-features>
+</instance>
+<instance>
+index: 0
+cui1: C0357197
+cui1-type: PHOB
+cui1-matched-words: calcium salts
+cui2: C0026837
+cui2-type: CNCE
+cui2-matched-words: rigor
+positivity: false
+inverse: false
+net-relation: treats
+meta-relation: null
+sentence: If M/8 solutions-nearly equimolecular to "physiological" solutions of sodium chloride-are used, even when injected intra-arterially, calcium salts hasten and magnesium salts retard the onset of rigor.
+<sentence-level-features>
+feature: inverse_false|PHOB|hasten and magnesium salts retard the onset of|CNCE
+feature: inverse_false|,|PHOB|hasten and magnesium salts retard the onset of|CNCE|.
+feature: inverse_false|intra-arterially ,|PHOB|hasten and magnesium salts retard the onset of|CNCE|. #PAD#
+feature: inverse_false|PHOB|NNS CC NN NNS VBD DT NN IN|CNCE
+feature: inverse_false|,|PHOB|NNS CC NN NNS VBD DT NN IN|CNCE|.
+feature: inverse_false|NN ,|PHOB|NNS CC NN NNS VBD DT NN IN|CNCE|. #PAD#
+feature: str:inverse_false|PHOB|[compound]<-hasten[nsubj]<-retard[dobj]->onset[nmod]->|CNCE
+feature: dep:inverse_false|PHOB|[compound]<-[nsubj]<-[dobj]->[nmod]->|CNCE
+feature: dir:inverse_false|PHOB|<-<-->->|CNCE
+feature: str:inverse_false|PHOB|[compound]<-hasten[nsubj]<-retard[dobj]->onset[nmod]->|CNCE|[case]->of
+feature: dep:inverse_false|PHOB|[compound]<-[nsubj]<-[dobj]->[nmod]->|CNCE|[case]->
+feature: dir:inverse_false|PHOB|<-<-->->|CNCE|->
+bag-of-words-features:
+bow-word-feature: 2859 1288 2197 647 0 
+bow-tag-feature: 12 40 13 1 12 13 28 3 12 6 39 0 
+bow-dep-feature: 12 37 23 33 
+bow-dep-word-feature: 2197 647 
+</sentence-level-features>
+<chunk-level-features>
+word-features:
+inverse_false|intra-arterially ,
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|hasten and magnesium salts retard the onset of
+bow: 2859 1288 2197 647 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 0 
+tag-features:
+inverse_false|NN ,
+bow: 12 40 
+inverse_false|PHOB
+bow: 
+inverse_false|NNS CC NN NNS VBD DT NN IN
+bow: 13 1 12 13 28 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 39 0 
+</chunk-level-features>
+<phrase-level-features>
+word-features:
+inverse_false|intra-arterially ,
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|magnesium salts
+bow: 2859 1288 
+inverse_false|retard
+bow: 2197 
+inverse_false|the onset of
+bow: 647 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|NN ,
+bow: 12 40 
+inverse_false|PHOB
+bow: 
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|NN NNS
+bow: 12 13 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT NN IN
+bow: 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</phrase-level-features>
+<word-level-features>
+word-features:
+inverse_false|intra-arterially
+bow: 
+inverse_false|,
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|magnesium
+bow: 2859 
+inverse_false|salts
+bow: 1288 
+inverse_false|retard
+bow: 2197 
+inverse_false|the
+bow: 
+inverse_false|onset
+bow: 647 
+inverse_false|of
+bow: 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|NN
+bow: 12 
+inverse_false|,
+bow: 40 
+inverse_false|PHOB
+bow: 
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|NN
+bow: 12 
+inverse_false|NNS
+bow: 13 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT
+bow: 3 
+inverse_false|NN
+bow: 12 
+inverse_false|IN
+bow: 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</word-level-features>
+</instance>
+<instance>
+index: 0
+cui1: C0302211
+cui1-type: PHOB
+cui1-matched-words: magnesium salts
+cui2: C0026837
+cui2-type: CNCE
+cui2-matched-words: rigor
+positivity: false
+inverse: false
+net-relation: treats
+meta-relation: null
+sentence: If M/8 solutions-nearly equimolecular to "physiological" solutions of sodium chloride-are used, even when injected intra-arterially, calcium salts hasten and magnesium salts retard the onset of rigor.
+<sentence-level-features>
+feature: inverse_false|PHOB|retard the onset of|CNCE
+feature: inverse_false|and|PHOB|retard the onset of|CNCE|.
+feature: inverse_false|hasten and|PHOB|retard the onset of|CNCE|. #PAD#
+feature: inverse_false|PHOB|VBD DT NN IN|CNCE
+feature: inverse_false|CC|PHOB|VBD DT NN IN|CNCE|.
+feature: inverse_false|NNS CC|PHOB|VBD DT NN IN|CNCE|. #PAD#
+feature: str:inverse_false|PHOB|[conj]<-hasten[nsubj]<-retard[dobj]->onset[nmod]->|CNCE
+feature: dep:inverse_false|PHOB|[conj]<-[nsubj]<-[dobj]->[nmod]->|CNCE
+feature: dir:inverse_false|PHOB|<-<-->->|CNCE
+feature: str:inverse_false|PHOB|[conj]<-hasten[nsubj]<-retard[dobj]->onset[nmod]->|CNCE|[case]->of
+feature: dep:inverse_false|PHOB|[conj]<-[nsubj]<-[dobj]->[nmod]->|CNCE|[case]->
+feature: dir:inverse_false|PHOB|<-<-->->|CNCE|->
+bag-of-words-features:
+bow-word-feature: 2197 647 0 
+bow-tag-feature: 13 1 28 3 12 6 39 0 
+bow-dep-feature: 14 37 23 33 
+bow-dep-word-feature: 2197 647 
+</sentence-level-features>
+<chunk-level-features>
+word-features:
+inverse_false|hasten and
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|retard the onset of
+bow: 2197 647 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 0 
+tag-features:
+inverse_false|NNS CC
+bow: 13 1 
+inverse_false|PHOB
+bow: 
+inverse_false|VBD DT NN IN
+bow: 28 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|. #PAD#
+bow: 39 0 
+</chunk-level-features>
+<phrase-level-features>
+word-features:
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|retard
+bow: 2197 
+inverse_false|the onset of
+bow: 647 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|PHOB
+bow: 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT NN IN
+bow: 3 12 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</phrase-level-features>
+<word-level-features>
+word-features:
+inverse_false|hasten
+bow: 
+inverse_false|and
+bow: 
+inverse_false|PHOB
+bow: 
+inverse_false|retard
+bow: 2197 
+inverse_false|the
+bow: 
+inverse_false|onset
+bow: 647 
+inverse_false|of
+bow: 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 
+inverse_false|#PAD#
+bow: 0 
+tag-features:
+inverse_false|NNS
+bow: 13 
+inverse_false|CC
+bow: 1 
+inverse_false|PHOB
+bow: 
+inverse_false|VBD
+bow: 28 
+inverse_false|DT
+bow: 3 
+inverse_false|NN
+bow: 12 
+inverse_false|IN
+bow: 6 
+inverse_false|CNCE
+bow: 
+inverse_false|.
+bow: 39 
+inverse_false|#PAD#
+bow: 0 
+</word-level-features>
+</instance>
