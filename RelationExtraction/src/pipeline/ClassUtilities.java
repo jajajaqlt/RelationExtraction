@@ -94,17 +94,26 @@ public class ClassUtilities {
 
 		// Mintz09: For each entity, one 'window' node that is not part of the
 		// dependency path
-		// all the edges connecting entity one node (exclusive of the one on the path)
+		// all the edges connecting entity one node (exclusive of the one on the
+		// path)
 		HashMap<Integer, TypedDependencyProperty> entity1Dependencies;
-		// all the edges connecting entity two node (exclusive of the one on the path)
+		// all the edges connecting entity two node (exclusive of the one on the
+		// path)
 		HashMap<Integer, TypedDependencyProperty> entity2Dependencies;
 
 		// stores mapping of 1-based indices of all phrase nodes on the shortest
 		// path (inclusive of two entity nodes) to edges originating from those
-		// nodes respectively, i.e. each edge only appears once in this data structure
+		// nodes respectively, i.e. each edge only appears once in this data
+		// structure
 		// also keeps the order of phrase nodes on the path
 		LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> path;
 
+		public String toString() {
+			String ret = "";
+			for (Phrase p : phrases)
+				ret += "[" + p.toString() + "] ";
+			return ret.substring(0, ret.length() - 1);
+		}
 	}
 
 	// only saves lexical information
@@ -123,6 +132,13 @@ public class ClassUtilities {
 		public Phrase() {
 			words = new ArrayList<ClassUtilities.Word>();
 		}
+
+		public String toString() {
+			String ret = "";
+			for (Word w : words)
+				ret += w.toString() + ",";
+			return ret.substring(0, ret.length() - 1);
+		}
 	}
 
 	// only saves lexical information
@@ -138,12 +154,18 @@ public class ClassUtilities {
 			wText = w;
 			// dependencies = new ArrayList<ClassUtilities.Dependency>();
 		}
+
+		public String toString() {
+			return wText;
+		}
 	}
 
 	// abstract form of an edge
 	public static class TypedDependencyProperty {
-		// true for to direction, i.e. the associated vertex is the end-point of the edge
-		// false for from direction, i.e. the associated vertex is the start-point of the edge
+		// true for to direction, i.e. the associated vertex is the end-point of
+		// the edge
+		// false for from direction, i.e. the associated vertex is the
+		// start-point of the edge
 		public boolean direction;
 		public String relation;
 		// true for arrow to the left, false for arrow to the right
