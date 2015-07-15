@@ -16,7 +16,7 @@ public class MainTest {
 	public static void main(String[] args) throws Exception {
 
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF");
+				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF", true);
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 
 		CandidatesToFeatures c2f = new CandidatesToFeatures("", "errorLog.txt",

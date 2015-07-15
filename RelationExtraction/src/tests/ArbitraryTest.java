@@ -3,13 +3,10 @@ package tests;
 import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
-import pipeline.Dijkstra;
-
-import com.google.common.base.CharMatcher;
+import tools.Time;
 
 public class ArbitraryTest {
 	public static void main(String[] args) throws Exception {
@@ -39,18 +36,22 @@ public class ArbitraryTest {
 		// String b = a;
 		// System.out.println(a);
 		// System.out.println(b);
-//		String word = "word";
-//		ArrayList<String> words = new ArrayList<String>();
-//		words.add(word);
-//		words.add(word);
-//		words.add(word);
-//		for (String word1 : words) {
-//
-//		}
-//		String word1 = "word1";
-		String str = "//";
-		System.out.println(str.length());
-
+		// String word = "word";
+		// ArrayList<String> words = new ArrayList<String>();
+		// words.add(word);
+		// words.add(word);
+		// words.add(word);
+		// for (String word1 : words) {
+		//
+		// }
+		// String word1 = "word1";
+		// String str = "//";
+		// System.out.println(str.length());
+		// List<Result> results = ConvertMetamapParsingResultsToJson
+		// .readJson("output.json");
+		// ConvertMetamapParsingResultsToJson.writeResults(results,
+		// "output.txt");
+		System.out.println(Time.getCurrentTime());
 	}
 
 	/**

@@ -14,7 +14,7 @@ public class OneEvInOnePhrase {
 
 		// System.out.println(System.currentTimeMillis());
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-				"SRSTR", "SRDEF", "sample_abstracts.txt", "COMPACT_MRREL.RRF");
+				"SRSTR", "SRDEF", "sample_abstracts.txt", "COMPACT_MRREL.RRF",false);
 		// System.out.println(System.currentTimeMillis());
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 		PreCandidate prev, succ;

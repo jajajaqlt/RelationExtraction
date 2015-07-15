@@ -1,6 +1,8 @@
 package gov.nih.nlm.nls.metamap;
 
-import se.sics.prologbeans.*;
+import java.io.Serializable;
+
+import se.sics.prologbeans.PBTerm;
 
 /**
  * Position implementation class.
@@ -11,7 +13,7 @@ import se.sics.prologbeans.*;
  * @author <a href="mailto:wrogers@nlm.nih.gov">Willie Rogers</a>
  * @version 1.0
  */
-public class PositionImpl implements Position {
+public class PositionImpl implements Position, Serializable {
 
   long x;
   long y;

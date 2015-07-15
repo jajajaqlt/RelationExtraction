@@ -1,6 +1,6 @@
 package gov.nih.nlm.nls.metamap;
 
-import java.io.InputStream;
+import java.io.InputStream; 
 import java.io.PrintStream;
 import java.io.BufferedReader;
 import java.io.FileReader;

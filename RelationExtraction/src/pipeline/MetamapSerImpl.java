@@ -316,6 +316,10 @@ public class MetamapSerImpl {
 		public Position position;
 		public List<PCM> pcmList;
 
+		// public UtteranceSerImpl(){
+		//
+		// }
+		
 		@Override
 		public String getId() throws Exception {
 			return this.id;

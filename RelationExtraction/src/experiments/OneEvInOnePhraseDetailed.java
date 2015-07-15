@@ -1,6 +1,6 @@
 package experiments;
 
-import gov.nih.nlm.nls.metamap.PCM; 
+import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Position;
 
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ public class OneEvInOnePhraseDetailed {
 	public static void main(String[] args) throws Exception {
 
 		// System.out.println(System.currentTimeMillis());
-//		 AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-//		 "SRSTR", "SRDEF", "sample_abstracts.txt", "COMPACT_MRREL.RRF");
+		// AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
+		// "SRSTR", "SRDEF", "sample_abstracts.txt", "COMPACT_MRREL.RRF");
 		AbstractsToCandidates a2c = new AbstractsToCandidates("NETMETA",
-				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF");
+				"SRSTR", "SRDEF", "input.txt", "COMPACT_MRREL.RRF", false);
 		// System.out.println(System.currentTimeMillis());
 		ArrayList<Candidate> candidates = a2c.getCandidates();
 		PreCandidate prev, succ;
@@ -31,7 +31,7 @@ public class OneEvInOnePhraseDetailed {
 			utt = candid.utterance.getString();
 			uttStartIndex = candid.utterance.getPosition().getX();
 
-			// public class PreCandidate { 
+			// public class PreCandidate {
 			// public String cui;
 			// // rootAbbr
 			// public String rootSType;
