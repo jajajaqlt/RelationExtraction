@@ -5,6 +5,8 @@ import gov.nih.nlm.nls.metamap.Mapping;
 import gov.nih.nlm.nls.metamap.MetaMapApi;
 import gov.nih.nlm.nls.metamap.MetaMapApiImpl;
 import gov.nih.nlm.nls.metamap.PCM;
+import gov.nih.nlm.nls.metamap.Phrase;
+import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Result;
 import gov.nih.nlm.nls.metamap.Utterance;
 import info.olteanu.interfaces.StringFilter;
@@ -13,6 +15,7 @@ import info.olteanu.utils.TextNormalizer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.UnsupportedEncodingException;
 //import java.lang.reflect.Array;
 //import java.text.DateFormat;
 //import java.text.SimpleDateFormat;
@@ -27,8 +30,12 @@ import java.util.regex.Pattern;
 
 import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.PreCandidate;
+import pipeline.MetamapSerImpl.ResultSerImpl;
+import tests.InterfaceAdapter;
 
 import com.google.common.base.CharMatcher;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 //import java.util.Map;
 /**
@@ -56,10 +63,12 @@ public class AbstractsToCandidates {
 	private HashMap<String, String> metaNetRelMap;
 	private SemanticNetwork semanticNet;
 	private int currentAbstractIndex;
+	private boolean isReadingFromJsonFile;
 
 	public AbstractsToCandidates(String relationMappingFile,
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
-			String abstractsFile, String metaRelationsFile) throws Exception {
+			String abstractsFile, String metaRelationsFile,
+			boolean isReadingFromJsonFile) throws Exception {
 		this.abstractsFile = abstractsFile;
 
 		processRelationMappingFile(relationMappingFile);
@@ -80,6 +89,7 @@ public class AbstractsToCandidates {
 		// System.out.println(System.currentTimeMillis());
 		cuiPairRelationMap = meta.cuiPairRelationMap;
 
+		this.isReadingFromJsonFile = isReadingFromJsonFile;
 	}
 
 	/**
@@ -109,34 +119,59 @@ public class AbstractsToCandidates {
 				abstractsFile)));
 		// each line is an abstract
 		String line;
-		MetaMapApi api = new MetaMapApiImpl(0);
-		api.setOptions("-y");
-		int i = 0;
 		Result result;
 		ArrayList<Candidate> someCandidates;
-		currentAbstractIndex = -1;
-
 		System.out.println(System.currentTimeMillis());
-		while ((line = br.readLine()) != null) {
-			currentAbstractIndex++;
-
-			// deals with non-ascii characters here
-			boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
-			if (!isAscii)
-				line = normalizeString(line);
-
-			System.out.println("" + i + "th abstract:");
-			System.out.println("start time: " + System.currentTimeMillis());
-			List<Result> resultList = api.processCitationsFromString(line);
-			// one 'line' has one abstract and one result
-			result = resultList.get(0);
-			// splits into utterances
-			for (Utterance utterance : result.getUtteranceList()) {
-				someCandidates = processUtterance(utterance);
-				candidates.addAll(someCandidates);
+		if (!isReadingFromJsonFile) {
+			MetaMapApi api = new MetaMapApiImpl(0);
+			api.setOptions("-y");
+			int i = 0;
+			currentAbstractIndex = -1;
+			while ((line = br.readLine()) != null) {
+				currentAbstractIndex++;
+				// deals with non-ascii characters here
+				boolean isAscii = CharMatcher.ASCII.matchesAllOf(line);
+				if (!isAscii)
+					line = normalizeString(line);
+				System.out.println("" + i + "th abstract:");
+				System.out.println("start time: " + System.currentTimeMillis());
+				List<Result> resultList = api.processCitationsFromString(line);
+				// one 'line' has one abstract and one result
+				result = resultList.get(0);
+				// splits into utterances
+				for (Utterance utterance : result.getUtteranceList()) {
+					someCandidates = processUtterance(utterance);
+					candidates.addAll(someCandidates);
+				}
+				System.out.println("end time: " + System.currentTimeMillis());
+				i++;
 			}
-			System.out.println("end time: " + System.currentTimeMillis());
-			i++;
+		} else {
+			GsonBuilder gb = new GsonBuilder();
+			gb.registerTypeAdapter(Result.class, new InterfaceAdapter<Result>());
+			gb.registerTypeAdapter(Utterance.class,
+					new InterfaceAdapter<Utterance>());
+			gb.registerTypeAdapter(Position.class,
+					new InterfaceAdapter<Position>());
+			gb.registerTypeAdapter(PCM.class, new InterfaceAdapter<PCM>());
+			gb.registerTypeAdapter(Phrase.class, new InterfaceAdapter<Phrase>());
+			gb.registerTypeAdapter(Mapping.class,
+					new InterfaceAdapter<Mapping>());
+			gb.registerTypeAdapter(Ev.class, new InterfaceAdapter<Ev>());
+			Gson gson = gb.create();
+			result = null;
+			int index = 0;
+			while ((line = br.readLine()) != null) {
+				System.out.println("" + index + "th abstract:");
+				System.out.println("start time: " + System.currentTimeMillis());
+				result = gson.fromJson(line, ResultSerImpl.class);
+				for (Utterance utterance : result.getUtteranceList()) {
+					someCandidates = processUtterance(utterance);
+					candidates.addAll(someCandidates);
+				}
+				System.out.println("end time: " + System.currentTimeMillis());
+				index++;
+			}
 
 		}
 		br.close();
@@ -393,23 +428,38 @@ public class AbstractsToCandidates {
 		br.close();
 	}
 
+	// /**
+	// *
+	// * @param str
+	// * @return Normalized version of str with accented characters replaced by
+	// * unaccented version and with diacritics removed. E.g. Ö -> O
+	// */
+	// private String normalizeString(String str) throws ClassNotFoundException
+	// {
+	// // TextNormalizer code from phramer.org
+	// // Allows compilation under both Java 5 and Java 6
+	// StringFilter stringFilter = TextNormalizer
+	// .getNormalizationStringFilter();
+	// String nfdNormalizedString = stringFilter.filter(str);
+	//
+	// // Normalizer is Java 6 only
+	// // String nfdNormalizedString = java.text.Normalizer.normalize(str,
+	// // Normalizer.Form.NFD);
+	// Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+	// return pattern.matcher(nfdNormalizedString).replaceAll("");
+	// }
+
 	/**
 	 *
-	 * @param str
-	 * @return Normalized version of str with accented characters replaced by
-	 *         unaccented version and with diacritics removed. E.g. Ö -> O
+	 * @param text
+	 * @return ASCII encoding of text with non ASCII characters replaced by ?
+	 * @throws UnsupportedEncodingException
 	 */
-	private String normalizeString(String str) throws ClassNotFoundException {
-		// TextNormalizer code from phramer.org
-		// Allows compilation under both Java 5 and Java 6
-		StringFilter stringFilter = TextNormalizer
-				.getNormalizationStringFilter();
-		String nfdNormalizedString = stringFilter.filter(str);
-
-		// Normalizer is Java 6 only
-		// String nfdNormalizedString = java.text.Normalizer.normalize(str,
-		// Normalizer.Form.NFD);
-		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-		return pattern.matcher(nfdNormalizedString).replaceAll("");
+	public static String normalizeString(String text)
+			throws UnsupportedEncodingException {
+		String aText;
+		byte[] b = text.getBytes("US-ASCII");
+		aText = new String(b, "US-ASCII");
+		return aText;
 	}
 }
