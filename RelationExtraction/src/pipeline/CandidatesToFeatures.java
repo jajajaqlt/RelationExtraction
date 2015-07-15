@@ -312,7 +312,13 @@ public class CandidatesToFeatures {
 		entity1Dependencies = new HashMap<Integer, TypedDependencyProperty>();
 		fromVertexIndex = -1;
 		entity1Dependencies = dependencies.get(fromVertexIndex);
-		toVertexIndex = Integer.parseInt(path.get(1).name);
+//		toVertexIndex = 0;
+//		try {
+			toVertexIndex = Integer.parseInt(path.get(1).name);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+
 		entity1Dependencies.remove(toVertexIndex);
 		for (Map.Entry<Integer, TypedDependencyProperty> entry : entity1Dependencies
 				.entrySet()) {
@@ -1188,7 +1194,7 @@ public class CandidatesToFeatures {
 
 			while (wordStartIndex >= phraseEndingIndices[phraseEndingIndicesCursor]) {
 				if (increaseCursorFlag)
-					gulpedPhraseIndices.add(wordStartIndex);
+					gulpedPhraseIndices.add(phraseEndingIndicesCursor);
 				phraseEndingIndicesCursor++;
 				increaseCursorFlag = true;
 			}
