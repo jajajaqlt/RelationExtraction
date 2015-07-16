@@ -142,7 +142,12 @@ public class CandidatesToFeatures {
 
 		Sentence sentence;
 
+		System.out.println("Total # of candidates is: " + candidates.size());
+		int index = 0;
 		for (Candidate candidate : candidates) {
+			index++;
+			System.out.println("Converting #" + index
+					+ " Candidate into Sentence.");
 			oldCandid = newCandid;
 			newCandid = candidate;
 
@@ -312,9 +317,9 @@ public class CandidatesToFeatures {
 		entity1Dependencies = new HashMap<Integer, TypedDependencyProperty>();
 		fromVertexIndex = -1;
 		entity1Dependencies = dependencies.get(fromVertexIndex);
-//		toVertexIndex = 0;
-//		try {
-			toVertexIndex = Integer.parseInt(path.get(1).name);
+		// toVertexIndex = 0;
+		// try {
+		toVertexIndex = Integer.parseInt(path.get(1).name);
 		// } catch (Exception e) {
 		// e.printStackTrace();
 		// }
@@ -388,7 +393,10 @@ public class CandidatesToFeatures {
 
 		String header = "", footer, sentenceLvFeats, chunkLvFeats, phraseLvFeats, wordLvFeats;
 
+		int n = 0;
 		for (Sentence s : sentences) {
+			n++;
+			System.out.println("Converting #" + n + " Sentence into features.");
 			try {
 				header = "";
 				footer = "";
@@ -475,9 +483,12 @@ public class CandidatesToFeatures {
 							phraseLvFeat2.length() - 1)
 							+ unitDelimiter;
 				}
-				middleWords = middleWords
-						.substring(0, middleWords.length() - 1);
-				middleTags = middleTags.substring(0, middleTags.length() - 1);
+				if (!middleWords.equals(""))
+					middleWords = middleWords.substring(0,
+							middleWords.length() - 1);
+				if (!middleTags.equals(""))
+					middleTags = middleTags.substring(0,
+							middleTags.length() - 1);
 
 				wordLvFeat1 += inverseFlagAbbr + s.entity2NE;
 				wordLvFeat2 += inverseFlagAbbr + s.entity2NE;
