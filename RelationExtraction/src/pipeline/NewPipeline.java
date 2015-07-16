@@ -49,6 +49,8 @@ public class NewPipeline {
 			}
 
 		}
+		br.close();
+		ps.close();
 	}
 
 }
