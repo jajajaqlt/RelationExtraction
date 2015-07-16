@@ -51,7 +51,16 @@ public class ArbitraryTest {
 		// .readJson("output.json");
 		// ConvertMetamapParsingResultsToJson.writeResults(results,
 		// "output.txt");
-		System.out.println(Time.getCurrentTime());
+		// System.out.println(Time.getCurrentTime());
+		Number num = new Number();
+		num.num = 10;
+		Number num2 = new Number();
+		System.out.println(num2.num);
+
+	}
+
+	public static class Number {
+		public static int num;
 	}
 
 	/**

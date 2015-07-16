@@ -3,5 +3,7 @@ encoding//src/experiments/TokenizationDiscrepancy.java=UTF-8
 encoding//src/pipeline/AbstractsToCandidates.java=UTF-8
 encoding//src/pipeline/CandidatesToFeatures.java=UTF-8
 encoding//src/pipeline/ConvertMetamapParsingResultsToJson.java=UTF-8
+encoding//src/pipeline/NewAbstractsToCandidates.java=UTF-8
+encoding//src/pipeline/NewCandidatesToFeatures.java=UTF-8
 encoding//src/tests/ArbitraryTest.java=UTF-8
 encoding/input.txt=UTF-8
