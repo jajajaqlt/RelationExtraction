@@ -944,10 +944,11 @@ public class NewCandidatesToFeatures {
 			// chunk-level features
 			chunkLvFeats += "<chunk-level-features>" + newLine;
 			// both chunkLvFeat1 and chunkLvFeat2 are '' ended
-			chunkLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(chunkLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
+			// chunkLvFeats += "word-features:"
+			// + newLine
+			// + addIndicesToFeatureGroup(chunkLvFeat1, "w",
+			// inverseFlagAbbr, newLine) + newLine;
+			chunkLvFeats += "word-features:" + newLine + chunkLvFeat1 + newLine;
 			chunkLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(chunkLvFeat2, "t",
@@ -956,10 +957,12 @@ public class NewCandidatesToFeatures {
 
 			// phrase-level features
 			phraseLvFeats += "<phrase-level-features>" + newLine;
-			phraseLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(phraseLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
+			// phraseLvFeats += "word-features:"
+			// + newLine
+			// + addIndicesToFeatureGroup(phraseLvFeat1, "w",
+			// inverseFlagAbbr, newLine) + newLine;
+			phraseLvFeats += "word-features:" + newLine + phraseLvFeat1
+					+ newLine;
 			phraseLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(phraseLvFeat2, "t",
@@ -969,10 +972,11 @@ public class NewCandidatesToFeatures {
 			// word-level features
 			wordLvFeats += "<word-level-features>" + newLine;
 			// both wordLvFeat1 and wordLvFeat2 are '' ended
-			wordLvFeats += "word-features:"
-					+ newLine
-					+ addIndicesToFeatureGroup(wordLvFeat1, "w",
-							inverseFlagAbbr, newLine) + newLine;
+			// wordLvFeats += "word-features:"
+			// + newLine
+			// + addIndicesToFeatureGroup(wordLvFeat1, "w",
+			// inverseFlagAbbr, newLine) + newLine;
+			wordLvFeats += "word-features:" + newLine + wordLvFeat1 + newLine;
 			wordLvFeats += "tag-features:"
 					+ newLine
 					+ addIndicesToFeatureGroup(wordLvFeat2, "t",
@@ -1104,11 +1108,16 @@ public class NewCandidatesToFeatures {
 	private String getIndex(String token, String type) {
 		int index = -1;
 		if (type.equals("w")) {
-			String stemmedWord;
-			stemmer.setCurrent(token);
-			stemmer.stem();
-			stemmedWord = stemmer.getCurrent();
-			index = wordIndex.indexOf(stemmedWord);
+			// changes the functionality of getting index from dictionary to
+			// 'wrapper'
+
+			// String stemmedWord;
+			// stemmer.setCurrent(token);
+			// stemmer.stem();
+			// stemmedWord = stemmer.getCurrent();
+			// index = wordIndex.indexOf(stemmedWord);
+
+			return token + " ";
 		}
 
 		if (type.equals("t")) {
