@@ -3,10 +3,23 @@ package tests;
 import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
-import tools.Time;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.process.Tokenizer;
+import edu.stanford.nlp.process.TokenizerFactory;
+import edu.stanford.nlp.trees.GrammaticalStructure;
+import edu.stanford.nlp.trees.GrammaticalStructureFactory;
+import edu.stanford.nlp.trees.PennTreebankLanguagePack;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TypedDependency;
 
 public class ArbitraryTest {
 	public static void main(String[] args) throws Exception {
@@ -52,11 +65,48 @@ public class ArbitraryTest {
 		// ConvertMetamapParsingResultsToJson.writeResults(results,
 		// "output.txt");
 		// System.out.println(Time.getCurrentTime());
-		Number num = new Number();
-		num.num = 10;
-		Number num2 = new Number();
-		System.out.println(num2.num);
+		// Number num = new Number();
+		// num.num = 10;
+		// Number num2 = new Number();
+		// System.out.println(num2.num);
+		// BufferedWriter log = new BufferedWriter(new OutputStreamWriter(
+		// System.out));
+		// for (int i = 0; i < 5; i++) {
+		// log.write("This is " + i + "!\n");
+		// log.flush();
+		// }
 
+		LexicalizedParser lp;
+		TokenizerFactory<CoreLabel> tokenizerFactory;
+		GrammaticalStructureFactory gsf;
+
+		lp = LexicalizedParser
+				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+		tokenizerFactory = PTBTokenizer
+				.factory(new CoreLabelTokenFactory(), "");
+		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
+
+		String uttText;
+		Tokenizer<CoreLabel> tok;
+		List<CoreLabel> rawWords = null;
+		Tree parse;
+		List<CoreLabel> taggedLabels = null;
+		GrammaticalStructure gs;
+		Collection<TypedDependency> tdl = null;
+
+		uttText = "The obstructed area may be bypassed by attaching the vas to any part of the epididymis on the testicular side of the obstruction or to the vasa efferentia.";
+		tok = tokenizerFactory.getTokenizer(new StringReader(uttText));
+		rawWords = tok.tokenize();
+		parse = lp.apply(rawWords);
+		taggedLabels = parse.taggedLabeledYield();
+		gs = gsf.newGrammaticalStructure(parse);
+		// TypedDependency: gov() dep() reln()
+		// tdl = gs.typedDependenciesCCprocessed();
+		tdl = gs.typedDependencies();
+		// no index information inside taggedLabels
+
+		// log.flush();
+		// log.close();
 	}
 
 	public static class Number {
