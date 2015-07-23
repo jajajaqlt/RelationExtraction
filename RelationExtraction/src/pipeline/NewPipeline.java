@@ -1,13 +1,15 @@
 package pipeline;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
 import pipeline.ClassUtilities.Candidate;
-import tools.Time;
 
 public class NewPipeline {
 	public static void run(String relationMappingFile,
@@ -17,11 +19,17 @@ public class NewPipeline {
 			String depTypeDictFile, boolean isReadingFromJsonFile)
 			throws Exception {
 
+		BufferedWriter bw;
+		if (outputFile.equals(""))
+			bw = new BufferedWriter(new OutputStreamWriter(System.out));
+		else
+			bw = new BufferedWriter(new FileWriter(outputFile));
+
 		NewAbstractsToCandidates a2c = new NewAbstractsToCandidates(
 				relationMappingFile, semanticNetworkFile,
 				semanticTypeAbbreviationFile, metaRelationsFile,
-				isReadingFromJsonFile);
-		NewCandidatesToFeatures c2f = new NewCandidatesToFeatures(outputFile,
+				isReadingFromJsonFile, bw);
+		NewCandidatesToFeatures c2f = new NewCandidatesToFeatures(bw,
 				wordDictFile, tagDictFile, depTypeDictFile);
 		File errorLog = new File(errorLogFile);
 		PrintStream ps = new PrintStream(errorLog);
@@ -33,6 +41,9 @@ public class NewPipeline {
 		int index = 0;
 		while ((line = br.readLine()) != null) {
 			try {
+				bw.write("<abstract>");
+				bw.newLine();
+				bw.flush();
 				index++;
 				// System.out.println("Starts processing #" + index
 				// + ". Time is: " + Time.getCurrentTime());
@@ -41,6 +52,9 @@ public class NewPipeline {
 				c2f.writeFeatures(index);
 				// System.out.println("Finishes processing #" + index
 				// + ". Time is: " + Time.getCurrentTime());
+				bw.write("</abstract>");
+				bw.newLine();
+				bw.flush();
 			} catch (Exception e) {
 				// System.out.println("Unable to finishes processing #" + index
 				// + ". Time is: " + Time.getCurrentTime());

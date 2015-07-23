@@ -74,7 +74,7 @@ public class NewCandidatesToFeatures {
 
 	// private String errorLogFile;
 
-	public NewCandidatesToFeatures(String outputFileName, String wordDictFile,
+	public NewCandidatesToFeatures(BufferedWriter bw, String wordDictFile,
 			String tagDictFile, String depTypeDictFile) throws Exception {
 		lp = LexicalizedParser
 				.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
@@ -82,12 +82,12 @@ public class NewCandidatesToFeatures {
 				.factory(new CoreLabelTokenFactory(), "");
 		gsf = new PennTreebankLanguagePack().grammaticalStructureFactory();
 
-		if (!outputFileName.equals("")) {
-			bw = new BufferedWriter(new FileWriter(outputFileName));
-			outputMethod = true;
-		} else {
-			outputMethod = false;
-		}
+		// if (!outputFileName.equals("")) {
+		// bw = new BufferedWriter(new FileWriter(outputFileName));
+		// outputMethod = true;
+		// } else {
+		// outputMethod = false;
+		// }
 
 		initializeIndices(wordDictFile, tagDictFile, depTypeDictFile);
 
@@ -98,6 +98,8 @@ public class NewCandidatesToFeatures {
 		sentences = new ArrayList<Sentence>();
 
 		// this.errorLogFile = errorLogFile;
+
+		this.bw = bw;
 	}
 
 	private void initializeIndices(String wordDictFile, String tagDictFile,
@@ -994,10 +996,12 @@ public class NewCandidatesToFeatures {
 			// System.out.print(footer);
 			instance = header + sentenceLvFeats + chunkLvFeats + phraseLvFeats
 					+ wordLvFeats + footer;
-			if (outputMethod)
-				bw.write(instance);
-			else
-				System.out.print(instance);
+			// if (outputMethod)
+			// bw.write(instance);
+			// else
+			// System.out.print(instance);
+			bw.write(instance);
+			bw.flush();
 			// } catch (Exception e) {
 			// e.printStackTrace(ps);
 			// ps.println("Error instance is:");
@@ -1006,8 +1010,10 @@ public class NewCandidatesToFeatures {
 			// }
 		}
 		// ps.close();
-		if (outputMethod)
-			bw.close();
+
+		// if (outputMethod)
+		// bw.close();
+
 		// System.out.println("Write features end time: "
 		// + System.currentTimeMillis());
 	}

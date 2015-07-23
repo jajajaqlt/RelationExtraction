@@ -13,6 +13,7 @@ import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.UnsupportedEncodingException;
@@ -28,6 +29,7 @@ import pipeline.ClassUtilities.Candidate;
 import pipeline.ClassUtilities.PreCandidate;
 import pipeline.MetamapSerImpl.ResultSerImpl;
 import tests.InterfaceAdapter;
+import tools.Time;
 
 import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
@@ -55,11 +57,12 @@ public class NewAbstractsToCandidates {
 	private boolean isReadingFromJsonFile;
 	private MetaMapApi api;
 	private Gson gson;
+	private BufferedWriter bw;
 
 	public NewAbstractsToCandidates(String relationMappingFile,
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
-			String metaRelationsFile, boolean isReadingFromJsonFile)
-			throws Exception {
+			String metaRelationsFile, boolean isReadingFromJsonFile,
+			BufferedWriter bw) throws Exception {
 
 		processRelationMappingFile(relationMappingFile);
 		String[] netRelations = Arrays.copyOf(netMetaRelMap.keySet().toArray(),
@@ -84,48 +87,75 @@ public class NewAbstractsToCandidates {
 		api = new MetaMapApiImpl(0);
 		api.setOptions("-y");
 
-		if (isReadingFromJsonFile) {
-			GsonBuilder gb = new GsonBuilder();
-			gb.registerTypeAdapter(Result.class, new InterfaceAdapter<Result>());
-			gb.registerTypeAdapter(Utterance.class,
-					new InterfaceAdapter<Utterance>());
-			gb.registerTypeAdapter(Position.class,
-					new InterfaceAdapter<Position>());
-			gb.registerTypeAdapter(PCM.class, new InterfaceAdapter<PCM>());
-			gb.registerTypeAdapter(Phrase.class, new InterfaceAdapter<Phrase>());
-			gb.registerTypeAdapter(Mapping.class,
-					new InterfaceAdapter<Mapping>());
-			gb.registerTypeAdapter(Ev.class, new InterfaceAdapter<Ev>());
-			gson = gb.create();
-		}
+		// if (isReadingFromJsonFile) {
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(Result.class, new InterfaceAdapter<Result>());
+		gb.registerTypeAdapter(Utterance.class,
+				new InterfaceAdapter<Utterance>());
+		gb.registerTypeAdapter(Position.class, new InterfaceAdapter<Position>());
+		gb.registerTypeAdapter(PCM.class, new InterfaceAdapter<PCM>());
+		gb.registerTypeAdapter(Phrase.class, new InterfaceAdapter<Phrase>());
+		gb.registerTypeAdapter(Mapping.class, new InterfaceAdapter<Mapping>());
+		gb.registerTypeAdapter(Ev.class, new InterfaceAdapter<Ev>());
+		gson = gb.create();
+		// }
+
+		this.bw = bw;
 	}
 
 	public ArrayList<Candidate> getCandidates(String abstractRecord)
 			throws Exception {
 		ArrayList<Candidate> candidates = new ArrayList<Candidate>();
-		Result result;
+		Result result, resultTransferred;
 		ArrayList<Candidate> someCandidates;
-		if (!isReadingFromJsonFile) {
-			// deals with non-ascii characters here
-			boolean isAscii = CharMatcher.ASCII.matchesAllOf(abstractRecord);
-			if (!isAscii)
-				abstractRecord = normalizeString(abstractRecord);
-			List<Result> resultList = api.processCitationsFromString(abstractRecord);
-			// one 'line' has one abstract and one result
-			result = resultList.get(0);
-			// splits into utterances
-			for (Utterance utterance : result.getUtteranceList()) {
-				someCandidates = processUtterance(utterance);
-				candidates.addAll(someCandidates);
-			}
-		} else {
+		String json;
+		// if (!isReadingFromJsonFile) {
+		// // deals with non-ascii characters here
+		// boolean isAscii = CharMatcher.ASCII.matchesAllOf(abstractRecord);
+		// if (!isAscii)
+		// abstractRecord = normalizeString(abstractRecord);
+		// List<Result> resultList = api
+		// .processCitationsFromString(abstractRecord);
+		// // one 'line' has one abstract and one result
+		// result = resultList.get(0);
+		// // splits into utterances
+		// for (Utterance utterance : result.getUtteranceList()) {
+		// someCandidates = processUtterance(utterance);
+		// candidates.addAll(someCandidates);
+		// }
+		// } else {
+		//
+		// result = gson.fromJson(abstractRecord, ResultSerImpl.class);
+		// for (Utterance utterance : result.getUtteranceList()) {
+		// someCandidates = processUtterance(utterance);
+		// candidates.addAll(someCandidates);
+		// }
+		//
+		// }
 
-			result = gson.fromJson(abstractRecord, ResultSerImpl.class);
-			for (Utterance utterance : result.getUtteranceList()) {
-				someCandidates = processUtterance(utterance);
-				candidates.addAll(someCandidates);
-			}
+		boolean isAscii = CharMatcher.ASCII.matchesAllOf(abstractRecord);
+		if (!isAscii)
+			abstractRecord = normalizeString(abstractRecord);
+		List<Result> resultList = api
+				.processCitationsFromString(abstractRecord);
+		// one 'line' has one abstract and one result
+		result = resultList.get(0);
 
+		resultTransferred = MetamapSerImpl.convertToSerImpl(result);
+		json = gson.toJson(resultTransferred);
+
+		bw.write("<metamap-output>");
+		bw.newLine();
+		bw.write(json);
+		bw.newLine();
+		bw.write("</metamap-output>");
+		bw.newLine();
+		bw.flush();
+
+		// result = gson.fromJson(json, ResultSerImpl.class);
+		for (Utterance utterance : resultTransferred.getUtteranceList()) {
+			someCandidates = processUtterance(utterance);
+			candidates.addAll(someCandidates);
 		}
 
 		return candidates;
