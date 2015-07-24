@@ -2,10 +2,7 @@ package pipeline;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +24,9 @@ import pipeline.ClassUtilities.Sentence;
 import pipeline.ClassUtilities.TypedDependencyProperty;
 import pipeline.ClassUtilities.Vertex;
 import pipeline.ClassUtilities.Word;
+
+import com.google.gson.Gson;
+
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
@@ -71,6 +71,8 @@ public class NewCandidatesToFeatures {
 	private HashIndex<String> depIndex;
 
 	private SnowballStemmer stemmer;
+
+	private String StanfordParserParsingResult;
 
 	// private String errorLogFile;
 
@@ -144,6 +146,11 @@ public class NewCandidatesToFeatures {
 
 		Sentence sentence;
 
+		String rawWordsResult;
+		String wordIndicesResult;
+		String taggedLabelsResult;
+		String tdlResult;
+
 		// System.out.println("Total # of candidates is: " + candidates.size());
 		int index = 0;
 		for (Candidate candidate : candidates) {
@@ -179,10 +186,21 @@ public class NewCandidatesToFeatures {
 				tdl = gs.typedDependencies();
 				// no index information inside taggedLabels
 				constructPhrases(newCandid, rawWords, taggedLabels);
+
+				rawWordsResult = rawWords.toString();
+				wordIndicesResult = getTdlResult(rawWords);
+				taggedLabelsResult = taggedLabels.toString();
+				tdlResult = tdl.toString();
+
+				StanfordParserParsingResult = rawWordsResult + "\n"
+						+ wordIndicesResult + "\n" + taggedLabelsResult + "\n"
+						+ tdlResult;
 			} else {
 				if (!checkCandidateIndicesEquality(oldCandid, newCandid))
 					constructPhrases(newCandid, rawWords, taggedLabels);
 			}
+
+			sentence.stanfordParserParsingInfo = this.StanfordParserParsingResult;
 
 			sentence.phrases = phrases;
 			sentence.words = taggedLabels;
@@ -203,6 +221,19 @@ public class NewCandidatesToFeatures {
 			sentences.add(sentence);
 		}
 
+	}
+
+	private String getTdlResult(List<CoreLabel> rawWords) {
+		CoreLabel rawWord;
+		int wordStartIndex, wordEndIndex;
+		List<String> ret = new ArrayList<String>();
+		for (int i = 0; i < rawWords.size(); i++) {
+			rawWord = rawWords.get(i);
+			wordStartIndex = rawWord.beginPosition();
+			wordEndIndex = rawWord.endPosition();
+			ret.add("" + wordStartIndex + "-" + wordEndIndex);
+		}
+		return ret.toString();
 	}
 
 	private void constructDependencyPath(Sentence sentence,
@@ -397,6 +428,22 @@ public class NewCandidatesToFeatures {
 
 		int n = 0;
 		for (Sentence s : sentences) {
+			bw.write("<sentence>");
+			bw.newLine();
+			bw.write("<stanford-parser-result>");
+			bw.newLine();
+			bw.write(s.stanfordParserParsingInfo);
+			bw.newLine();
+			bw.write("</stanford-parser-result>");
+			bw.newLine();
+			bw.write("<phrase-chunking-result>");
+			bw.newLine();
+			bw.write(s.toString());
+			bw.newLine();
+			bw.write("</phrase-chunking-result>");
+			bw.newLine();
+			bw.flush();
+
 			n++;
 			// System.out.println("Converting #" + n +
 			// " Sentence into features.");
@@ -419,12 +466,14 @@ public class NewCandidatesToFeatures {
 			for (Word w : s.phrases.get(s.entity1Index).words)
 				entity1MatchedWords += " " + w.wText;
 			header += "cui1-matched-words:" + entity1MatchedWords + newLine;
+			header += "cui1-index: " + s.entity1Index + newLine;
 			header += "cui2: " + s.entity2Cui + newLine;
 			header += "cui2-type: " + s.entity2NE + newLine;
 			entity2MatchedWords = "";
 			for (Word w : s.phrases.get(s.entity2Index).words)
 				entity2MatchedWords += " " + w.wText;
 			header += "cui2-matched-words:" + entity2MatchedWords + newLine;
+			header += "cui2-index: " + s.entity2Index + newLine;
 			header += "positivity: " + (s.isPositive ? "true" : "false")
 					+ newLine;
 			header += "inverse: " + (s.isInverse ? "true" : "false") + newLine;
@@ -1001,7 +1050,10 @@ public class NewCandidatesToFeatures {
 			// else
 			// System.out.print(instance);
 			bw.write(instance);
+			bw.write("</sentence>");
+			bw.newLine();
 			bw.flush();
+
 			// } catch (Exception e) {
 			// e.printStackTrace(ps);
 			// ps.println("Error instance is:");

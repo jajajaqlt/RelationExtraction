@@ -108,6 +108,8 @@ public class ClassUtilities {
 		// also keeps the order of phrase nodes on the path
 		LinkedHashMap<Integer, ArrayList<TypedDependencyProperty>> path;
 
+		public String stanfordParserParsingInfo;
+
 		public String toString() {
 			String ret = "";
 			for (Phrase p : phrases)
@@ -156,7 +158,7 @@ public class ClassUtilities {
 		}
 
 		public String toString() {
-			return wText;
+			return wText + "-" + tag + "-" + index;
 		}
 	}
 

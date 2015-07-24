@@ -3,12 +3,16 @@ package tests;
 import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -101,12 +105,16 @@ public class ArbitraryTest {
 		uttText = "The obstructed area may be bypassed by attaching the vas to any part of the epididymis on the testicular side of the obstruction or to the vasa efferentia.";
 		tok = tokenizerFactory.getTokenizer(new StringReader(uttText));
 		rawWords = tok.tokenize();
+		System.out.println(rawWords.toString());
+		System.out.println(getTdlResult(rawWords));
 		parse = lp.apply(rawWords);
 		taggedLabels = parse.taggedLabeledYield();
+		System.out.println(taggedLabels.toString());
 		gs = gsf.newGrammaticalStructure(parse);
 		// TypedDependency: gov() dep() reln()
 		// tdl = gs.typedDependenciesCCprocessed();
 		tdl = gs.typedDependencies();
+		System.out.println(tdl.toString());
 		// no index information inside taggedLabels
 
 		// GsonBuilder gb = new GsonBuilder();
@@ -120,28 +128,53 @@ public class ArbitraryTest {
 		// String tdlJson = gson.toJson(tdl);
 		// System.out.println(tdlJson);
 		// FileOutputStream fileOut = new FileOutputStream("out.ser");
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream out = new ObjectOutputStream(baos);
-		out.writeObject(tdl);
-		out.close();
-		// String ser = out.toString();
-		byte[] ser = baos.toByteArray();
-		// System.out.println();
-		baos.close();
-		// fileOut.close();
+		// BufferedWriter bw = new BufferedWriter(new
+		// FileWriter("output2.ser"));
+		//
+		// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		// ObjectOutputStream out = new ObjectOutputStream(baos);
+		// out.writeObject(tdl);
 		// out.close();
-		// FileInputStream fileIn = new FileInputStream("out.ser");
-		// ObjectInputStream in = new ObjectInputStream(fileIn);
-		// List<CoreLabel> rawWords2 = (List<CoreLabel>) in.readObject();
+		// // String ser = out.toString();
+		// byte[] ser2 = baos.toByteArray();
+		// String ser = baos.toString("UTF-8");
+		// System.out.println(ser);
+		// bw.write(ser);
+		// bw.close();
+		// // System.out.println();
+		// baos.close();
+		// // fileOut.close();
+		// // out.close();
+		// // FileInputStream fileIn = new FileInputStream("out.ser");
+		// // ObjectInputStream in = new ObjectInputStream(fileIn);
+		// // List<CoreLabel> rawWords2 = (List<CoreLabel>) in.readObject();
+		// // in.close();
+		// // fileIn.close();
+		// // ByteArrayInputStream bais = new ByteArrayInputStream(ser);
+		// // FileInputStream fin = new FileInputStream("output2.ser");
+		// // fin.
+		// // byte[] b = string.getBytes();
+		// byte[] b = ser.getBytes(Charset.forName("UTF-8"));
+		// ByteArrayInputStream bais = new ByteArrayInputStream(b);
+		// ObjectInputStream in = new ObjectInputStream(bais);
+		// Collection<TypedDependency> tdl2 = (Collection<TypedDependency>) in
+		// .readObject();
 		// in.close();
-		// fileIn.close();
-		ByteArrayInputStream bais = new ByteArrayInputStream(ser);
-		ObjectInputStream in = new ObjectInputStream(bais);
-		Collection<TypedDependency> tdl2 = (Collection<TypedDependency>) in
-				.readObject();
-		in.close();
-		bais.close();
+		// bais.close();
+		// System.out.println(Arrays.toString(ser));
+	}
 
+	private static String getTdlResult(List<CoreLabel> rawWords) {
+		CoreLabel rawWord;
+		int wordStartIndex, wordEndIndex;
+		List<String> ret = new ArrayList<String>();
+		for (int i = 0; i < rawWords.size(); i++) {
+			rawWord = rawWords.get(i);
+			wordStartIndex = rawWord.beginPosition();
+			wordEndIndex = rawWord.endPosition();
+			ret.add("" + wordStartIndex + "-" + wordEndIndex);
+		}
+		return ret.toString();
 	}
 
 	public static class Number {

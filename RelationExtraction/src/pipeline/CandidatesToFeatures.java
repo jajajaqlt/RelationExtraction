@@ -416,12 +416,14 @@ public class CandidatesToFeatures {
 				for (Word w : s.phrases.get(s.entity1Index).words)
 					entity1MatchedWords += " " + w.wText;
 				header += "cui1-matched-words:" + entity1MatchedWords + newLine;
+				header += "cui1-index: " + s.entity1Index + newLine;
 				header += "cui2: " + s.entity2Cui + newLine;
 				header += "cui2-type: " + s.entity2NE + newLine;
 				entity2MatchedWords = "";
 				for (Word w : s.phrases.get(s.entity2Index).words)
 					entity2MatchedWords += " " + w.wText;
 				header += "cui2-matched-words:" + entity2MatchedWords + newLine;
+				header += "cui2-index: " + s.entity2Index + newLine;
 				header += "positivity: " + (s.isPositive ? "true" : "false")
 						+ newLine;
 				header += "inverse: " + (s.isInverse ? "true" : "false")
