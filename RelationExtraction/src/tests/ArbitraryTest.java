@@ -3,6 +3,10 @@ package tests;
 import info.olteanu.interfaces.StringFilter;
 import info.olteanu.utils.TextNormalizer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -105,8 +109,39 @@ public class ArbitraryTest {
 		tdl = gs.typedDependencies();
 		// no index information inside taggedLabels
 
-		// log.flush();
-		// log.close();
+		// GsonBuilder gb = new GsonBuilder();
+		// gb.registerTypeAdapter(CoreAnnotations.ValueAnnotation.class,
+		// new InterfaceAdapter<CoreAnnotations.ValueAnnotation>());
+		// Gson gson = gb.create();
+		// String rawWordsJson = gson.toJson(rawWords);
+		// System.out.println(rawWordsJson);
+		// String taggedLabelsJson = gson.toJson(taggedLabels);
+		// System.out.println(taggedLabelsJson);
+		// String tdlJson = gson.toJson(tdl);
+		// System.out.println(tdlJson);
+		// FileOutputStream fileOut = new FileOutputStream("out.ser");
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream out = new ObjectOutputStream(baos);
+		out.writeObject(tdl);
+		out.close();
+		// String ser = out.toString();
+		byte[] ser = baos.toByteArray();
+		// System.out.println();
+		baos.close();
+		// fileOut.close();
+		// out.close();
+		// FileInputStream fileIn = new FileInputStream("out.ser");
+		// ObjectInputStream in = new ObjectInputStream(fileIn);
+		// List<CoreLabel> rawWords2 = (List<CoreLabel>) in.readObject();
+		// in.close();
+		// fileIn.close();
+		ByteArrayInputStream bais = new ByteArrayInputStream(ser);
+		ObjectInputStream in = new ObjectInputStream(bais);
+		Collection<TypedDependency> tdl2 = (Collection<TypedDependency>) in
+				.readObject();
+		in.close();
+		bais.close();
+
 	}
 
 	public static class Number {
