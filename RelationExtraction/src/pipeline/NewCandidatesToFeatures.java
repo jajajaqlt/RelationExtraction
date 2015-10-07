@@ -894,12 +894,16 @@ public class NewCandidatesToFeatures {
 					+ s.entity2NE;
 
 			// no window node
-			sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-					+ strFeatureStem + newLine;
-			sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-					+ depFeatureStem + newLine;
-			sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-					+ dirFeatureStem + newLine;
+			// sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+			// + strFeatureStem + newLine;
+			// sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+			// + depFeatureStem + newLine;
+			// sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+			// + dirFeatureStem + newLine;
+
+			sentenceLvFeats += "feature: " + "str:" + strFeatureStem + newLine;
+			sentenceLvFeats += "feature: " + "dep:" + depFeatureStem + newLine;
+			sentenceLvFeats += "feature: " + "dir:" + dirFeatureStem + newLine;
 
 			// having left window nodes
 			TypedDependencyProperty tdp;
@@ -917,12 +921,19 @@ public class NewCandidatesToFeatures {
 				type = "[" + tdp.relation + "]";
 				sLvDepTypeIndices = getIndex(tdp.relation, "d")
 						+ sLvDepTypeIndices;
-				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-						+ word + type + arrow + "|" + strFeatureStem + newLine;
-				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-						+ type + arrow + "|" + depFeatureStem + newLine;
-				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-						+ arrow + "|" + dirFeatureStem + newLine;
+				// sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+				// + word + type + arrow + "|" + strFeatureStem + newLine;
+				// sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+				// + type + arrow + "|" + depFeatureStem + newLine;
+				// sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+				// + arrow + "|" + dirFeatureStem + newLine;
+
+				sentenceLvFeats += "feature: " + "str:" + word + type + arrow
+						+ "|" + strFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dep:" + type + arrow + "|"
+						+ depFeatureStem + newLine;
+				sentenceLvFeats += "feature: " + "dir:" + arrow + "|"
+						+ dirFeatureStem + newLine;
 			}
 
 			// having right window nodes
@@ -939,12 +950,18 @@ public class NewCandidatesToFeatures {
 					arrow = "->";
 				type = "[" + tdp.relation + "]";
 				sLvDepTypeIndices += getIndex(word, "d");
-				sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-						+ strFeatureStem + "|" + type + arrow + word + newLine;
-				sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-						+ depFeatureStem + "|" + type + arrow + newLine;
-				sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-						+ dirFeatureStem + "|" + arrow + newLine;
+				// sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
+				// + strFeatureStem + "|" + type + arrow + word + newLine;
+				// sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
+				// + depFeatureStem + "|" + type + arrow + newLine;
+				// sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
+				// + dirFeatureStem + "|" + arrow + newLine;
+				sentenceLvFeats += "feature: " + "str:" + strFeatureStem + "|"
+						+ type + arrow + word + newLine;
+				sentenceLvFeats += "feature: " + "dep:" + depFeatureStem + "|"
+						+ type + arrow + newLine;
+				sentenceLvFeats += "feature: " + "dir:" + dirFeatureStem + "|"
+						+ arrow + newLine;
 			}
 
 			// having window nodes on both sides
@@ -972,15 +989,26 @@ public class NewCandidatesToFeatures {
 						arrow2 = "->";
 					type2 = "[" + tdp2.relation + "]";
 
-					sentenceLvFeats += "feature: " + "str:" + inverseFlag + "|"
-							+ word1 + type1 + arrow1 + "|" + strFeatureStem
-							+ "|" + type2 + arrow2 + word2 + newLine;
-					sentenceLvFeats += "feature: " + "dep:" + inverseFlag + "|"
-							+ type1 + arrow1 + "|" + depFeatureStem + "|"
-							+ type2 + arrow2 + newLine;
-					sentenceLvFeats += "feature: " + "dir:" + inverseFlag + "|"
-							+ arrow1 + "|" + dirFeatureStem + "|" + arrow2
+					// sentenceLvFeats += "feature: " + "str:" + inverseFlag +
+					// "|"
+					// + word1 + type1 + arrow1 + "|" + strFeatureStem
+					// + "|" + type2 + arrow2 + word2 + newLine;
+					// sentenceLvFeats += "feature: " + "dep:" + inverseFlag +
+					// "|"
+					// + type1 + arrow1 + "|" + depFeatureStem + "|"
+					// + type2 + arrow2 + newLine;
+					// sentenceLvFeats += "feature: " + "dir:" + inverseFlag +
+					// "|"
+					// + arrow1 + "|" + dirFeatureStem + "|" + arrow2
+					// + newLine;
+					sentenceLvFeats += "feature: " + "str:" + word1 + type1
+							+ arrow1 + "|" + strFeatureStem + "|" + type2
+							+ arrow2 + word2 + newLine;
+					sentenceLvFeats += "feature: " + "dep:" + type1 + arrow1
+							+ "|" + depFeatureStem + "|" + type2 + arrow2
 							+ newLine;
+					sentenceLvFeats += "feature: " + "dir:" + arrow1 + "|"
+							+ dirFeatureStem + "|" + arrow2 + newLine;
 				}
 			}
 
