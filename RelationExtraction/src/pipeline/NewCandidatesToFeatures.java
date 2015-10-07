@@ -1014,12 +1014,14 @@ public class NewCandidatesToFeatures {
 
 			// sentence-level bag of words features
 			sentenceLvFeats += "bag-of-words-features:" + newLine;
-			sentenceLvFeats += "bow-word-feature: " + sLvWordIndices + newLine;
-			sentenceLvFeats += "bow-tag-feature: " + sLvTagIndices + newLine;
-			sentenceLvFeats += "bow-dep-feature: " + sLvDepTypeIndices
+			sentenceLvFeats += "bow-word-feature:" + newLine + sLvWordIndices
 					+ newLine;
-			sentenceLvFeats += "bow-dep-word-feature: " + sLvDepWordIndices
+			sentenceLvFeats += "bow-tag-feature:" + newLine + sLvTagIndices
 					+ newLine;
+			sentenceLvFeats += "bow-dep-feature:" + newLine + sLvDepTypeIndices
+					+ newLine;
+			sentenceLvFeats += "bow-dep-word-feature:" + newLine
+					+ sLvDepWordIndices + newLine;
 			sentenceLvFeats += "</sentence-level-features>" + newLine;
 
 			// chunk-level features
