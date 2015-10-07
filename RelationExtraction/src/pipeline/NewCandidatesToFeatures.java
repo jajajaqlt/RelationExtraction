@@ -480,10 +480,12 @@ public class NewCandidatesToFeatures {
 
 			// a flag indicating which entity came first in the sentence
 			if (s.isInverse) {
-				inverseFlag = "inverse_true";
+				// inverseFlag = "inverse_true";
+				inverseFlag = "inv_t";
 				inverseFlagAbbr = inverseFlag + "|";
 			} else {
-				inverseFlag = "inverse_false";
+				// inverseFlag = "inverse_false";
+				inverseFlag = "inv_f";
 				inverseFlagAbbr = inverseFlag + "|";
 			}
 
