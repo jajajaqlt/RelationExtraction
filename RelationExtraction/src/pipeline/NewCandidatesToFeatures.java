@@ -24,9 +24,6 @@ import pipeline.ClassUtilities.Sentence;
 import pipeline.ClassUtilities.TypedDependencyProperty;
 import pipeline.ClassUtilities.Vertex;
 import pipeline.ClassUtilities.Word;
-
-import com.google.gson.Gson;
-
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
@@ -39,6 +36,7 @@ import edu.stanford.nlp.trees.PennTreebankLanguagePack;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.HashIndex;
+import edu.stanford.nlp.util.StringUtils;
 import gov.nih.nlm.nls.metamap.PCM;
 import gov.nih.nlm.nls.metamap.Position;
 import gov.nih.nlm.nls.metamap.Utterance;
@@ -417,6 +415,7 @@ public class NewCandidatesToFeatures {
 		boolean includePadInFeatures = true;
 		String unitDelimiter = "\n";
 		int unitDelimiterLength = unitDelimiter.length();
+		int sLvFeatsCount, chunksCount, phrasesCount, wordsCount;
 
 		// sentence-level bag of words features
 		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
@@ -428,6 +427,11 @@ public class NewCandidatesToFeatures {
 
 		int n = 0;
 		for (Sentence s : sentences) {
+			// sLvFeatsCount = 0;
+			// chunksCount = 0;
+			// phrasesCount = 0;
+			// wordsCount = 0;
+
 			bw.write("<sentence>");
 			bw.newLine();
 			bw.write("<stanford-parser-result>");
@@ -493,7 +497,15 @@ public class NewCandidatesToFeatures {
 			header += "meta-relation: "
 					+ (s.metaRelation == null ? "null" : s.metaRelation)
 					+ newLine;
-			header += "sentence: " + s.sentenceText + newLine;
+			sLvFeatsCount = (1 + countOfWindowNodes) * 2 + 3
+					+ s.entity1Dependencies.size() * 3
+					+ s.entity2Dependencies.size() * 3
+					+ s.entity1Dependencies.size()
+					* s.entity2Dependencies.size() * 3;
+			header += "number of sentence-level features: " + sLvFeatsCount
+					+ newLine;
+			chunksCount = 5;
+			header += "number of chunks: " + chunksCount + newLine;
 
 			// sentence-level features
 			sentenceLvFeats += "<sentence-level-features>" + newLine;
@@ -1075,6 +1087,12 @@ public class NewCandidatesToFeatures {
 			// System.out.print(phraseLvFeats);
 			// System.out.print(wordLvFeats);
 			// System.out.print(footer);
+			phrasesCount = (countCharOccurences(phraseLvFeats, '\n') - 4) / 3;
+			header += "number of phrases: " + phrasesCount + newLine;
+			wordsCount = (countCharOccurences(wordLvFeats, '\n') - 4) / 3;
+			header += "number of words: " + wordsCount + newLine;
+			header += "sentence: " + s.sentenceText + newLine;
+
 			instance = header + sentenceLvFeats + chunkLvFeats + phraseLvFeats
 					+ wordLvFeats + footer;
 			// if (outputMethod)
@@ -1100,6 +1118,15 @@ public class NewCandidatesToFeatures {
 
 		// System.out.println("Write features end time: "
 		// + System.currentTimeMillis());
+	}
+
+	private int countCharOccurences(String str, char c) {
+		int ret = 0;
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == c)
+				ret++;
+		}
+		return ret;
 	}
 
 	// featGroup is "" ended
