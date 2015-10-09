@@ -502,10 +502,10 @@ public class NewCandidatesToFeatures {
 					+ s.entity2Dependencies.size() * 3
 					+ s.entity1Dependencies.size()
 					* s.entity2Dependencies.size() * 3;
-			header += "number of sentence-level features: " + sLvFeatsCount
+			header += "number-of-sentence-level-features: " + sLvFeatsCount
 					+ newLine;
 			chunksCount = 5;
-			header += "number of chunks: " + chunksCount + newLine;
+			header += "number-of-chunks: " + chunksCount + newLine;
 
 			// sentence-level features
 			sentenceLvFeats += "<sentence-level-features>" + newLine;
@@ -1088,9 +1088,9 @@ public class NewCandidatesToFeatures {
 			// System.out.print(wordLvFeats);
 			// System.out.print(footer);
 			phrasesCount = (countCharOccurences(phraseLvFeats, '\n') - 4) / 3;
-			header += "number of phrases: " + phrasesCount + newLine;
+			header += "number-of-phrases: " + phrasesCount + newLine;
 			wordsCount = (countCharOccurences(wordLvFeats, '\n') - 4) / 3;
-			header += "number of words: " + wordsCount + newLine;
+			header += "number-of-words: " + wordsCount + newLine;
 			header += "sentence: " + s.sentenceText + newLine;
 
 			instance = header + sentenceLvFeats + chunkLvFeats + phraseLvFeats
