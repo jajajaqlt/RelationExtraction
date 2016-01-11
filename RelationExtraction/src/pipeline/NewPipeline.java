@@ -19,26 +19,26 @@ public class NewPipeline {
 			String depTypeDictFile, boolean isReadingFromJsonFile)
 			throws Exception {
 
+		BufferedReader br = new BufferedReader(new FileReader(abstractsFile));
 		BufferedWriter bw;
 		if (outputFile.equals(""))
 			bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		else
-			bw = new BufferedWriter(new FileWriter(outputFile));
-
+			bw = new BufferedWriter(new FileWriter(outputFile));				
+		File errorLog = new File(errorLogFile);
+		PrintStream ps = new PrintStream(errorLog);
+		
 		NewAbstractsToCandidates a2c = new NewAbstractsToCandidates(
 				relationMappingFile, semanticNetworkFile,
 				semanticTypeAbbreviationFile, metaRelationsFile,
 				isReadingFromJsonFile, bw);
 		NewCandidatesToFeatures c2f = new NewCandidatesToFeatures(bw,
 				wordDictFile, tagDictFile, depTypeDictFile);
-		File errorLog = new File(errorLogFile);
-		PrintStream ps = new PrintStream(errorLog);
-		// e.printStackTrace(ps);
-		// ps.println("Error instance is:");
-		BufferedReader br = new BufferedReader(new FileReader(abstractsFile));
+				
 		ArrayList<Candidate> candidates;
 		String line;
 		int index = 0;
+		
 		while ((line = br.readLine()) != null) {
 			try {
 				bw.write("<abstract>");
