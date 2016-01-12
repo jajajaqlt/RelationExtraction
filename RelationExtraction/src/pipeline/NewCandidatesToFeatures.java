@@ -396,7 +396,7 @@ public class NewCandidatesToFeatures {
 		return false;
 	}
 
-	public void writeFeatures(int index) throws Exception {
+	public void writeFeatures(int globalIndex) throws Exception {
 		// System.out.println("Write features start time: "
 		// + System.currentTimeMillis());
 		String instance;
@@ -416,7 +416,8 @@ public class NewCandidatesToFeatures {
 		String unitDelimiter = "\n";
 		int unitDelimiterLength = unitDelimiter.length();
 		int sLvFeatsCount, chunksCount, phrasesCount, wordsCount;
-
+		int index;
+		
 		// sentence-level bag of words features
 		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
 
@@ -426,27 +427,35 @@ public class NewCandidatesToFeatures {
 		String header = "", footer, sentenceLvFeats, chunkLvFeats, phraseLvFeats, wordLvFeats;
 
 		int n = 0;
+		String oldStanfordParserParsingInfo = null;
 		for (Sentence s : sentences) {
 			// sLvFeatsCount = 0;
 			// chunksCount = 0;
 			// phrasesCount = 0;
 			// wordsCount = 0;
-
-			bw.write("<sentence>");
-			bw.newLine();
-			bw.write("<stanford-parser-result>");
-			bw.newLine();
-			bw.write(s.stanfordParserParsingInfo);
-			bw.newLine();
-			bw.write("</stanford-parser-result>");
-			bw.newLine();
-			bw.write("<phrase-chunking-result>");
-			bw.newLine();
-			bw.write(s.toString());
-			bw.newLine();
-			bw.write("</phrase-chunking-result>");
-			bw.newLine();
-			bw.flush();
+			if(s.stanfordParserParsingInfo != oldStanfordParserParsingInfo){
+				if(n != 0){
+					bw.write("</sentence>");
+					bw.newLine();
+				}
+				bw.write("<sentence>");
+				bw.newLine();
+				bw.write("<stanford-parser-result>");
+				bw.newLine();
+				bw.write(s.stanfordParserParsingInfo);
+				bw.newLine();
+				bw.write("</stanford-parser-result>");
+				bw.newLine();
+				bw.write("<phrase-chunking-result>");
+				bw.newLine();
+				bw.write(s.toString());
+				bw.newLine();
+				bw.write("</phrase-chunking-result>");
+				bw.newLine();
+				bw.flush();
+				oldStanfordParserParsingInfo = s.stanfordParserParsingInfo;
+			} 
+			
 
 			n++;
 			// System.out.println("Converting #" + n +
@@ -463,7 +472,7 @@ public class NewCandidatesToFeatures {
 			String chunkLvFeat1 = "", chunkLvFeat2 = "", phraseLvFeat1 = "", phraseLvFeat2 = "", wordLvFeat1 = "", wordLvFeat2 = "";
 			// header
 			header += "<instance>" + newLine;
-			header += "index: " + index + newLine;
+			header += "index: " + globalIndex + newLine;
 			header += "cui1: " + s.entity1Cui + newLine;
 			header += "cui1-type: " + s.entity1NE + newLine;
 			entity1MatchedWords = "";
@@ -1100,8 +1109,6 @@ public class NewCandidatesToFeatures {
 			// else
 			// System.out.print(instance);
 			bw.write(instance);
-			bw.write("</sentence>");
-			bw.newLine();
 			bw.flush();
 
 			// } catch (Exception e) {
@@ -1111,6 +1118,10 @@ public class NewCandidatesToFeatures {
 			// // System.err.println("Error sentence is: " + s.sentenceText);
 			// }
 		}
+		
+		bw.write("</sentence>");
+		bw.newLine();
+		bw.flush();
 		// ps.close();
 
 		// if (outputMethod)
