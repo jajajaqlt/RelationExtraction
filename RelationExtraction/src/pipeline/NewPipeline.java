@@ -16,7 +16,8 @@ public class NewPipeline {
 			String semanticNetworkFile, String semanticTypeAbbreviationFile,
 			String metaRelationsFile, String abstractsFile, String outputFile,
 			String errorLogFile, String wordDictFile, String tagDictFile,
-			String depTypeDictFile, boolean isReadingFromJsonFile)
+			String depTypeDictFile, boolean isReadingFromJsonFile,
+			boolean filterLongPath, int wordSeqThres, int depSeqThres)
 			throws Exception {
 
 		BufferedReader br = new BufferedReader(new FileReader(abstractsFile));
@@ -24,21 +25,21 @@ public class NewPipeline {
 		if (outputFile.equals(""))
 			bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		else
-			bw = new BufferedWriter(new FileWriter(outputFile));				
+			bw = new BufferedWriter(new FileWriter(outputFile));
 		File errorLog = new File(errorLogFile);
 		PrintStream ps = new PrintStream(errorLog);
-		
+
 		NewAbstractsToCandidates a2c = new NewAbstractsToCandidates(
 				relationMappingFile, semanticNetworkFile,
 				semanticTypeAbbreviationFile, metaRelationsFile,
 				isReadingFromJsonFile, bw);
 		NewCandidatesToFeatures c2f = new NewCandidatesToFeatures(bw,
 				wordDictFile, tagDictFile, depTypeDictFile);
-				
+
 		ArrayList<Candidate> candidates;
 		String line;
 		int index = 0;
-		
+
 		while ((line = br.readLine()) != null) {
 			try {
 				bw.write("<abstract>");
@@ -49,7 +50,8 @@ public class NewPipeline {
 				// + ". Time is: " + Time.getCurrentTime());
 				candidates = a2c.getCandidates(line);
 				c2f.getSentences(candidates);
-				c2f.writeFeatures(index);
+				c2f.writeFeatures(index, filterLongPath, wordSeqThres,
+						depSeqThres);
 				// System.out.println("Finishes processing #" + index
 				// + ". Time is: " + Time.getCurrentTime());
 				bw.write("</abstract>");
@@ -66,5 +68,4 @@ public class NewPipeline {
 		br.close();
 		ps.close();
 	}
-
 }

@@ -396,7 +396,8 @@ public class NewCandidatesToFeatures {
 		return false;
 	}
 
-	public void writeFeatures(int globalIndex) throws Exception {
+	public void writeFeatures(int globalIndex, boolean filterLongPath,
+			int wordSeqThres, int depSeqThres) throws Exception {
 		// System.out.println("Write features start time: "
 		// + System.currentTimeMillis());
 		String instance;
@@ -417,7 +418,7 @@ public class NewCandidatesToFeatures {
 		int unitDelimiterLength = unitDelimiter.length();
 		int sLvFeatsCount, chunksCount, phrasesCount, wordsCount;
 		int index;
-		
+
 		// sentence-level bag of words features
 		String sLvWordIndices, sLvTagIndices, sLvDepTypeIndices, sLvDepWordIndices;
 
@@ -433,8 +434,8 @@ public class NewCandidatesToFeatures {
 			// chunksCount = 0;
 			// phrasesCount = 0;
 			// wordsCount = 0;
-			if(s.stanfordParserParsingInfo != oldStanfordParserParsingInfo){
-				if(n != 0){
+			if (s.stanfordParserParsingInfo != oldStanfordParserParsingInfo) {
+				if (n != 0) {
 					bw.write("</sentence>");
 					bw.newLine();
 				}
@@ -454,8 +455,7 @@ public class NewCandidatesToFeatures {
 				bw.newLine();
 				bw.flush();
 				oldStanfordParserParsingInfo = s.stanfordParserParsingInfo;
-			} 
-			
+			}
 
 			n++;
 			// System.out.println("Converting #" + n +
@@ -783,6 +783,11 @@ public class NewCandidatesToFeatures {
 			// word features
 			// example feature:
 			// "inverse_true|Brothers ,|ORGANIZATION|, Bear Stearns and|ORGANIZATION|. B_1"
+			/**
+			 * Word feature stem modifications here.
+			 */
+			if (filterLongPath && middleWords.split(" ").length > wordSeqThres)
+				middleWords = "*LONG*";
 			wordFeatureStem = s.entity1NE + "|" + middleWords + "|"
 					+ s.entity2NE;
 			sentenceLvFeats += "feature: " + inverseFlag + "|"
@@ -905,6 +910,15 @@ public class NewCandidatesToFeatures {
 					}
 					strFeatureStem += word;
 				}
+			}
+
+			/**
+			 * Dependency feature stems modification here!!!
+			 */
+			if (filterLongPath && dirFeatureStem.length() / 2 > depSeqThres) {
+				strFeatureStem = "*LONG-PATH*";
+				depFeatureStem = "*LONG-TYPE*";
+				dirFeatureStem = "*LONG-PATH*";
 			}
 
 			strFeatureStem = s.entity1NE + "|" + strFeatureStem + "|"
@@ -1118,10 +1132,11 @@ public class NewCandidatesToFeatures {
 			// // System.err.println("Error sentence is: " + s.sentenceText);
 			// }
 		}
-		
+
 		bw.write("</sentence>");
 		bw.newLine();
 		bw.flush();
+		// for test only
 		// ps.close();
 
 		// if (outputMethod)
