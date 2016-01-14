@@ -1249,32 +1249,33 @@ public class NewCandidatesToFeatures {
 	}
 
 	private String getIndex(String token, String type) {
-		int index = -1;
-		if (type.equals("w")) {
-			// changes the functionality of getting index from dictionary to
-			// 'wrapper'
-
-			// String stemmedWord;
-			// stemmer.setCurrent(token);
-			// stemmer.stem();
-			// stemmedWord = stemmer.getCurrent();
-			// index = wordIndex.indexOf(stemmedWord);
-
-			return token + " ";
-		}
-
-		if (type.equals("t")) {
-			index = tagIndex.indexOf(token);
-		}
-
-		if (type.equals("d")) {
-			index = depIndex.indexOf(token);
-		}
-
-		if (index != -1)
-			return "" + index + " ";
-		else
-			return "";
+		return token + " ";
+//		int index = -1;
+//		if (type.equals("w")) {
+//			// changes the functionality of getting index from dictionary to
+//			// 'wrapper'
+//
+//			// String stemmedWord;
+//			// stemmer.setCurrent(token);
+//			// stemmer.stem();
+//			// stemmedWord = stemmer.getCurrent();
+//			// index = wordIndex.indexOf(stemmedWord);
+//
+//			return token + " ";
+//		}
+//
+//		if (type.equals("t")) {
+//			index = tagIndex.indexOf(token);
+//		}
+//
+//		if (type.equals("d")) {
+//			index = depIndex.indexOf(token);
+//		}
+//
+//		if (index != -1)
+//			return "" + index + " ";
+//		else
+//			return "";
 	}
 
 	private void printPhrases() {
