@@ -1169,15 +1169,15 @@ public class NewCandidatesToFeatures {
 		for (int i = 0; i < lines.length; i++) {
 			line = lines[i];
 			ret += line + delimiter;
-			ret += "bow: ";
-			line = line.substring(flagSize);
-			tokens = line.split(" ");
-			for (int j = 0; j < tokens.length; j++) {
-				token = tokens[j];
-				index = getIndex(token, type);
-				ret += index;
-			}
-			ret += delimiter;
+//			ret += "bow: ";
+//			line = line.substring(flagSize);
+//			tokens = line.split(" ");
+//			for (int j = 0; j < tokens.length; j++) {
+//				token = tokens[j];
+//				index = getIndex(token, type);
+//				ret += index;
+//			}
+//			ret += delimiter;
 		}
 
 		ret = ret.substring(0, ret.length() - delimiter.length());
