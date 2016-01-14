@@ -1110,9 +1110,9 @@ public class NewCandidatesToFeatures {
 			// System.out.print(phraseLvFeats);
 			// System.out.print(wordLvFeats);
 			// System.out.print(footer);
-			phrasesCount = (countCharOccurences(phraseLvFeats, '\n') - 4) / 3;
+			phrasesCount = (countCharOccurences(phraseLvFeats, '\n') - 4) / 2;
 			header += "number-of-phrases: " + phrasesCount + newLine;
-			wordsCount = (countCharOccurences(wordLvFeats, '\n') - 4) / 3;
+			wordsCount = (countCharOccurences(wordLvFeats, '\n') - 4) / 2;
 			header += "number-of-words: " + wordsCount + newLine;
 			header += "sentence: " + s.sentenceText + newLine;
 
